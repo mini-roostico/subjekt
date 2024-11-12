@@ -6,6 +6,8 @@ junit = "4.13.2"
 kotlin = "2.0.21"
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+jackson = "com.fasterxml.jackson.module:jackson-module-kotlin:2.18.1"
+jackson-yaml = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.1"
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

@@ -1,0 +1,30 @@
+---
+name: "Invalid iteration of aggregate calls"
+macros:
+  - name: loop
+    values:
+      - "for(i in 1..3) {
+          {{0}}
+         }"
+      - "(1..3).forEach {
+          {{0}}
+        }"
+  - name: alignedOn
+    values:
+      - "alignedOn(0) {
+          {{0}}
+         }"
+parameters:
+  - name: "AGGREGATE"
+    values: [ "neighbouring()", "exampleAggregate()" ]
+subjects:
+  - name: AggregateWithNestedFun
+    code: |-
+      fun Aggregate<Int>.entry() {
+         %%loop(
+            fun Aggregate<Int>.nested() {
+                %(AGGREGATE)
+            }
+         )
+      }
+    outcomes: []

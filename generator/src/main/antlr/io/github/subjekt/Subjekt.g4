@@ -1,3 +1,0 @@
-grammar Subjekt;
-
-example: EOF;
