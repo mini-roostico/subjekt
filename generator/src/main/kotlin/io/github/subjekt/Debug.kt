@@ -1,11 +1,12 @@
 package io.github.subjekt
 
 import io.github.subjekt.files.Reader
+import io.github.subjekt.rendering.Rendering.render
 
 object Debug {
 
   @JvmStatic
   fun main(vararg args: String) {
-    println(Reader.suiteFromResource("subjects/ExampleSuite.yaml"))
+    Reader.suiteFromResource("subjects/ExampleSuite.yaml")?.render()
   }
 }
