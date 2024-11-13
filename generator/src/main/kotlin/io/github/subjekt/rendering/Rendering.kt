@@ -1,10 +1,9 @@
 package io.github.subjekt.rendering
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.github.subjekt.files.Parameter
-import io.github.subjekt.files.Subject
-import io.github.subjekt.files.Suite
+import io.github.subjekt.files.*
 import io.github.subjekt.rendering.Permutations.permute
+import io.github.subjekt.resolved.ResolvedSubject
 
 class Rendering(private val engine: Engine = EngineProvider.inject()) {
 
@@ -20,13 +19,13 @@ class Rendering(private val engine: Engine = EngineProvider.inject()) {
         )
       }
 
-  private fun Suite.getMacroInstances(): List<String> =
-    (macros?.map { engine.renderMacroDeclaration(it) } ?: emptyList())
+  private fun List<Macro>?.getMacroInstances(): List<String> =
+    (this?.map { engine.renderMacroDeclaration(it) } ?: emptyList())
       .permute("\n")
       .run { ifEmpty { listOf("") } }
 
-  private fun Suite.getParametersInstances(subject: Subject): List<Map<String, Any>> =
-    (mergeParameters(parameters ?: emptyList(), subject.parameters ?: emptyList())).run {
+  private fun Subject.getParametersInstances(suiteParameters: List<Parameter>?): List<Map<String, Any>> =
+    (mergeParameters(suiteParameters ?: emptyList(), parameters ?: emptyList())).run {
       (this.permute()).run { ifEmpty { listOf(mapOf()) } }
     }
 
@@ -38,27 +37,38 @@ class Rendering(private val engine: Engine = EngineProvider.inject()) {
         |$code
       """.trimMargin()
 
-  fun Suite.render(): List<Set<String>> =
-    subjects.map { subject ->
-      val macroInstances = getMacroInstances()
+  private fun Subject.resolve(suiteMacros: List<Macro>?, suiteParameters: List<Parameter>?): Set<ResolvedSubject> {
+    val macroInstances = suiteMacros.getMacroInstances()
+    return getParametersInstances(suiteParameters).flatMap { parameterInstance ->
+      macroInstances.mapNotNull { macroInstance ->
+        val codeWithMacroDeclarations = if (macroInstance.isBlank()) code else StringBuilder()
+          .append(macroInstance)
+          .append("\n")
+          .append(code)
+          .toString()
 
-      getParametersInstances(subject).flatMap { parameterInstance ->
-        macroInstances.map { macroInstance ->
-          val codeWithMacroDeclarations = if (macroInstance.isBlank()) subject.code else StringBuilder()
-            .append(macroInstance)
-            .append("\n")
-            .append(subject.code)
-            .toString()
-
-          try {
-            return@map engine.render(codeWithMacroDeclarations, parameterInstance)
-          } catch (t: Throwable) {
-            logger.error { createWarning(subject.name, t, codeWithMacroDeclarations) }
-            return@map ""
-          }
+        try {
+          val resolvedName = engine.render(name, parameterInstance)
+          val resolvedOutcomes = outcomes
+            .filterNot { it.error == null && it.warning == null }
+            .map {
+              Outcome(
+                warning = it.warning?.run { engine.render(this, parameterInstance) },
+                error = it.error?.run { engine.render(this, parameterInstance) }
+              )
+            }
+          val resolvedCode = engine.render(codeWithMacroDeclarations, parameterInstance)
+          ResolvedSubject(resolvedName, resolvedCode, resolvedOutcomes)
+        } catch (t: Throwable) {
+          logger.error { createWarning(name, t, codeWithMacroDeclarations) }
+          null
         }
-      }.toSet()
-    }
+      }
+    }.toSet()
+  }
+
+  fun Suite.resolve(): List<Set<ResolvedSubject>> =
+    subjects.map { it.resolve(macros, parameters) }
 
 
 }

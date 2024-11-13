@@ -1,5 +1,6 @@
 package io.github.subjekt
 
+import io.github.subjekt.Subjekt.asCode
 import io.github.subjekt.files.Macro
 import io.github.subjekt.files.Parameter
 import io.github.subjekt.files.Subject
@@ -29,12 +30,12 @@ class SuiteRenderingTest {
       null,
       listOf(Parameter("PAR", listOf(5, 10)))
     )
-    val expected = setOf(
+    val expected = listOf(
       setOf("println(5)", "println(10)"),
       setOf("log(5)", "log(10)")
     )
     with(Rendering()) {
-      assertEquals(expected, suite.render())
+      assertEquals(expected, suite.resolve().asCode())
     }
   }
 
@@ -55,12 +56,12 @@ class SuiteRenderingTest {
       ),
       listOf(Parameter("PAR", listOf(5, 10)))
     )
-    val expected = setOf(
+    val expected = listOf(
       setOf("println(pretty(5))", "println(ugly(5))", "println(pretty(10))", "println(ugly(10))"),
       setOf("log(pretty(5))", "log(ugly(5))", "log(pretty(10))", "log(ugly(10))"),
     )
     with(Rendering()) {
-      assertEquals(expected, suite.render())
+      assertEquals(expected, suite.resolve().asCode())
     }
   }
 
@@ -85,7 +86,7 @@ class SuiteRenderingTest {
       ),
       listOf(Parameter("PAR", listOf(5, 10)))
     )
-    val expected = setOf(
+    val expected = listOf(
       setOf(
         "println(pretty(5), true)", "println(ugly(5), true)", "println(pretty(10), true)", "println(ugly(10), true)",
         "println(pretty(5), false)", "println(ugly(5), false)", "println(pretty(10), false)", "println(ugly(10), false)"
@@ -93,7 +94,7 @@ class SuiteRenderingTest {
       setOf("log(pretty(5))", "log(ugly(5))", "log(pretty(10))", "log(ugly(10))"),
     )
     with(Rendering()) {
-      assertEquals(expected, suite.render())
+      assertEquals(expected, suite.resolve().asCode())
     }
   }
 
@@ -119,7 +120,7 @@ class SuiteRenderingTest {
       ),
       listOf(Parameter("PAR", listOf(5)))
     )
-    val expected = setOf(
+    val expected = listOf(
       setOf(
         "println(pretty(5), true)", "println(ugly(5), true)", "println(pretty(10), true)", "println(ugly(10), true)",
         "println(pretty(5), false)", "println(ugly(5), false)", "println(pretty(10), false)", "println(ugly(10), false)"
@@ -127,7 +128,7 @@ class SuiteRenderingTest {
       setOf("log(pretty(5))", "log(ugly(5))"),
     )
     with(Rendering()) {
-      assertEquals(expected, suite.render())
+      assertEquals(expected, suite.resolve().asCode())
     }
   }
 
@@ -142,12 +143,12 @@ class SuiteRenderingTest {
       null,
       null
     )
-    val expected = setOf(
+    val expected = listOf(
       setOf("println(5)"),
       setOf("println(10)"),
     )
     with(Rendering()) {
-      assertEquals(expected, suite.render())
+      assertEquals(expected, suite.resolve().asCode())
     }
   }
 }

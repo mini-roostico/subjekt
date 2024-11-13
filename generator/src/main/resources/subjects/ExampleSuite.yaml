@@ -26,7 +26,7 @@ parameters:
     values: [ "neighbouring()", "exampleAggregate()" ]
 
 subjects:
-  - name: Iteration
+  - name: Iteration$util.capitalizeFirst($AGGREGATE)
     code: |-
       fun Aggregate<Int>.entry() {
           #loop(
@@ -36,7 +36,7 @@ subjects:
     outcomes:
       - warning: "Warning: aggregate function '${AGGREGATE}' called inside a loop with no manual alignment operation"
 
-  - name: IterationExtAlign
+  - name: IterationExtAlign$util.capitalizeFirst($AGGREGATE)
     code: |-
       #set($INNER = "#loop($AGGREGATE)")
       fun Aggregate<Int>.entry() {
@@ -45,7 +45,7 @@ subjects:
     outcomes:
       - warning: "Warning: aggregate function '${AGGREGATE}' called inside a loop with no manual alignment operation"
 
-  - name: AggregateWithNestedFun
+  - name: AggregateWithNestedFun$util.capitalizeFirst($AGGREGATE)
     code: |-
       fun Aggregate<Int>.entry() {
          #loop(

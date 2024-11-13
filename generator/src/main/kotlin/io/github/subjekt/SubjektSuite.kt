@@ -3,23 +3,35 @@ package io.github.subjekt
 import io.github.subjekt.files.Subject
 import io.github.subjekt.files.Suite
 import io.github.subjekt.rendering.Rendering
+import io.github.subjekt.resolved.ResolvedSubject
 import java.io.File
 import java.nio.file.Path
+import kotlin.io.path.exists
 
 class SubjektSuite(private val suite: Suite) {
   private val rendering: Rendering = Rendering()
 
-  fun toKotlinSources(path: Path, nameGenerator: (Subject) -> String = { it.name }): List<File> =
-    with(rendering) {
-      val result = suite.render()
-      require(result.size == suite.subjects.size)
-      result.zip(suite.subjects).flatMap { (codeInstances, subject) ->
-        codeInstances.withIndex().map { (index, code) ->
-          val fileName = "${nameGenerator(subject)}$index.kt"
-          val filePath = path.resolve(fileName)
-          val file = filePath.toFile()
-          file.writeText(code)
+  private fun createUniqueFile(path: Path, nameGenerator: (ResolvedSubject) -> String, subject: ResolvedSubject): File {
+    fun cleanName(name: String): String = name.replace(Regex("[^A-Za-z0-9 ]"), "")
 
+
+    var fileName = cleanName(nameGenerator(subject)) + ".kt"
+    var filePath = path.resolve(fileName)
+    val redundancyIndex = 0
+    while (filePath.exists()) {
+      fileName = cleanName(nameGenerator(subject) + redundancyIndex) + ".kt"
+      filePath = path.resolve(fileName)
+    }
+    return filePath.toFile()
+  }
+
+  fun toKotlinSources(path: Path, nameGenerator: (ResolvedSubject) -> String = { it.name }): List<File> =
+    with(rendering) {
+      val result = suite.resolve()
+      result.flatMap { resolvedSubjects ->
+        resolvedSubjects.map { subject ->
+          val file = createUniqueFile(path, nameGenerator, subject)
+          file.writeText(subject.code)
           file
         }
       }
