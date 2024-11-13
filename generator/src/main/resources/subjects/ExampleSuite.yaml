@@ -2,29 +2,54 @@
 name: "Invalid iteration of aggregate calls"
 macros:
   - name: loop
+    accepts: [code]
     values:
-      - "for(i in 1..3) {
-          {{0}}
-         }"
-      - "(1..3).forEach {
-          {{0}}
-        }"
+      - |-
+         for(i in 1..3) {
+           $code
+         }
+      - |- 
+         (1..3).forEach {
+           $code
+         }
   - name: alignedOn
+    accepts: [code]
     values:
-      - "alignedOn(0) {
-          {{0}}
-         }"
+      - |-
+         alignedOn(0) {
+           $code
+         }
 parameters:
   - name: "AGGREGATE"
     values: [ "neighbouring()", "exampleAggregate()" ]
+
 subjects:
+  - name: Iteration
+    code: |-
+      fun Aggregate<Int>.entry() {
+          #loop(
+              $AGGREGATE
+          )
+      }
+    outcomes:
+      - warning: "Warning: aggregate function '${AGGREGATE}' called inside a loop with no manual alignment operation"
+
+  - name: IterationExtAlign
+    code: |-
+      #set($INNER = "#loop($AGGREGATE)")
+      fun Aggregate<Int>.entry() {
+          #alignedOn($INNER)
+      }
+    outcomes:
+      - warning: "Warning: aggregate function '${AGGREGATE}' called inside a loop with no manual alignment operation"
+
   - name: AggregateWithNestedFun
     code: |-
       fun Aggregate<Int>.entry() {
-         %%loop(
-            fun Aggregate<Int>.nested() {
-                %(AGGREGATE)
-            }
+         #loop(
+            "fun Aggregate<Int>.nested() {
+                $AGGREGATE
+            }"
          )
       }
     outcomes: []
