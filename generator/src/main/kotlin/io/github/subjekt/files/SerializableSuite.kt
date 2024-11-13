@@ -1,8 +1,5 @@
 package io.github.subjekt.files
 
-typealias Parameter = MultiValued
-typealias Macro = MultiValued
-
 data class Suite(
   val name: String,
   val subjects: List<Subject>,
@@ -17,6 +14,8 @@ data class Subject(
   val outcomes: List<Outcome>
 )
 
-data class MultiValued(val name: String, val values: List<Any>)
+data class Macro(val name: String, val values: List<Any>, val accepts: List<String>)
 
-data class Outcome(val warning: String)
+data class Parameter(val name: String, val values: List<Any>)
+
+data class Outcome(val warning: String?, val error: String?)
