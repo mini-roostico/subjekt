@@ -1,5 +1,7 @@
 ---
 name: "Invalid iteration of aggregate calls"
+config:
+  engine: "velocity"
 macros:
   - name: loop
     accepts: [code]

@@ -4,7 +4,8 @@ data class Suite(
   val name: String,
   val subjects: List<Subject>,
   val macros: List<Macro>?,
-  val parameters: List<Parameter>?
+  val parameters: List<Parameter>?,
+  val config: Configuration? = null
 )
 
 data class Subject(
@@ -19,3 +20,8 @@ data class Macro(val name: String, val values: List<Any>, val accepts: List<Stri
 data class Parameter(val name: String, val values: List<Any>)
 
 data class Outcome(val warning: String?, val error: String?)
+
+data class Configuration(
+  val engine: String = "velocity",
+
+)

@@ -38,7 +38,7 @@ class Rendering(private val engine: Engine = EngineProvider.inject()) {
         |$code
       """.trimMargin()
 
-  fun Suite.render(): Set<Set<String>> =
+  fun Suite.render(): List<Set<String>> =
     subjects.map { subject ->
       val macroInstances = getMacroInstances()
 
@@ -58,7 +58,7 @@ class Rendering(private val engine: Engine = EngineProvider.inject()) {
           }
         }
       }.toSet()
-    }.toSet()
+    }
 
 
 }
