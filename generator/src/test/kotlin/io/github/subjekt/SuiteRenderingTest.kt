@@ -4,11 +4,19 @@ import io.github.subjekt.files.Macro
 import io.github.subjekt.files.Parameter
 import io.github.subjekt.files.Subject
 import io.github.subjekt.files.Suite
-import io.github.subjekt.rendering.Rendering.render
+import io.github.subjekt.rendering.EngineProvider
+import io.github.subjekt.rendering.Rendering
+import io.github.subjekt.rendering.engines.VelocityEngine
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class SuiteRenderingTest {
+
+  @BeforeEach
+  fun setUp() {
+    EngineProvider.register("velocity", VelocityEngine())
+  }
 
   @Test
   fun `Rendering a simple suite`() {
@@ -25,7 +33,9 @@ class SuiteRenderingTest {
       setOf("println(5)", "println(10)"),
       setOf("log(5)", "log(10)")
     )
-    assertEquals(expected, suite.render())
+    with(Rendering()) {
+      assertEquals(expected, suite.render())
+    }
   }
 
   @Test
@@ -49,7 +59,9 @@ class SuiteRenderingTest {
       setOf("println(pretty(5))", "println(ugly(5))", "println(pretty(10))", "println(ugly(10))"),
       setOf("log(pretty(5))", "log(ugly(5))", "log(pretty(10))", "log(ugly(10))"),
     )
-    assertEquals(expected, suite.render())
+    with(Rendering()) {
+      assertEquals(expected, suite.render())
+    }
   }
 
   @Test
@@ -80,7 +92,9 @@ class SuiteRenderingTest {
       ),
       setOf("log(pretty(5))", "log(ugly(5))", "log(pretty(10))", "log(ugly(10))"),
     )
-    assertEquals(expected, suite.render())
+    with(Rendering()) {
+      assertEquals(expected, suite.render())
+    }
   }
 
   @Test
@@ -112,6 +126,28 @@ class SuiteRenderingTest {
       ),
       setOf("log(pretty(5))", "log(ugly(5))"),
     )
-    assertEquals(expected, suite.render())
+    with(Rendering()) {
+      assertEquals(expected, suite.render())
+    }
+  }
+
+  @Test
+  fun `Empty parameters and Macros`() {
+    val suite = Suite(
+      "Example",
+      listOf(
+        Subject("It1", null, "println(5)", emptyList()),
+        Subject("It2", null, "println(10)", emptyList()),
+      ),
+      null,
+      null
+    )
+    val expected = setOf(
+      setOf("println(5)"),
+      setOf("println(10)"),
+    )
+    with(Rendering()) {
+      assertEquals(expected, suite.render())
+    }
   }
 }
