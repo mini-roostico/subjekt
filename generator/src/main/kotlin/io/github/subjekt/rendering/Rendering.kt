@@ -4,8 +4,9 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.subjekt.files.*
 import io.github.subjekt.rendering.Permutations.permute
 import io.github.subjekt.resolved.ResolvedSubject
+import io.github.subjekt.resolved.SubjektConfiguration
 
-class Rendering(private val engine: Engine = EngineProvider.inject()) {
+class Rendering(private val engine: Engine = EngineProvider.inject(SubjektConfiguration.engine)) {
 
   private val logger = KotlinLogging.logger {}
 
@@ -67,8 +68,17 @@ class Rendering(private val engine: Engine = EngineProvider.inject()) {
     }.toSet()
   }
 
-  fun Suite.resolve(): List<Set<ResolvedSubject>> =
-    subjects.map { it.resolve(macros, parameters) }
+  private fun makeConfiguration(configuration: Configuration) {
+    SubjektConfiguration.engine = configuration.engine
+    SubjektConfiguration.lint = configuration.lint
+    SubjektConfiguration.mergeTests = configuration.mergeTests
+    SubjektConfiguration.testFormat = configuration.testFormat
+  }
+
+  fun Suite.resolve(): List<Set<ResolvedSubject>> {
+    this.config?.let { makeConfiguration(it) }
+    return subjects.map { it.resolve(macros, parameters) }
+  }
 
 
 }

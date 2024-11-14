@@ -17,5 +17,5 @@ object Subjekt {
     SubjektSuite(suiteFromYaml(yaml) ?: throw IllegalArgumentException("Parsing failed with $yaml"))
 
   fun resource(path: String): SubjektSuite =
-    SubjektSuite(suiteFromResource(path) ?: throw FileNotFoundException(path))
+    SubjektSuite(suiteFromResource(path) ?: throw IllegalStateException("Something went wrong"))
 }
