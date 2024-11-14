@@ -2,6 +2,8 @@
 name: "Invalid iteration of aggregate calls"
 config:
   engine: "velocity"
+  lint: True
+  testFormat: "kotest"
 macros:
   - name: loop
     accepts: [code]
@@ -25,7 +27,10 @@ parameters:
   - name: "AGGREGATE"
     values: [ "neighbouring()", "exampleAggregate()" ]
 
+# SUBJECTS
 subjects:
+
+# SIMPLE ITERATIONS
   - name: Iteration$util.capitalizeFirst($AGGREGATE)
     code: |-
       fun Aggregate<Int>.entry() {
@@ -45,13 +50,77 @@ subjects:
     outcomes:
       - warning: "Warning: aggregate function '${AGGREGATE}' called inside a loop with no manual alignment operation"
 
+  - name: IterationAlign$util.capitalizeFirst($AGGREGATE)
+    code: |-
+      #set($INNER = "#alignedOn($AGGREGATE)")
+      fun Aggregate<Int>.entry() {
+          #loop( 
+            $INNER
+          ) 
+      }
+    outcomes: []
+
   - name: AggregateWithNestedFun$util.capitalizeFirst($AGGREGATE)
     code: |-
       fun Aggregate<Int>.entry() {
-         #loop(
-            "fun Aggregate<Int>.nested() {
+         #loop("
+            fun Aggregate<Int>.nested() {
                 $AGGREGATE
-            }"
-         )
+            }")
+      }
+    outcomes: []
+
+# DELEGATES
+
+  - name: IterationAlignDelegate$util.capitalizeFirst($AGGREGATE)
+    code: |-
+      #set($INNER = "#alignedOn('aggr(this)')")
+      
+      fun delegate(aggr: Aggregate<Int>) {
+          aggr.$AGGREGATE
+      }
+
+      fun Aggregate<Int>.entry() {
+          #loop($INNER)
+      }
+    outcomes:
+      - warning: "Warning: suspicious call of function '$AGGREGATE' with aggregate argument inside a loop with no 
+      manual alignment operation"
+
+  - name: IterationDelegateAlign$util.capitalizeFirst($AGGREGATE)
+    code: |-
+      
+      fun delegate(aggr: Aggregate<Int>) {
+          aggr.#alignedOn("aggr.$AGGREGATE")
+      }
+
+      fun Aggregate<Int>.entry() {
+         #loop('delegate(this)')
+      }
+    outcomes: []
+
+  - name: DelegateIteration$util.capitalizeFirst($AGGREGATE)
+    code: |-
+      fun delegate(aggr: Aggregate<Int>) {
+          #loop("aggr.$AGGREGATE")
+      }
+
+      fun Aggregate<Int>.entry() {
+          aggr(this)
+      }
+    outcomes:
+      - warning: "Warning: suspicious call of function '$AGGREGATE' with aggregate argument
+      inside a loop with no manual alignment operation"
+
+# OUTSIDE
+
+  - name: OutsideAggregate$util.capitalizeFirst($AGGREGATE)
+    code: |-
+      fun entry() {
+        #loop("
+          aggregate(0) {
+            $AGGREGATE
+          }
+        ")
       }
     outcomes: []

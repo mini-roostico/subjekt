@@ -1,5 +1,6 @@
 package io.github.subjekt.resolved
 
+import io.github.subjekt.files.Outcome
 import io.github.subjekt.files.Subject
 import io.github.subjekt.files.Suite
 import io.github.subjekt.rendering.Rendering
@@ -10,6 +11,9 @@ import kotlin.io.path.exists
 class SubjektSuite(private val suite: Suite) {
   private val rendering: Rendering = Rendering()
   private val resolvedSubjects by lazy { with(rendering) { suite.resolve().flatten() } }
+
+  val outcomes: Iterable<Iterable<Outcome>>
+    get() = resolvedSubjects.map { it.outcomes }
 
   private fun createUniqueFile(path: Path, nameGenerator: (ResolvedSubject) -> String, subject: ResolvedSubject): File {
     fun cleanName(name: String): String = name.replace(Regex("[^A-Za-z0-9 ]"), "")
