@@ -6,7 +6,6 @@ import io.github.subjekt.stdlib.Utility
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
 import java.io.StringWriter
-import kotlin.reflect.jvm.javaMethod
 
 class VelocityEngine : Engine {
   override fun renderMacroDeclaration(macro: Macro): List<String> = macro.values.map {

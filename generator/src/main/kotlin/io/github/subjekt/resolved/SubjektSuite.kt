@@ -1,19 +1,18 @@
-package io.github.subjekt
+package io.github.subjekt.resolved
 
 import io.github.subjekt.files.Subject
 import io.github.subjekt.files.Suite
 import io.github.subjekt.rendering.Rendering
-import io.github.subjekt.resolved.ResolvedSubject
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.exists
 
 class SubjektSuite(private val suite: Suite) {
   private val rendering: Rendering = Rendering()
+  private val resolvedSubjects by lazy { with(rendering) { suite.resolve().flatten() } }
 
   private fun createUniqueFile(path: Path, nameGenerator: (ResolvedSubject) -> String, subject: ResolvedSubject): File {
     fun cleanName(name: String): String = name.replace(Regex("[^A-Za-z0-9 ]"), "")
-
 
     var fileName = cleanName(nameGenerator(subject)) + ".kt"
     var filePath = path.resolve(fileName)
@@ -26,15 +25,10 @@ class SubjektSuite(private val suite: Suite) {
   }
 
   fun toKotlinSources(path: Path, nameGenerator: (ResolvedSubject) -> String = { it.name }): List<File> =
-    with(rendering) {
-      val result = suite.resolve()
-      result.flatMap { resolvedSubjects ->
-        resolvedSubjects.map { subject ->
-          val file = createUniqueFile(path, nameGenerator, subject)
-          file.writeText(subject.code)
-          file
-        }
-      }
+    resolvedSubjects.map { subject ->
+      val file = createUniqueFile(path, nameGenerator, subject)
+      file.writeText(subject.code)
+      file
     }
 
   fun blacklistByName(nameRegex: String): SubjektSuite =

@@ -3,6 +3,7 @@ package io.github.subjekt
 import io.github.subjekt.files.Reader.suiteFromResource
 import io.github.subjekt.files.Reader.suiteFromYaml
 import io.github.subjekt.resolved.ResolvedSubject
+import io.github.subjekt.resolved.SubjektSuite
 import java.io.File
 import java.io.FileNotFoundException
 
