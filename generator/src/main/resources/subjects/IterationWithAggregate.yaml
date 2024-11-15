@@ -6,7 +6,9 @@ config:
   testFormat: "kotest"
   codePreamble: |-
     /**
-      This file has been auto-generated. See 
+      This file has been auto-generated. 
+      See [https://github.com/FreshMag/subjekt/blob/main/generator/src/main/resources/subjects/IterationWithAggregate.yaml](here)
+      for details.
     */
     
     import it.unibo.collektive.aggregate.api.Aggregate
