@@ -25,7 +25,7 @@ data class Configuration(
   val engine: String = "velocity",
   val lint: Boolean = false,
   val testFormat: String = "kotest",
-  val mergeTests: Boolean = true
-) {
-
-}
+  val codePreamble: String = "",
+  val testPreamble: String = "",
+  val hardCodedTests: Boolean = false,
+)

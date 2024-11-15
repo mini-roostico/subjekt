@@ -71,8 +71,10 @@ class Rendering(private val engine: Engine = EngineProvider.inject(SubjektConfig
   private fun makeConfiguration(configuration: Configuration) {
     SubjektConfiguration.engine = configuration.engine
     SubjektConfiguration.lint = configuration.lint
-    SubjektConfiguration.mergeTests = configuration.mergeTests
     SubjektConfiguration.testFormat = configuration.testFormat
+    SubjektConfiguration.codePreamble = configuration.codePreamble
+    SubjektConfiguration.testPreamble = configuration.testPreamble
+    SubjektConfiguration.hardCodedTests = configuration.hardCodedTests
   }
 
   fun Suite.resolve(): List<Set<ResolvedSubject>> {

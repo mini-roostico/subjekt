@@ -7,7 +7,7 @@ import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
 import java.io.StringWriter
 
-class VelocityEngine : Engine {
+class VelocityEngine(private val preamble: String = "") : Engine {
   override fun renderMacroDeclaration(macro: Macro): List<String> = macro.values.map {
     "#macro(${macro.name} ${macro.accepts.joinToString(" $", prefix = "$")})$it#end"
   }
@@ -25,7 +25,7 @@ class VelocityEngine : Engine {
 
     val writer = StringWriter()
     velocity.evaluate(context, writer, "StringTemplate", templateString)
-    return writer.toString()
+    return preamble + writer.toString()
   }
 
 }

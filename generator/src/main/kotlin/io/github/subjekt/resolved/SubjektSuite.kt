@@ -3,10 +3,11 @@ package io.github.subjekt.resolved
 import io.github.subjekt.files.Outcome
 import io.github.subjekt.files.Subject
 import io.github.subjekt.files.Suite
+import io.github.subjekt.files.Utils.createUniqueFile
 import io.github.subjekt.rendering.Rendering
+import io.github.subjekt.tests.KotestGenerator
 import java.io.File
 import java.nio.file.Path
-import kotlin.io.path.exists
 
 class SubjektSuite(private val suite: Suite) {
   private val rendering: Rendering = Rendering()
@@ -15,25 +16,20 @@ class SubjektSuite(private val suite: Suite) {
   val outcomes: Iterable<Iterable<Outcome>>
     get() = resolvedSubjects.map { it.outcomes }
 
-  private fun createUniqueFile(path: Path, nameGenerator: (ResolvedSubject) -> String, subject: ResolvedSubject): File {
-    fun cleanName(name: String): String = name.replace(Regex("[^A-Za-z0-9 ]"), "")
-
-    var fileName = cleanName(nameGenerator(subject)) + ".kt"
-    var filePath = path.resolve(fileName)
-    val redundancyIndex = 0
-    while (filePath.exists()) {
-      fileName = cleanName(nameGenerator(subject) + redundancyIndex) + ".kt"
-      filePath = path.resolve(fileName)
-    }
-    return filePath.toFile()
-  }
-
   fun toKotlinSources(path: Path, nameGenerator: (ResolvedSubject) -> String = { it.name }): List<File> =
     resolvedSubjects.map { subject ->
       val file = createUniqueFile(path, nameGenerator, subject)
-      file.writeText(subject.code)
+      file.writeText(SubjektConfiguration.codePreamble + "\n" + subject.code)
       file
     }
+
+  fun generateTests(path: Path) {
+    with(KotestGenerator(SubjektConfiguration.testPreamble)) {
+      val tests = generateTests()
+      val file = createUniqueFile(path, suite.name, "Spec")
+      file.writeText(tests)
+    }
+  }
 
   fun blacklistByName(nameRegex: String): SubjektSuite =
     blacklist { it.name.matches(nameRegex.toRegex()) }
