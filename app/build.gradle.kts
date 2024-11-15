@@ -3,14 +3,16 @@
  */
 
 plugins {
-    id("io.github.subjekt.kotlin-application-conventions")
+  id("io.github.subjekt.kotlin-application-conventions")
+  alias(libs.plugins.shadowJar)
 }
 
 dependencies {
-    implementation(project(":generator"))
+  implementation(project(":generator"))
+  implementation(libs.picocli)
 }
 
 application {
-    // Define the main class for the application.
-    mainClass.set("io.github.subjekt.app.AppKt")
+  // Define the main class for the application.
+  mainClass.set("io.github.subjekt.app.AppKt")
 }
