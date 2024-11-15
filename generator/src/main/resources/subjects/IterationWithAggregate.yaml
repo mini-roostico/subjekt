@@ -1,0 +1,133 @@
+---
+name: "Invalid iteration of aggregate calls"
+config:
+  engine: "velocity"
+  lint: True
+  testFormat: "kotest"
+  codePreamble: |-
+    /**
+      This file has been auto-generated. See 
+    */
+    
+    import it.unibo.collektive.aggregate.api.Aggregate
+    import it.unibo.collektive.Collektive.Companion.aggregate
+macros:
+  - name: loop
+    accepts: [code]
+    values:
+      - |-
+         for(i in 1..3) {
+           $code
+         }
+      - |- 
+         (1..3).forEach {
+           $code
+         }
+  - name: alignedOn
+    accepts: [code]
+    values:
+      - |-
+         alignedOn(0) {
+           $code
+         }
+parameters:
+  - name: "AGGREGATE"
+    values: [ "neighbouring()", "exampleAggregate()" ]
+
+# SUBJECTS
+subjects:
+
+# SIMPLE ITERATIONS
+  - name: Iteration$util.capitalizeFirst($AGGREGATE)
+    code: |-
+      fun Aggregate<Int>.entry() {
+          #loop(
+              $AGGREGATE
+          )
+      }
+    outcomes:
+      - warning: "Warning: aggregate function '${AGGREGATE}' called inside a loop with no manual alignment operation"
+
+  - name: IterationExtAlign$util.capitalizeFirst($AGGREGATE)
+    code: |-
+      #set($INNER = "#loop($AGGREGATE)")
+      fun Aggregate<Int>.entry() {
+          #alignedOn($INNER)
+      }
+    outcomes:
+      - warning: "Warning: aggregate function '${AGGREGATE}' called inside a loop with no manual alignment operation"
+
+  - name: IterationAlign$util.capitalizeFirst($AGGREGATE)
+    code: |-
+      #set($INNER = "#alignedOn($AGGREGATE)")
+      fun Aggregate<Int>.entry() {
+          #loop( 
+            $INNER
+          ) 
+      }
+    outcomes: []
+
+  - name: AggregateWithNestedFun$util.capitalizeFirst($AGGREGATE)
+    code: |-
+      fun Aggregate<Int>.entry() {
+         #loop("
+            fun Aggregate<Int>.nested() {
+                $AGGREGATE
+            }")
+      }
+    outcomes: []
+
+# DELEGATES
+
+  - name: IterationAlignDelegate$util.capitalizeFirst($AGGREGATE)
+    code: |-
+      #set($INNER = "#alignedOn('aggr(this)')")
+      
+      fun delegate(aggr: Aggregate<Int>) {
+          aggr.$AGGREGATE
+      }
+
+      fun Aggregate<Int>.entry() {
+          #loop($INNER)
+      }
+    outcomes:
+      - warning: "Warning: suspicious call of function '$AGGREGATE' with aggregate argument inside a loop with no 
+      manual alignment operation"
+
+  - name: IterationDelegateAlign$util.capitalizeFirst($AGGREGATE)
+    code: |-
+      
+      fun delegate(aggr: Aggregate<Int>) {
+          aggr.#alignedOn("aggr.$AGGREGATE")
+      }
+
+      fun Aggregate<Int>.entry() {
+         #loop('delegate(this)')
+      }
+    outcomes: []
+
+  - name: DelegateIteration$util.capitalizeFirst($AGGREGATE)
+    code: |-
+      fun delegate(aggr: Aggregate<Int>) {
+          #loop("aggr.$AGGREGATE")
+      }
+
+      fun Aggregate<Int>.entry() {
+          aggr(this)
+      }
+    outcomes:
+      - warning: "Warning: suspicious call of function '$AGGREGATE' with aggregate argument
+      inside a loop with no manual alignment operation"
+
+# OUTSIDE
+
+  - name: OutsideAggregate$util.capitalizeFirst($AGGREGATE)
+    code: |-
+      fun entry() {
+        #loop("
+          aggregate(0) {
+            $AGGREGATE
+          }
+        ")
+      }
+    outcomes: []
