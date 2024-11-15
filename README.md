@@ -13,7 +13,13 @@
 
 Utility software to generate Kotlin testing cases for compiler plugins.
 
+## Example usage
 
+To generate Kotlin sources from a YAML:
+
+```bash
+subjekt-jar generate sources "/path/to/file.yaml"
+```
 
 <!--
 ***
