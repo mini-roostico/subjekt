@@ -3,6 +3,14 @@
  */
 package io.github.subjekt.app
 
-fun main() {
-    println("Hello world!")
+import io.github.subjekt.cli.EntryPointCommand
+import picocli.CommandLine
+
+fun main(args: Array<String>) {
+  val cmd = CommandLine(EntryPointCommand())
+  try {
+    cmd.execute(*args)
+  } catch (ex: Exception) {
+    println("Error: ${ex.message}")
+  }
 }
