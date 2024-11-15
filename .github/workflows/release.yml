@@ -86,7 +86,7 @@ jobs:
       - name: Build fat JAR for subjekt
         run: |
           ./gradlew clean :app:shadowJar # Assumes usage of the Shadow plugin for fat JARs
-          mv app/build/libs/app-*-all.jar "subjekt-${{ github.event.pull_request.title }}.jar"
+          mv app/build/libs/app-all.jar "subjekt-${{ github.event.pull_request.title }}.jar"
         env:
           GRADLE_USER_HOME: ${{ runner.temp }}/.gradle # Avoid Gradle daemon issues in GitHub Actions
 
