@@ -4,6 +4,13 @@ config:
   engine: "velocity"
   lint: True
   testFormat: "kotest"
+  codePreamble: |-
+    /**
+      This file has been auto-generated. See 
+    */
+    
+    import it.unibo.collektive.aggregate.api.Aggregate
+    import it.unibo.collektive.Collektive.Companion.aggregate
 macros:
   - name: loop
     accepts: [code]
