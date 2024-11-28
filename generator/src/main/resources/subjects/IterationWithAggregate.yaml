@@ -6,13 +6,11 @@ config:
   testFormat: "kotest"
   codePreamble: |-
     /**
-      This file has been auto-generated. 
-      See [https://github.com/FreshMag/subjekt/blob/main/generator/src/main/resources/subjects/IterationWithAggregate.yaml](here)
-      for details.
+      * This file has been auto-generated. 
+      * See [https://github.com/FreshMag/collektive-plugin/blob/test/generated-cases/compiler-plugin-test/src/test/resources/yaml/IterationWithAggregate.yaml](here)
+      * for details.
     */
-    
     import it.unibo.collektive.aggregate.api.Aggregate
-    import it.unibo.collektive.Collektive.Companion.aggregate
 macros:
   - name: loop
     accepts: [code]
@@ -34,13 +32,13 @@ macros:
          }
 parameters:
   - name: "AGGREGATE"
-    values: [ "neighbouring()", "exampleAggregate()" ]
+    values: [ "neighboring(0)"]
 
 # SUBJECTS
 subjects:
 
 # SIMPLE ITERATIONS
-  - name: Iteration$util.capitalizeFirst($AGGREGATE)
+  - name: Iteration$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
     code: |-
       fun Aggregate<Int>.entry() {
           #loop(
@@ -50,7 +48,8 @@ subjects:
     outcomes:
       - warning: "Warning: aggregate function '${AGGREGATE}' called inside a loop with no manual alignment operation"
 
-  - name: IterationExtAlign$util.capitalizeFirst($AGGREGATE)
+  - name: |-
+      IterationExtAlign$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
     code: |-
       #set($INNER = "#loop($AGGREGATE)")
       fun Aggregate<Int>.entry() {
@@ -59,7 +58,7 @@ subjects:
     outcomes:
       - warning: "Warning: aggregate function '${AGGREGATE}' called inside a loop with no manual alignment operation"
 
-  - name: IterationAlign$util.capitalizeFirst($AGGREGATE)
+  - name: IterationAlign$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
     code: |-
       #set($INNER = "#alignedOn($AGGREGATE)")
       fun Aggregate<Int>.entry() {
@@ -69,7 +68,7 @@ subjects:
       }
     outcomes: []
 
-  - name: AggregateWithNestedFun$util.capitalizeFirst($AGGREGATE)
+  - name: IterationWithNestedFun$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
     code: |-
       fun Aggregate<Int>.entry() {
          #loop("
@@ -81,12 +80,11 @@ subjects:
 
 # DELEGATES
 
-  - name: IterationAlignDelegate$util.capitalizeFirst($AGGREGATE)
+  - name: IterationAlignDelegate$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
     code: |-
-      #set($INNER = "#alignedOn('aggr(this)')")
-      
-      fun delegate(aggr: Aggregate<Int>) {
-          aggr.$AGGREGATE
+      #set($INNER = "#alignedOn('delegate(this)')")
+      fun delegate(aggregate: Aggregate<Int>) {
+          aggregate.$AGGREGATE
       }
 
       fun Aggregate<Int>.entry() {
@@ -96,11 +94,10 @@ subjects:
       - warning: "Warning: suspicious call of function '$AGGREGATE' with aggregate argument inside a loop with no 
       manual alignment operation"
 
-  - name: IterationDelegateAlign$util.capitalizeFirst($AGGREGATE)
+  - name: IterationDelegateAlign$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
     code: |-
-      
-      fun delegate(aggr: Aggregate<Int>) {
-          aggr.#alignedOn("aggr.$AGGREGATE")
+      fun delegate(aggregate: Aggregate<Int>) {
+          aggregate.#alignedOn("aggregate.$AGGREGATE")
       }
 
       fun Aggregate<Int>.entry() {
@@ -108,23 +105,138 @@ subjects:
       }
     outcomes: []
 
-  - name: DelegateIteration$util.capitalizeFirst($AGGREGATE)
+  - name: IterationDelegate$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
     code: |-
-      fun delegate(aggr: Aggregate<Int>) {
-          #loop("aggr.$AGGREGATE")
+      fun delegate(aggregate: Aggregate<Int>) {
+          aggregate.$AGGREGATE
       }
 
       fun Aggregate<Int>.entry() {
-          aggr(this)
+          #loop("delegate(this)")
       }
     outcomes:
       - warning: "Warning: suspicious call of function '$AGGREGATE' with aggregate argument
       inside a loop with no manual alignment operation"
 
+  - name: IterationDelegateWithNestedFun$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+    code: |-
+      fun delegate(aggregate: Aggregate<Int>) {
+          fun nested() {
+            aggregate.$AGGREGATE
+          }
+      }
+
+      fun Aggregate<Int>.entry() {
+          #loop("delegate(this)")
+      }
+    outcomes: []
+
+  - name: IterationRecursiveDelegate$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+    code: |-
+      fun delegate(aggregate: Aggregate<Int>) {
+        delegate2(aggregate)
+      }
+      
+      fun delegate2(aggregate: Aggregate<Int>) {
+        aggregate.$AGGREGATE
+      }
+
+      fun Aggregate<Int>.entry() {
+          #loop("delegate(this)")
+      }
+    outcomes:
+      - warning: "Warning: suspicious call of function 'delegate' with aggregate argument
+      inside a loop with no manual alignment operation"
+
+  - name: IterationRecursiveDelegateAlign$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+    code: |-
+      fun delegate(aggregate: Aggregate<Int>) {
+        delegate2(aggregate)
+      }
+
+      fun delegate2(aggregate: Aggregate<Int>) {
+        aggregate.alignedOn(0) {
+          aggregate.$AGGREGATE
+        }
+      }
+
+      fun Aggregate<Int>.entry() {
+          #loop("delegate(this)")
+      }
+    outcomes: []
+
+  - name: IterationAlignRecursiveDelegate$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+    code: |-
+      fun delegate(aggregate: Aggregate<Int>) {
+        aggregate.alignedOn(0) {
+          delegate2(aggregate)
+        }
+      }
+
+      fun delegate2(aggregate: Aggregate<Int>) {
+          aggregate.$AGGREGATE
+      }
+
+      fun Aggregate<Int>.entry() {
+          #loop("delegate(this)")
+      }
+    outcomes: [ ]
+
+  - name: IterationDelegatedNestedFun$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+    code: |-
+      fun delegate(aggregate: Aggregate<Int>) {
+        fun delegate2() {
+          aggregate.$AGGREGATE
+        }
+        delegate2()
+      }
+
+      fun Aggregate<Int>.entry() {
+          #loop("delegate(this)")
+      }
+    outcomes:
+      - warning: "Warning: suspicious call of function 'delegate' with aggregate argument
+      inside a loop with no manual alignment operation"
+
+  - name: IterationDelegatedNestedFunAlign$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+    code: |-
+      fun delegate(aggregate: Aggregate<Int>) {
+        fun delegate2() {
+          aggregate.alignedOn(0) {
+            aggregate.$AGGREGATE
+          }
+        }
+        delegate2()
+      }
+
+      fun Aggregate<Int>.entry() {
+          #loop("delegate(this)")
+      }
+    outcomes: []
+
+  - name: IterationAlignDelegatedNestedFun$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+    code: |-
+      fun delegate(aggregate: Aggregate<Int>) {
+        fun delegate2() {
+          aggregate.$AGGREGATE
+        }
+        aggregate.alignedOn(0) {
+          delegate2()
+        }
+      }
+
+      fun Aggregate<Int>.entry() {
+          #loop("delegate(this)")
+      }
+    outcomes: [ ]
+
+
 # OUTSIDE
 
-  - name: OutsideAggregate$util.capitalizeFirst($AGGREGATE)
+  - name: OutsideAggregate$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
     code: |-
+      import it.unibo.collektive.Collektive.Companion.aggregate
+      
       fun entry() {
         #loop("
           aggregate(0) {
