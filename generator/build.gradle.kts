@@ -1,10 +1,28 @@
+import com.vanniktech.maven.publish.JavadocJar
+import com.vanniktech.maven.publish.KotlinJvm
+
 plugins {
-    id("io.github.subjekt.kotlin-library-conventions")
-    kotlin("jvm")
+  id("io.github.subjekt.kotlin-library-conventions")
+  kotlin("jvm")
+  id("com.vanniktech.maven.publish") version "0.30.0"
 }
 
 repositories {
   mavenCentral()
+}
+
+mavenPublishing {
+  configure(
+    KotlinJvm(
+      // configures the -javadoc artifact, possible values:
+      // - `JavadocJar.None()` don't publish this artifact
+      // - `JavadocJar.Empty()` publish an empty jar
+      // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
+      javadocJar = JavadocJar.Dokka("javadoc"),
+      // whether to publish a sources jar
+      sourcesJar = true,
+    )
+  )
 }
 
 dependencies {
