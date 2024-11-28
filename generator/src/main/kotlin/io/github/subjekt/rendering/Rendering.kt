@@ -42,26 +42,25 @@ class Rendering(private val engine: Engine = EngineProvider.inject(SubjektConfig
     val macroInstances = suiteMacros.getMacroInstances()
     return getParametersInstances(suiteParameters).flatMap { parameterInstance ->
       macroInstances.mapNotNull { macroInstance ->
-        val codeWithMacroDeclarations = if (macroInstance.isBlank()) code else StringBuilder()
+        val macroDeclarations = if (macroInstance.isBlank()) code else StringBuilder()
           .append(macroInstance)
           .append("\n")
-          .append(code)
           .toString()
 
         try {
-          val resolvedName = engine.render(name, parameterInstance)
+          val resolvedName = engine.render(macroDeclarations + name, parameterInstance).replace("\n", "")
           val resolvedOutcomes = outcomes
             .filterNot { it.error == null && it.warning == null }
             .map {
               Outcome(
-                warning = it.warning?.run { engine.render(this, parameterInstance) },
-                error = it.error?.run { engine.render(this, parameterInstance) }
+                warning = it.warning?.run { engine.render(macroDeclarations + this, parameterInstance).replace("\n", "") },
+                error = it.error?.run { engine.render(macroDeclarations + this, parameterInstance).replace("\n", "") }
               )
             }
-          val resolvedCode = engine.render(codeWithMacroDeclarations, parameterInstance)
+          val resolvedCode = engine.render(macroDeclarations + code, parameterInstance)
           ResolvedSubject(resolvedName, resolvedCode, resolvedOutcomes)
         } catch (t: Throwable) {
-          logger.error { createWarning(name, t, codeWithMacroDeclarations) }
+          logger.error { createWarning(name, t, macroDeclarations + code) }
           null
         }
       }
