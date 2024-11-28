@@ -18,4 +18,4 @@ plugins {
 }
 
 rootProject.name = "subjekt"
-include("app", "generator")
+include("api", "app")

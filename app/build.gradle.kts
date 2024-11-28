@@ -8,7 +8,7 @@ plugins {
 }
 
 dependencies {
-  implementation(project(":generator"))
+  implementation(project(":api"))
   implementation(libs.picocli)
 }
 
