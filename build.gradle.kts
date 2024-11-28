@@ -1,8 +1,16 @@
 import java.text.SimpleDateFormat
 import java.util.Date
 
-group = "io.github.subjekt"
-version = "1.0.0"
+
+
+allprojects {
+  group = "io.github.freshmag"
+  version = "1.0.0"
+
+  repositories {
+    mavenCentral()
+  }
+}
 
 /**
  * Usage:
