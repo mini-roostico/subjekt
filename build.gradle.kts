@@ -1,8 +1,6 @@
 import java.text.SimpleDateFormat
 import java.util.Date
 
-
-
 allprojects {
   group = "io.github.freshmag"
   version = "1.0.0"

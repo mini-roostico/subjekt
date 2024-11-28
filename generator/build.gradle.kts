@@ -4,7 +4,8 @@ import com.vanniktech.maven.publish.KotlinJvm
 plugins {
   id("io.github.subjekt.kotlin-library-conventions")
   kotlin("jvm")
-  id("com.vanniktech.maven.publish") version "0.30.0"
+  alias(libs.plugins.mavenPublish)
+  alias(libs.plugins.dokka)
 }
 
 repositories {
@@ -18,7 +19,7 @@ mavenPublishing {
       // - `JavadocJar.None()` don't publish this artifact
       // - `JavadocJar.Empty()` publish an empty jar
       // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
-      javadocJar = JavadocJar.Dokka("javadoc"),
+      javadocJar = JavadocJar.Dokka("dokkaHtml"),
       // whether to publish a sources jar
       sourcesJar = true,
     )

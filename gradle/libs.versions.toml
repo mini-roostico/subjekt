@@ -19,5 +19,7 @@ slf4j-simple = "org.slf4j:slf4j-simple:2.0.16"
 velocity = "org.apache.velocity:velocity-engine-core:2.3"
 
 [plugins]
+dokka = { id = "org.jetbrains.dokka", version = "1.9.20" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.30.0" }
 shadowJar = { id = "com.gradleup.shadow", version.ref = "shadowJar" }
