@@ -9,6 +9,8 @@ kotlin = "2.0.21"
 shadowJar = "8.3.5"
 
 [libraries]
+antlr = "org.antlr:antlr4:4.13.2"
+antlr-runtime = "org.antlr:antlr4-runtime:4.13.2"
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 jackson = "com.fasterxml.jackson.module:jackson-module-kotlin:2.18.1"
 jackson-yaml = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.1"
