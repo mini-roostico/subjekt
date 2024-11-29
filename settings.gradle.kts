@@ -19,3 +19,4 @@ plugins {
 
 rootProject.name = "subjekt"
 include("api", "app")
+include("compiler")
