@@ -13,7 +13,7 @@ class Macro(
     get() = argumentsIdentifiers.size
 
   fun toResolvedMacro(context: Context): Macro {
-    val selectedContext = Context().also {
+    val selectedContext = Context.emptyContext().also {
       context.parameterSnapshot().filterNot { (name, _) -> argumentsIdentifiers.contains(name) }
         .forEach { (name, value) ->
           it.putParameter(name, value)
