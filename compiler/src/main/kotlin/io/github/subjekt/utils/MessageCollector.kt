@@ -2,6 +2,7 @@ package io.github.subjekt.utils
 
 import org.antlr.v4.runtime.BaseErrorListener
 import org.antlr.v4.runtime.ConsoleErrorListener
+import org.antlr.v4.runtime.Lexer
 import org.antlr.v4.runtime.Parser
 import org.antlr.v4.runtime.RecognitionException
 import org.antlr.v4.runtime.Recognizer
@@ -23,9 +24,19 @@ sealed class MessageCollector {
 
   data class Message(val type: MessageType, val message: String)
 
-  fun useParser(parser: Parser) {
-    parser.removeErrorListener(ConsoleErrorListener.INSTANCE)
-    parser.addErrorListener(object : BaseErrorListener() {
+
+  fun showInConsole() {
+    messages.forEach {
+      when (it.type) {
+        MessageType.INFO -> println("i: ${it.message}")
+        MessageType.WARNING -> println("w: ${it.message}")
+        MessageType.ERROR -> System.err.println("e: ${it.message}")
+      }
+    }
+  }
+
+  private val listener: BaseErrorListener by lazy {
+    object : BaseErrorListener() {
       override fun syntaxError(
         recognizer: Recognizer<*, *>?,
         offendingSymbol: Any?,
@@ -36,8 +47,17 @@ sealed class MessageCollector {
       ) {
         error("Line $line:$charPositionInLine $msg")
       }
+    }
+  }
 
-    })
+  fun useLexer(lexer: Lexer) {
+    lexer.removeErrorListener(ConsoleErrorListener.INSTANCE)
+    lexer.addErrorListener(listener)
+  }
+
+  fun useParser(parser: Parser) {
+    parser.removeErrorListener(ConsoleErrorListener.INSTANCE)
+    parser.addErrorListener(listener)
   }
 
   class SimpleCollector : MessageCollector() {

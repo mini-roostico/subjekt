@@ -38,14 +38,14 @@ class SuiteVisitor(private val messageCollector: MessageCollector) : SuiteIrVisi
 
   override fun visitSubject(subject: Subject) {
     val previousContext = context
-    subject.macros.map { it.toResolvedMacro(context) }.forEach { macro -> context.putMacro(macro) }
+    subject.macros.map { it.toResolvedMacro(context, messageCollector) }.forEach { macro -> context.putMacro(macro) }
     subject.parameters.permute { parConfiguration ->
       context = previousContext
       parConfiguration.forEach { par -> context.putParameter(par.identifier, par.value) }
-      val outcomes = subject.outcomes.map { it.toResolvedOutcome(context) }
-      subject.code.resolve(context).forEach { code ->
+      val outcomes = subject.outcomes.map { it.toResolvedOutcome(context, messageCollector) }
+      subject.code.resolve(context, messageCollector).forEach { code ->
         resolvedSubjects += ResolvedSubject(
-          subject.name.resolveOne(context),
+          subject.name.resolveOne(context, messageCollector),
           code,
           outcomes,
         )
