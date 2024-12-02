@@ -3,15 +3,16 @@ package io.github.subjekt.nodes.suite
 import io.github.subjekt.nodes.Context
 import io.github.subjekt.resolved.Resolvable
 import io.github.subjekt.resolved.ResolvedOutcome
+import io.github.subjekt.utils.MessageCollector
 
 sealed class Outcome(open val message: Resolvable) {
   data class Warning(override val message: Resolvable) : Outcome(message)
   data class Error(override val message: Resolvable) : Outcome(message)
 
-  fun toResolvedOutcome(context: Context): ResolvedOutcome =
+  fun toResolvedOutcome(context: Context, messageCollector: MessageCollector): ResolvedOutcome =
     when (this) {
-      is Warning -> ResolvedOutcome.Warning(message.resolveOne(context))
-      is Error -> ResolvedOutcome.Error(message.resolveOne(context))
+      is Warning -> ResolvedOutcome.Warning(message.resolveOne(context, messageCollector))
+      is Error -> ResolvedOutcome.Error(message.resolveOne(context, messageCollector))
     }
 
 

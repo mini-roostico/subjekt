@@ -2,6 +2,7 @@ package io.github.subjekt.nodes.suite
 
 import io.github.subjekt.nodes.Context
 import io.github.subjekt.resolved.Resolvable
+import io.github.subjekt.utils.MessageCollector
 
 class Macro(
   val identifier: String,
@@ -12,14 +13,17 @@ class Macro(
   val argumentsNumber: Int
     get() = argumentsIdentifiers.size
 
-  fun toResolvedMacro(context: Context): Macro {
+  fun toResolvedMacro(context: Context, messageCollector: MessageCollector): Macro {
     val selectedContext = Context.emptyContext().also {
       context.parameterSnapshot().filterNot { (name, _) -> argumentsIdentifiers.contains(name) }
         .forEach { (name, value) ->
           it.putParameter(name, value)
         }
     }
-    return Macro(identifier, argumentsIdentifiers, bodies.map { Template.parse(it.resolveOne(selectedContext)) })
+    return Macro(
+      identifier,
+      argumentsIdentifiers,
+      bodies.map { Template.parse(it.resolveOne(selectedContext, messageCollector)) })
   }
 
   companion object {
