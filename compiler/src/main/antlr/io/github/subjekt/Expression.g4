@@ -23,5 +23,5 @@ WHITESP  : ( '\t' | ' ' | '\n' | '\r' )+    -> channel(HIDDEN) ;
 COMMENT : '/*' .*? '*/' -> channel(HIDDEN) ;
 
 ERR   	 : . {
-    System.out.println("Invalid char: "+ getText() +" at line "+getLine());
+    System.err.println("Line " + getLine() + ": invalid char '"+getText()+"'");
 } -> channel(HIDDEN);
