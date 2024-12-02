@@ -16,7 +16,7 @@ class ExpressionIrCreationVisitor(val messageCollector: MessageCollector) : Expr
     visit(ctx.macroCall())
 
   override fun visitVariable(ctx: ExpressionParser.VariableContext): Node? =
-    Node.Id(ctx.text)
+    Node.Id(ctx.text, ctx.start.line)
 
   override fun visitPlusExpr(ctx: ExpressionParser.PlusExprContext): Node? {
     val left = visit(ctx.expression(0))
@@ -31,12 +31,13 @@ class ExpressionIrCreationVisitor(val messageCollector: MessageCollector) : Expr
     }
     return Node.Plus(
       visit(ctx.expression(0)),
-      visit(ctx.expression(1))
+      visit(ctx.expression(1)),
+      ctx.start.line
     )
   }
 
   override fun visitLiteral(ctx: ExpressionParser.LiteralContext): Node? =
-    Node.Literal(ctx.text.trim().removePrefix("\"").removeSuffix("\""))
+    Node.Literal(ctx.text.trim().removePrefix("\"").removeSuffix("\""), ctx.start.line)
 
   override fun visitMacroCall(ctx: ExpressionParser.MacroCallContext): Node? {
     val id = ctx.ID()?.text
@@ -47,7 +48,8 @@ class ExpressionIrCreationVisitor(val messageCollector: MessageCollector) : Expr
     val arguments = ctx.expression().map { visit(it) }
     return Node.Call(
       id,
-      arguments
+      arguments,
+      ctx.start.line
     )
   }
 }
