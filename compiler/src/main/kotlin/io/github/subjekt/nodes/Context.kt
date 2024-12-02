@@ -3,7 +3,7 @@ package io.github.subjekt.nodes
 import io.github.subjekt.nodes.suite.Macro
 import io.github.subjekt.utils.MessageCollector
 
-class Context(private val collector: MessageCollector) {
+class Context(val collector: MessageCollector) {
 
   val parameters = mutableMapOf<String, Any>()
   private val macros = mutableMapOf<String, Macro>()
@@ -14,8 +14,12 @@ class Context(private val collector: MessageCollector) {
   fun macroSnapshot(): Map<String, Macro> =
     macros.toMap()
 
-  operator fun plus(pairs: Context): Context {
-    TODO()
+  fun lookupParameter(identifier: String): Any? {
+    return parameters[identifier]
+  }
+
+  fun lookupMacro(identifier: String): Macro? {
+    return macros[identifier]
   }
 
   fun putParameter(identifier: String, value: Any) {
@@ -27,11 +31,11 @@ class Context(private val collector: MessageCollector) {
   }
 
   fun warning(message: String) {
-    TODO()
+    collector.warning(message)
   }
 
   fun error(message: String) {
-    TODO()
+    collector.error(message)
   }
 
 
