@@ -1,9 +1,8 @@
 package io.github.subjekt.nodes
 
 import io.github.subjekt.nodes.suite.Macro
-import io.github.subjekt.utils.MessageCollector
 
-class Context(val collector: MessageCollector) {
+class Context() {
 
   val parameters = mutableMapOf<String, Any>()
   private val macros = mutableMapOf<String, Macro>()
@@ -30,24 +29,14 @@ class Context(val collector: MessageCollector) {
     macros[macro.identifier] = macro
   }
 
-  fun warning(message: String) {
-    collector.warning(message)
-  }
-
-  fun error(message: String) {
-    collector.error(message)
-  }
-
-
   companion object {
     fun emptyContext(): Context {
-      return Context(MessageCollector.NullCollector())
+      return Context()
     }
 
     fun of(
       vararg parameters: Pair<String, Any>,
-      messageCollector: MessageCollector = MessageCollector.NullCollector()
-    ) = Context(messageCollector).also { context ->
+    ) = Context().also { context ->
       parameters.forEach { context.putParameter(it.first, it.second) }
     }
   }
