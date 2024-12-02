@@ -1,5 +1,6 @@
-package io.github.subjekt.nodes
+package io.github.subjekt.nodes.suite
 
+import io.github.subjekt.nodes.Context
 import io.github.subjekt.resolved.Resolvable
 
 class Macro(
@@ -22,7 +23,7 @@ class Macro(
   }
 
   companion object {
-    fun fromYamlMacro(macro: io.github.subjekt.yaml.Macro): io.github.subjekt.nodes.Macro {
+    fun fromYamlMacro(macro: io.github.subjekt.yaml.Macro): Macro {
       if (!macro.def.contains("(")) {
         throw IllegalArgumentException("Illegal macro definition. Expected '(' in ${macro.def}")
       }

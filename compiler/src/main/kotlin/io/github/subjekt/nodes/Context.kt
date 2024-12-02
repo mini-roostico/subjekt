@@ -1,5 +1,6 @@
 package io.github.subjekt.nodes
 
+import io.github.subjekt.nodes.suite.Macro
 import io.github.subjekt.utils.MessageCollector
 
 class Context(private val collector: MessageCollector) {

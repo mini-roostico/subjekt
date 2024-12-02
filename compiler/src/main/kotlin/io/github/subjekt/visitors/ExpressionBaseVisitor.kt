@@ -1,9 +1,22 @@
 package io.github.subjekt.visitors
 
 import io.github.subjekt.ExpressionBaseVisitor
+import io.github.subjekt.ExpressionLexer
 import io.github.subjekt.ExpressionParser
+import io.github.subjekt.nodes.Context
+import org.antlr.v4.runtime.CharStreams
+import org.antlr.v4.runtime.CommonTokenStream
 
-class ExpressionBaseVisitor : ExpressionBaseVisitor<Unit>() {
+class ExpressionBaseVisitor(context: Context) : ExpressionBaseVisitor<Unit>() {
+
+  fun visit(expression: String): List<String> {
+    val lexer = ExpressionLexer(CharStreams.fromString(expression))
+    val parser = ExpressionParser(CommonTokenStream(lexer))
+    val tree = parser.expression()
+    visit(tree)
+    TODO()
+  }
+
   override fun visitCall(ctx: ExpressionParser.CallContext?) {
     return super.visitCall(ctx)
   }

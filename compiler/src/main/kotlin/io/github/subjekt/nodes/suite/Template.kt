@@ -1,5 +1,6 @@
-package io.github.subjekt.nodes
+package io.github.subjekt.nodes.suite
 
+import io.github.subjekt.nodes.Context
 import io.github.subjekt.resolved.Resolvable
 import io.github.subjekt.utils.Expressions.evaluate
 import io.github.subjekt.utils.Permutations.permute

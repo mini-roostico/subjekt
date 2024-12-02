@@ -1,6 +1,6 @@
 package io.github.subjekt
 
-import io.github.subjekt.nodes.Parameter
+import io.github.subjekt.nodes.suite.Parameter
 import io.github.subjekt.utils.Permutations.permute
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
