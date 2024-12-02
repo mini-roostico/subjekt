@@ -21,11 +21,17 @@ dependencies {
   // https://mvnrepository.com/artifact/org.antlr/antlr4-runtime
   runtimeOnly(libs.antlr.runtime)
 
+  // https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-kotlin
+  implementation(libs.jackson)
+  // https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml
+  implementation(libs.jackson.yaml)
+
   testImplementation(kotlin("test"))
 }
 
 tasks.generateGrammarSource {
   source("src/main/antlr/io/github/subjekt")
+  arguments = listOf("-visitor")
 }
 
 tasks.test {

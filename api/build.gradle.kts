@@ -29,10 +29,6 @@ mavenPublishing {
 dependencies {
   implementation(project(":compiler"))
 
-  // https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-kotlin
-  implementation(libs.jackson)
-  // https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml
-  implementation(libs.jackson.yaml)
   // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
   implementation(libs.kotlin.logging)
   // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
