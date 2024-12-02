@@ -1,6 +1,7 @@
 plugins {
   kotlin("jvm")
   antlr
+  alias(libs.plugins.ktlint)
 }
 
 repositories {

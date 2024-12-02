@@ -6,6 +6,7 @@ picocli = "4.7.6"
 
 # plugins
 kotlin = "2.0.21"
+ktlint = "12.1.2"
 shadowJar = "8.3.5"
 
 [libraries]
@@ -23,5 +24,6 @@ velocity = "org.apache.velocity:velocity-engine-core:2.3"
 [plugins]
 dokka = { id = "org.jetbrains.dokka", version = "1.9.20" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.30.0" }
 shadowJar = { id = "com.gradleup.shadow", version.ref = "shadowJar" }
