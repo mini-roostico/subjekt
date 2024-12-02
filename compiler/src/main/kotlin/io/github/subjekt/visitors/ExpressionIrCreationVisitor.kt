@@ -32,7 +32,7 @@ class ExpressionIrCreationVisitor(val messageCollector: MessageCollector) : Expr
     return Node.Plus(
       visit(ctx.expression(0)),
       visit(ctx.expression(1)),
-      ctx.start.line
+      ctx.start.line,
     )
   }
 
@@ -49,7 +49,7 @@ class ExpressionIrCreationVisitor(val messageCollector: MessageCollector) : Expr
     return Node.Call(
       id,
       arguments,
-      ctx.start.line
+      ctx.start.line,
     )
   }
 }

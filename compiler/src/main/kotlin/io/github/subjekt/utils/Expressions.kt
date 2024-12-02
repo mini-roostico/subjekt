@@ -24,5 +24,4 @@ object Expressions {
     val ast = ExpressionIrCreationVisitor(messageCollector).visit(tree)
     return ExpressionResolveVisitor(context, messageCollector).visit(ast)
   }
-
 }

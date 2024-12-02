@@ -24,8 +24,8 @@ class ExpressionEvaluationTest {
       Macro(
         "bar",
         listOf("arg1"),
-        listOf(Template.parse("(\${{ arg1 }})"), Template.parse("{\${{ arg1 }}}"))
-      )
+        listOf(Template.parse("(\${{ arg1 }})"), Template.parse("{\${{ arg1 }}}")),
+      ),
     )
   }
 
@@ -69,10 +69,16 @@ class ExpressionEvaluationTest {
     val result = expr.evaluate(context, collector)
     assertEquals(
       setOf(
-        "((value1))", "({value1})", "{(value1)}", "{{value1}}",
-        "((value2))", "({value2})", "{(value2)}", "{{value2}}"
-      ), result.toSet()
+        "((value1))",
+        "({value1})",
+        "{(value1)}",
+        "{{value1}}",
+        "((value2))",
+        "({value2})",
+        "{(value2)}",
+        "{{value2}}",
+      ),
+      result.toSet(),
     )
   }
-
 }

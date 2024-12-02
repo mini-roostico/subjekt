@@ -148,7 +148,7 @@ class ExpressionIrCreationVisitorTest {
     assert(collector.messages.isNotEmpty())
     assertContains(
       collector.messages,
-      Message(MessageCollector.MessageType.ERROR, "Line 1: right side of plus expression is null")
+      Message(MessageCollector.MessageType.ERROR, "Line 1: right side of plus expression is null"),
     )
   }
 
@@ -159,7 +159,7 @@ class ExpressionIrCreationVisitorTest {
     assert(collector.messages.isNotEmpty())
     assertContains(
       collector.messages,
-      Message(MessageCollector.MessageType.ERROR, "Line 1:5 mismatched input '<EOF>' expecting {',', ')'}")
+      Message(MessageCollector.MessageType.ERROR, "Line 1:5 mismatched input '<EOF>' expecting {',', ')'}"),
     )
   }
 }

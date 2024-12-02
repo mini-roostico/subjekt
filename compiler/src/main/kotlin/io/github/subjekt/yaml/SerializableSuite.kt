@@ -13,7 +13,7 @@ data class Subject(
   val parameters: List<Parameter>?,
   val macros: List<Macro>?,
   val code: String,
-  val outcomes: List<Outcome>
+  val outcomes: List<Outcome>,
 )
 
 data class Macro(val def: String, val values: List<String>)

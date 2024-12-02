@@ -52,10 +52,8 @@ class PermutationTest {
       listOf(1, 5),
       listOf(2, 3),
       listOf(2, 4),
-      listOf(2, 5)
+      listOf(2, 5),
     )
     assertEquals(expected, list.permute())
   }
-
-
 }

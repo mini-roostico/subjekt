@@ -13,14 +13,18 @@ data class Template(
 
   override fun resolveOne(context: Context, messageCollector: MessageCollector): String {
     if (expressions.isEmpty()) return toFormat
-    val firstResolvedExpression = (expressions.map { expr ->
-      expr.evaluate(context, messageCollector).also {
-        if (it.size > 1) messageCollector.warning(
-          "'resolveOne' was called inside template $toFormat, but expression $expr has" +
-            "multiple possible values. Taking only the first value."
-        )
-      }.first()
-    }).toTypedArray()
+    val firstResolvedExpression = (
+      expressions.map { expr ->
+        expr.evaluate(context, messageCollector).also {
+          if (it.size > 1) {
+            messageCollector.warning(
+              "'resolveOne' was called inside template $toFormat, but expression $expr has" +
+                "multiple possible values. Taking only the first value.",
+            )
+          }
+        }.first()
+      }
+      ).toTypedArray()
     return toFormat.format(*firstResolvedExpression)
   }
 
