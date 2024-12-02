@@ -1,7 +1,7 @@
 package io.github.subjekt
 
 import io.github.subjekt.nodes.Context
-import io.github.subjekt.nodes.Template
+import io.github.subjekt.nodes.suite.Template
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

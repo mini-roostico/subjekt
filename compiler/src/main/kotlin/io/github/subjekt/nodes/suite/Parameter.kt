@@ -1,4 +1,4 @@
-package io.github.subjekt.nodes
+package io.github.subjekt.nodes.suite
 
 data class Parameter(
   val name: String,

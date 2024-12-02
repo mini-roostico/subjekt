@@ -1,6 +1,6 @@
 package io.github.subjekt.utils
 
-import io.github.subjekt.nodes.Parameter
+import io.github.subjekt.nodes.suite.Parameter
 
 object Permutations {
 

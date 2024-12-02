@@ -1,4 +1,4 @@
-package io.github.subjekt.nodes
+package io.github.subjekt.nodes.suite
 
 import io.github.subjekt.resolved.Resolvable
 

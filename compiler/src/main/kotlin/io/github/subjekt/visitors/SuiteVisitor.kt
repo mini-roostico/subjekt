@@ -2,6 +2,12 @@ package io.github.subjekt.visitors
 
 import io.github.subjekt.nodes.*
 import io.github.subjekt.nodes.Context.Companion.emptyContext
+import io.github.subjekt.nodes.suite.Macro
+import io.github.subjekt.nodes.suite.Outcome
+import io.github.subjekt.nodes.suite.Parameter
+import io.github.subjekt.nodes.suite.Subject
+import io.github.subjekt.nodes.suite.Suite
+import io.github.subjekt.nodes.suite.Template
 import io.github.subjekt.resolved.ResolvedSubject
 import io.github.subjekt.utils.MessageCollector
 import io.github.subjekt.utils.Permutations.permute

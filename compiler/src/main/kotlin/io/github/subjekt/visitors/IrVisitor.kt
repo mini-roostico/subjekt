@@ -1,11 +1,11 @@
 package io.github.subjekt.visitors
 
-import io.github.subjekt.nodes.Macro
-import io.github.subjekt.nodes.Outcome
-import io.github.subjekt.nodes.Parameter
-import io.github.subjekt.nodes.Subject
-import io.github.subjekt.nodes.Suite
-import io.github.subjekt.nodes.Template
+import io.github.subjekt.nodes.suite.Macro
+import io.github.subjekt.nodes.suite.Outcome
+import io.github.subjekt.nodes.suite.Parameter
+import io.github.subjekt.nodes.suite.Subject
+import io.github.subjekt.nodes.suite.Suite
+import io.github.subjekt.nodes.suite.Template
 
 interface IrVisitor<T> {
   fun visitSuite(suite: Suite): T
