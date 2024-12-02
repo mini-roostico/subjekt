@@ -7,7 +7,7 @@ import io.github.subjekt.nodes.suite.Subject
 import io.github.subjekt.nodes.suite.Suite
 import io.github.subjekt.nodes.suite.Template
 
-interface IrVisitor<T> {
+interface SuiteIrVisitor<T> {
   fun visitSuite(suite: Suite): T
   fun visitSubject(subject: Subject): T
   fun visitParameter(parameter: Parameter): T

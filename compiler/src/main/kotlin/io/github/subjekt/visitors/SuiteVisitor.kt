@@ -13,7 +13,7 @@ import io.github.subjekt.utils.MessageCollector
 import io.github.subjekt.utils.Permutations.permute
 import io.github.subjekt.yaml.Configuration
 
-class SuiteVisitor(private val messageCollector: MessageCollector) : IrVisitor<Unit> {
+class SuiteVisitor(private val messageCollector: MessageCollector) : SuiteIrVisitor<Unit> {
 
   private var context: Context = emptyContext()
   private lateinit var configuration: Configuration
