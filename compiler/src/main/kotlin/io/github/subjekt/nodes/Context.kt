@@ -5,11 +5,11 @@ import io.github.subjekt.utils.MessageCollector
 
 class Context(private val collector: MessageCollector) {
 
-  val parameter = mutableMapOf<String, Any>()
+  val parameters = mutableMapOf<String, Any>()
   private val macros = mutableMapOf<String, Macro>()
 
   fun parameterSnapshot(): Map<String, Any> =
-    parameter.toMap()
+    parameters.toMap()
 
   fun macroSnapshot(): Map<String, Macro> =
     macros.toMap()
@@ -19,7 +19,7 @@ class Context(private val collector: MessageCollector) {
   }
 
   fun putParameter(identifier: String, value: Any) {
-    parameter[identifier] = value
+    parameters[identifier] = value
   }
 
   fun putMacro(macro: Macro) {
