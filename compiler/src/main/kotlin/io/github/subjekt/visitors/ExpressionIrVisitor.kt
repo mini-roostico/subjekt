@@ -9,11 +9,10 @@ interface ExpressionIrVisitor<T> {
   fun visitLiteral(node: Node.Literal): T
 
   fun visit(node: Node) =
-    when(node) {
+    when (node) {
       is Node.Call -> visitCall(node)
       is Node.Id -> visitId(node)
       is Node.Plus -> visitPlus(node)
       is Node.Literal -> visitLiteral(node)
     }
-
 }

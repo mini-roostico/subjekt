@@ -15,7 +15,6 @@ sealed class Outcome(open val message: Resolvable) {
       is Error -> ResolvedOutcome.Error(message.resolveOne(context, messageCollector))
     }
 
-
   companion object {
     fun fromYamlOutcome(yamlOutcome: io.github.subjekt.yaml.Outcome): Outcome {
       return if (yamlOutcome.warning != null) {

@@ -7,11 +7,11 @@ import io.github.subjekt.utils.Permutations.permute
 
 class ExpressionResolveVisitor(
   var context: Context,
-  val messageCollector: MessageCollector
+  val messageCollector: MessageCollector,
 ) : ExpressionIrVisitor<List<String>> {
 
   private fun Node.createError(message: String) {
-    messageCollector.error("Line ${line}: $message")
+    messageCollector.error("Line $line: $message")
   }
 
   override fun visitCall(node: Node.Call): List<String> {
@@ -35,7 +35,6 @@ class ExpressionResolveVisitor(
       context = previousContext
       result
     }.toSet().toList()
-
   }
 
   override fun visitId(node: Node.Id): List<String> {

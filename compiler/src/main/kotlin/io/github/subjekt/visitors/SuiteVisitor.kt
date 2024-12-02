@@ -1,6 +1,6 @@
 package io.github.subjekt.visitors
 
-import io.github.subjekt.nodes.*
+import io.github.subjekt.nodes.Context
 import io.github.subjekt.nodes.Context.Companion.emptyContext
 import io.github.subjekt.nodes.suite.Macro
 import io.github.subjekt.nodes.suite.Outcome

@@ -2,7 +2,7 @@ package io.github.subjekt.nodes.expression
 
 import io.github.subjekt.visitors.ExpressionIrVisitor
 
-sealed class Node(val line: Int): Visitable {
+sealed class Node(val line: Int) : Visitable {
 
   override fun <T> accept(irVisitor: ExpressionIrVisitor<T>) {
     irVisitor.visit(this)

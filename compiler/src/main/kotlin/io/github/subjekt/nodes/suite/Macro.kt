@@ -23,7 +23,8 @@ class Macro(
     return Macro(
       identifier,
       argumentsIdentifiers,
-      bodies.map { Template.parse(it.resolveOne(selectedContext, messageCollector)) })
+      bodies.map { Template.parse(it.resolveOne(selectedContext, messageCollector)) },
+    )
   }
 
   companion object {

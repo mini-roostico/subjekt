@@ -6,7 +6,7 @@ object Permutations {
 
   data class DefinedParameter(
     val identifier: String,
-    val value: Any
+    val value: Any,
   )
 
   fun List<Parameter>.permute(parameterConfigurationConsumer: (List<DefinedParameter>) -> Unit) {
@@ -21,7 +21,7 @@ object Permutations {
         DefinedParameter(this[index].name, value)
       }
     }.forEach {
-        parameterConfigurationConsumer(it)
+      parameterConfigurationConsumer(it)
     }
   }
 
@@ -34,5 +34,4 @@ object Permutations {
       }
     }
   }
-
 }

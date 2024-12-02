@@ -10,7 +10,6 @@ data class Suite(
   val parameters: List<Parameter> = emptyList(),
 ) {
 
-
   companion object {
     fun fromYamlSuite(yamlSuite: io.github.subjekt.yaml.Suite): Suite {
       return Suite(
@@ -20,7 +19,6 @@ data class Suite(
         yamlSuite.macros?.map { Macro.fromYamlMacro(it) } ?: emptyList(),
         yamlSuite.parameters?.map { Parameter.fromYamlParameter(it) } ?: emptyList(),
       )
-
     }
   }
 }

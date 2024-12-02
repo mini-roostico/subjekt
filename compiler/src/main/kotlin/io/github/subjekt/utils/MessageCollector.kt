@@ -12,7 +12,7 @@ sealed class MessageCollector {
   enum class MessageType {
     INFO,
     WARNING,
-    ERROR
+    ERROR,
   }
 
   abstract val messages: List<Message>
@@ -23,7 +23,6 @@ sealed class MessageCollector {
   abstract fun flushMessages()
 
   data class Message(val type: MessageType, val message: String)
-
 
   fun showInConsole() {
     messages.forEach {
@@ -43,7 +42,7 @@ sealed class MessageCollector {
         line: Int,
         charPositionInLine: Int,
         msg: String?,
-        e: RecognitionException?
+        e: RecognitionException?,
       ) {
         error("Line $line:$charPositionInLine $msg")
       }

@@ -2,7 +2,6 @@ package io.github.subjekt.nodes.suite
 
 import io.github.subjekt.resolved.Resolvable
 
-
 class Subject(
   val name: Resolvable,
   val macros: List<Macro> = emptyList(),

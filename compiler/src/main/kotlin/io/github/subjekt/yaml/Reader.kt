@@ -12,14 +12,23 @@ object Reader {
   }
 
   fun suiteFromYaml(path: File): Suite? =
-    try { mapper.readValue(path) } catch (e: Exception) { println("There was an error: ${e.message}"); null }
+    try {
+      mapper.readValue(path)
+    } catch (e: Exception) {
+      println("There was an error: ${e.message}")
+      null
+    }
 
   fun suiteFromYaml(yaml: String): Suite? =
-    try { mapper.readValue(yaml) } catch (e: Exception) { println("There was an error; ${e.message}"); null }
+    try {
+      mapper.readValue(yaml)
+    } catch (e: Exception) {
+      println("There was an error; ${e.message}")
+      null
+    }
 
   fun suiteFromResource(path: String): Suite? {
     val file = Reader::class.java.classLoader.getResource(path)?.path?.let { File(it) } ?: return null
     return suiteFromYaml(file)
   }
-
 }
