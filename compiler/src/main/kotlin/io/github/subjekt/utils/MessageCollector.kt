@@ -1,7 +1,12 @@
 package io.github.subjekt.utils
 
 import io.github.subjekt.nodes.Context
-import org.antlr.v4.runtime.*
+import org.antlr.v4.runtime.BaseErrorListener
+import org.antlr.v4.runtime.ConsoleErrorListener
+import org.antlr.v4.runtime.Lexer
+import org.antlr.v4.runtime.Parser
+import org.antlr.v4.runtime.RecognitionException
+import org.antlr.v4.runtime.Recognizer
 import java.lang.System
 
 sealed class MessageCollector {
@@ -84,7 +89,7 @@ sealed class MessageCollector {
     messages.forEach(::showInConsole)
   }
 
-  private fun createListener(context: Context): BaseErrorListener  {
+  private fun createListener(context: Context): BaseErrorListener {
     return object : BaseErrorListener() {
       override fun syntaxError(
         recognizer: Recognizer<*, *>?,
