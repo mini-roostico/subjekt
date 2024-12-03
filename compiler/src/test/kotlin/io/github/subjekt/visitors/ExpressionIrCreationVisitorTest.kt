@@ -168,6 +168,14 @@ class ExpressionIrCreationVisitorTest {
   }
 
   @Test
+  fun `Simple dot call`() {
+    val expr = "foo.bar()"
+    val node = expr.visitExpression()
+    assert(collector.messages.isEmpty())
+    assert(node is Node.DotCall)
+  }
+
+  @Test
   fun `Plus syntax error`() {
     val expr = "a +"
     val node = expr.visitExpression()
