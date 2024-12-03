@@ -34,7 +34,7 @@ class ExpressionResolveVisitor(
       val result = acc + macro.bodies.map { body -> body.resolveOne(context, messageCollector) }
       context = previousContext
       result
-    }.toSet().toList()
+    }.toList()
   }
 
   override fun visitId(node: Node.Id): List<String> {
@@ -61,6 +61,5 @@ class ExpressionResolveVisitor(
     }
   }
 
-  override fun visitLiteral(node: Node.Literal): List<String> =
-    listOf(node.value)
+  override fun visitLiteral(node: Node.Literal): List<String> = listOf(node.value)
 }
