@@ -19,7 +19,7 @@ data class Template(
         expr.evaluate(context, messageCollector).also {
           if (it.size > 1) {
             messageCollector.warning(
-              "'resolveOne' was called inside template $toFormat, but expression $expr has" +
+              "'resolveOne' was called inside template ${source}, but expression $expr has " +
                 "multiple possible values. Taking only the first value.",
               context,
               -1
