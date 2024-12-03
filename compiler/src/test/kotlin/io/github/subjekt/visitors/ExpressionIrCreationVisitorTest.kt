@@ -2,6 +2,7 @@ package io.github.subjekt.visitors
 
 import io.github.subjekt.ExpressionLexer
 import io.github.subjekt.ExpressionParser
+import io.github.subjekt.nodes.Context
 import io.github.subjekt.nodes.expression.Node
 import io.github.subjekt.utils.MessageCollector
 import io.github.subjekt.utils.MessageCollector.Message
@@ -11,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertContains
 import kotlin.test.assertNull
-import io.github.subjekt.nodes.Context
 
 class ExpressionIrCreationVisitorTest {
 
