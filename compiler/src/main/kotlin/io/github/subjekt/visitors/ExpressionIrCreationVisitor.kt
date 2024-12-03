@@ -9,7 +9,7 @@ import org.antlr.v4.runtime.ParserRuleContext
 
 class ExpressionIrCreationVisitor(
   val context: Context,
-  val messageCollector: MessageCollector
+  val messageCollector: MessageCollector,
 ) : ExpressionBaseVisitor<Node>() {
 
   private fun ParserRuleContext.createError(message: String) {
