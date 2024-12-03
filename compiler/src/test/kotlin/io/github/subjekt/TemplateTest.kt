@@ -14,7 +14,7 @@ class TemplateTest {
   fun `Simple template parsing`() {
     val templateString = "Hello, \${{ name }}!"
     val template = Template.parse(templateString)
-    val expected = Template("Hello, %s!", listOf("name"))
+    val expected = Template("Hello, %s!", listOf("name"), templateString)
     assertEquals(expected, template)
   }
 

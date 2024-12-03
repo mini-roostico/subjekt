@@ -15,7 +15,7 @@ import kotlin.test.assertEquals
 class ExpressionEvaluationTest {
 
   private var context = Context.emptyContext()
-  private val collector: MessageCollector = MessageCollector.SimpleCollector()
+  private val collector: MessageCollector = MessageCollector.SimpleCollector(silent = true)
 
   @BeforeEach
   fun setUp() {
@@ -126,7 +126,7 @@ class ExpressionEvaluationTest {
     assertEquals(emptyList(), result)
     assertContains(
       collector.messages,
-      Message(MessageCollector.MessageType.ERROR, "Line 1: Identifier 'c' is not defined"),
+      Message(MessageCollector.MessageType.ERROR, "line 1: Identifier 'c' is not defined"),
     )
   }
 
@@ -137,7 +137,7 @@ class ExpressionEvaluationTest {
     assertEquals(emptyList(), result)
     assertContains(
       collector.messages,
-      Message(MessageCollector.MessageType.ERROR, "Line 1: Macro 'baz' is not defined"),
+      Message(MessageCollector.MessageType.ERROR, "line 1: Macro 'baz' is not defined"),
     )
   }
 
@@ -148,7 +148,7 @@ class ExpressionEvaluationTest {
     assertEquals(emptyList(), result)
     assertContains(
       collector.messages,
-      Message(MessageCollector.MessageType.ERROR, "Line 1: Macro 'bar' expects 1 arguments, but got 0"),
+      Message(MessageCollector.MessageType.ERROR, "line 1: Macro 'bar' expects 1 arguments, but got 0"),
     )
   }
 }
