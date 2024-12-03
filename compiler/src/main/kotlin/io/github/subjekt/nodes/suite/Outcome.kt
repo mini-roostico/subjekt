@@ -4,6 +4,7 @@ import io.github.subjekt.nodes.Context
 import io.github.subjekt.resolved.Resolvable
 import io.github.subjekt.resolved.ResolvedOutcome
 import io.github.subjekt.utils.MessageCollector
+import io.github.subjekt.yaml.Configuration
 
 sealed class Outcome(open val message: Resolvable) {
   data class Warning(override val message: Resolvable) : Outcome(message)
@@ -16,11 +17,11 @@ sealed class Outcome(open val message: Resolvable) {
     }
 
   companion object {
-    fun fromYamlOutcome(yamlOutcome: io.github.subjekt.yaml.Outcome): Outcome {
+    fun fromYamlOutcome(yamlOutcome: io.github.subjekt.yaml.Outcome, config: Configuration): Outcome {
       return if (yamlOutcome.warning != null) {
-        Warning(Template.parse(yamlOutcome.warning))
+        Warning(Template.parse(yamlOutcome.warning, config.expressionPrefix, config.expressionSuffix))
       } else if (yamlOutcome.error != null) {
-        Error(Template.parse(yamlOutcome.error))
+        Error(Template.parse(yamlOutcome.error, config.expressionPrefix, config.expressionSuffix))
       } else {
         throw IllegalArgumentException("Illegal outcome definition. Expected 'warning' or 'error' in $yamlOutcome")
       }

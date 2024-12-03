@@ -12,11 +12,12 @@ data class Suite(
 
   companion object {
     fun fromYamlSuite(yamlSuite: io.github.subjekt.yaml.Suite): Suite {
+      val config = yamlSuite.config ?: Configuration()
       return Suite(
         yamlSuite.name,
-        yamlSuite.subjects.map { Subject.fromYamlSubject(it) },
-        yamlSuite.config ?: Configuration(),
-        yamlSuite.macros?.map { Macro.fromYamlMacro(it) } ?: emptyList(),
+        yamlSuite.subjects.map { Subject.fromYamlSubject(it, config) },
+        config,
+        yamlSuite.macros?.map { Macro.fromYamlMacro(it, config) } ?: emptyList(),
         yamlSuite.parameters?.map { Parameter.fromYamlParameter(it) } ?: emptyList(),
       )
     }

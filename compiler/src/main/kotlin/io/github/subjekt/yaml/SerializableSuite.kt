@@ -24,4 +24,6 @@ data class Outcome(val warning: String?, val error: String?)
 
 data class Configuration(
   val codePreamble: String = "",
+  val expressionPrefix: String = "\${{",
+  val expressionSuffix: String = "}}",
 )
