@@ -11,6 +11,7 @@ import org.antlr.v4.runtime.CommonTokenStream
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertContains
+import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 class ExpressionIrCreationVisitorTest {
@@ -45,7 +46,7 @@ class ExpressionIrCreationVisitorTest {
   }
 
   @Test
-  fun `Simple IR creation with literals`() {
+  fun `Simple IR creation with literals - double quoted`() {
     val expr = "\"a\" + \"b\""
     val node = expr.visitExpression()
     assert(collector.messages.isEmpty())
@@ -53,6 +54,30 @@ class ExpressionIrCreationVisitorTest {
     val plusNode = node as Node.Plus
     assert(plusNode.left is Node.Literal)
     assert(plusNode.right is Node.Literal)
+  }
+
+  @Test
+  fun `Simple IR creation with literals - single quoted`() {
+    val expr = "'a' + 'b'"
+    val node = expr.visitExpression()
+    assert(collector.messages.isEmpty())
+    assert(node is Node.Plus)
+    val plusNode = node as Node.Plus
+    assert(plusNode.left is Node.Literal)
+    assert(plusNode.right is Node.Literal)
+  }
+
+  @Test
+  fun `Simple IR creation with literals containing escaped quotes`() {
+    val expr = """"\"a\"" + '\"b\"'"""
+    val node = expr.visitExpression()
+    assert(collector.messages.isEmpty())
+    assert(node is Node.Plus)
+    val plusNode = node as Node.Plus
+    assert(plusNode.left is Node.Literal)
+    assert(plusNode.right is Node.Literal)
+    assertEquals("\"a\"", (plusNode.left as Node.Literal).value)
+    assertEquals("\"b\"", (plusNode.right as Node.Literal).value)
   }
 
   @Test

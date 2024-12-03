@@ -177,12 +177,12 @@ class CompilerTests {
       |    - "{%%a%%}"
       |subjects:
       |- name: Test subject
-      |  code: "%%macro(\"test\")%%"
+      |  code: "%%macro('\"test\"')%%"
       |  outcomes: []
       """.trimMargin(),
       collector,
     )!!.toCode()
     assert(collector.messages.isEmpty())
-    assertEquals(setOf("(test)", "{test}"), generated)
+    assertEquals(setOf("(\"test\")", "{\"test\"}"), generated)
   }
 }
