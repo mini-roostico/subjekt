@@ -11,19 +11,21 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertContains
 import kotlin.test.assertNull
+import io.github.subjekt.nodes.Context
 
 class ExpressionIrCreationVisitorTest {
 
-  private val collector: MessageCollector = MessageCollector.SimpleCollector()
+  private val collector: MessageCollector = MessageCollector.SimpleCollector(silent = true)
 
   fun String.visitExpression(): Node? {
     val stream = CharStreams.fromString(this)
     val lexer = ExpressionLexer(stream)
     val tokens = CommonTokenStream(lexer)
     val parser = ExpressionParser(tokens)
-    collector.useParser(parser)
+    val context = Context.emptyContext()
+    collector.useParser(parser, context)
     val tree = parser.expression()
-    return ExpressionIrCreationVisitor(collector).visit(tree)
+    return ExpressionIrCreationVisitor(context, collector).visit(tree)
   }
 
   @BeforeEach
@@ -148,7 +150,7 @@ class ExpressionIrCreationVisitorTest {
     assert(collector.messages.isNotEmpty())
     assertContains(
       collector.messages,
-      Message(MessageCollector.MessageType.ERROR, "Line 1: right side of plus expression is null"),
+      Message(MessageCollector.MessageType.ERROR, "line 1:3: mismatched input '<EOF>' expecting {STRING, ID}"),
     )
   }
 
@@ -159,7 +161,7 @@ class ExpressionIrCreationVisitorTest {
     assert(collector.messages.isNotEmpty())
     assertContains(
       collector.messages,
-      Message(MessageCollector.MessageType.ERROR, "Line 1:5 mismatched input '<EOF>' expecting {',', ')'}"),
+      Message(MessageCollector.MessageType.ERROR, "line 1:5: mismatched input '<EOF>' expecting {',', ')'}"),
     )
   }
 }
