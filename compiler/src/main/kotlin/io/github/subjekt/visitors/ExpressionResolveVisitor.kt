@@ -37,6 +37,28 @@ class ExpressionResolveVisitor(
     }.toList()
   }
 
+  override fun visitDotCall(node: Node.DotCall): List<String> {
+    val customMacro = context.lookupModule(node.moduleId, node.callId)
+    if (customMacro == null) {
+      node.createError("Macro '${node.callId}' is not defined in module '${node.moduleId}'")
+      return emptyList()
+    }
+    if (customMacro.numberOfArguments != node.arguments.size) {
+      node.createError("Macro '${node.callId}' expects ${customMacro.numberOfArguments} arguments, but got ${node.arguments.size}")
+      return emptyList()
+    }
+    return node.arguments.map { arg -> visit(arg) }.permute().fold(emptyList<String>()) { acc, argsConfiguration ->
+      if (argsConfiguration.toList().size != customMacro.numberOfArguments) {
+        node.createError("Internal error while evaluating macro '${node.callId}'")
+        return emptyList()
+      }
+      val previousContext = context
+      val result = customMacro.eval(argsConfiguration.toList(), messageCollector)
+      context = previousContext
+      result
+    }.toList()
+  }
+
   override fun visitId(node: Node.Id): List<String> {
     val par = context.lookupParameter(node.identifier)
     if (par == null) {

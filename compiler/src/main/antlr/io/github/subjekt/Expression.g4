@@ -7,12 +7,17 @@ package io.github.subjekt;
 expression
     : expression '+' expression #plusExpr
     | macroCall                 #call
+    | dotCall                   #moduleCall
     | ID                        #variable
     | STRING                    #literal
     ;
 
 macroCall
     : ID '(' (expression (',' expression)*)? ')'
+    ;
+
+dotCall
+    : ID '.' ID '(' (expression (',' expression)*)? ')'
     ;
 
 STRING : '"' (ESC | ~[\r\n"\\])* '"' | '\'' (ESC | ~[\r\n'\\])* '\'' ;
