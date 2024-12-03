@@ -1,8 +1,6 @@
 package io.github.subjekt.nodes.suite
 
-import io.github.subjekt.nodes.Context
 import io.github.subjekt.resolved.Resolvable
-import io.github.subjekt.utils.MessageCollector
 
 class Macro(
   val identifier: String,
