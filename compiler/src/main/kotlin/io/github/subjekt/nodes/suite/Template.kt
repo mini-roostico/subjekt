@@ -9,7 +9,7 @@ import io.github.subjekt.utils.Permutations.permute
 data class Template(
   val toFormat: String,
   val expressions: List<String>,
-  override val source: String
+  override val source: String,
 ) : Resolvable {
 
   override fun resolveOne(context: Context, messageCollector: MessageCollector): String {
@@ -19,10 +19,10 @@ data class Template(
         expr.evaluate(context, messageCollector).also {
           if (it.size > 1) {
             messageCollector.warning(
-              "'resolveOne' was called inside template ${source}, but expression $expr has " +
+              "'resolveOne' was called inside template $source, but expression $expr has " +
                 "multiple possible values. Taking only the first value.",
               context,
-              -1
+              -1,
             )
           }
         }.first()
