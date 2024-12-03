@@ -89,18 +89,16 @@ sealed class MessageCollector {
     messages.forEach(::showInConsole)
   }
 
-  private fun createListener(context: Context): BaseErrorListener {
-    return object : BaseErrorListener() {
-      override fun syntaxError(
-        recognizer: Recognizer<*, *>?,
-        offendingSymbol: Any?,
-        line: Int,
-        charPositionInLine: Int,
-        msg: String?,
-        e: RecognitionException?,
-      ) {
-        error(msg ?: "Error", context, Position(line, charPositionInLine))
-      }
+  private fun createListener(context: Context): BaseErrorListener = object : BaseErrorListener() {
+    override fun syntaxError(
+      recognizer: Recognizer<*, *>?,
+      offendingSymbol: Any?,
+      line: Int,
+      charPositionInLine: Int,
+      msg: String?,
+      e: RecognitionException?,
+    ) {
+      error(msg ?: "Error", context, Position(line, charPositionInLine))
     }
   }
 
@@ -121,8 +119,8 @@ sealed class MessageCollector {
     private fun preprocessMessage(message: String, context: Context, position: Position): String {
       val suite = if (context.suiteName.isBlank()) "" else "Suite: '${context.suiteName}', "
       val subject = if (context.subjektName.isBlank()) "" else "Subject: '${context.subjektName}' "
-      val position = if (position.toString().isBlank()) "" else "$position"
-      return "$suite$subject$position: $message"
+      val position = if (position.toString().isBlank()) "" else "$position: "
+      return "$suite$subject$position$message"
     }
 
     override fun report(message: Message, context: Context, position: Position) {

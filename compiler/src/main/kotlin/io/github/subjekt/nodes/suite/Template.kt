@@ -25,13 +25,12 @@ data class Template(
               -1,
             )
           }
-        }.firstOrNull() ?: {
+        }.firstOrNull() ?: "".also {
           messageCollector.error(
             "Expression $expr in template $source could not be resolved.",
             context,
             -1,
           )
-          ""
         }
       }
       ).toTypedArray()
