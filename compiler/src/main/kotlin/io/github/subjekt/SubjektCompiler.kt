@@ -1,5 +1,6 @@
 package io.github.subjekt
 
+import io.github.subjekt.conversion.Stdlib
 import io.github.subjekt.nodes.suite.Suite
 import io.github.subjekt.resolved.ResolvedSuite
 import io.github.subjekt.utils.MessageCollector
@@ -16,7 +17,7 @@ object SubjektCompiler {
       return null
     }
     val suite = Suite.fromYamlSuite(this)
-    val visitor = SuiteVisitor(messageCollector)
+    val visitor = SuiteVisitor(messageCollector, listOf(Stdlib))
     visitor.visitSuite(suite)
     return ResolvedSuite(suite.name, visitor.resolvedSubjects.toSet(), suite.configuration)
   }
