@@ -157,7 +157,7 @@ class ExpressionIrCreationVisitorTest {
   @Test
   fun `Call syntax error`() {
     val expr = "foo(a"
-    val node = expr.visitExpression()
+    expr.visitExpression()
     assert(collector.messages.isNotEmpty())
     assertContains(
       collector.messages,
