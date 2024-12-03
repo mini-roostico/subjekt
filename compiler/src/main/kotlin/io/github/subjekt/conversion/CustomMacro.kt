@@ -28,7 +28,6 @@ interface CustomMacro {
 
         override fun eval(args: List<String>, messageCollector: MessageCollector): List<String> {
           try {
-            println(args)
             val result = method.invoke(null, *args.toTypedArray()) as List<String>
             return result
           } catch (e: Exception) {
