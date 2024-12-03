@@ -112,6 +112,8 @@ sealed class MessageCollector {
     parser.addErrorListener(createListener(context))
   }
 
+  fun hasErrors(): Boolean = messages.any { it.type == MessageType.ERROR }
+
   class SimpleCollector(private val silent: Boolean = false) : MessageCollector() {
     override var messages = emptyList<Message>()
       private set
