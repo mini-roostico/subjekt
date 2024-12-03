@@ -2,14 +2,18 @@ package io.github.subjekt.visitors
 
 import io.github.subjekt.ExpressionBaseVisitor
 import io.github.subjekt.ExpressionParser
+import io.github.subjekt.nodes.Context
 import io.github.subjekt.nodes.expression.Node
 import io.github.subjekt.utils.MessageCollector
 import org.antlr.v4.runtime.ParserRuleContext
 
-class ExpressionIrCreationVisitor(val messageCollector: MessageCollector) : ExpressionBaseVisitor<Node>() {
+class ExpressionIrCreationVisitor(
+  val context: Context,
+  val messageCollector: MessageCollector
+) : ExpressionBaseVisitor<Node>() {
 
   private fun ParserRuleContext.createError(message: String) {
-    messageCollector.error("Line ${this.start.line}: $message")
+    messageCollector.error(message, context, this.start.line to this.start.charPositionInLine)
   }
 
   override fun visitCall(ctx: ExpressionParser.CallContext): Node? =

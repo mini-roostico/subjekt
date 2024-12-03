@@ -11,7 +11,7 @@ class ExpressionResolveVisitor(
 ) : ExpressionIrVisitor<List<String>> {
 
   private fun Node.createError(message: String) {
-    messageCollector.error("Line $line: $message")
+    messageCollector.error(message, context, this.line)
   }
 
   override fun visitCall(node: Node.Call): List<String> {
