@@ -21,6 +21,7 @@ class SuiteVisitor(private val messageCollector: MessageCollector) : SuiteIrVisi
   val resolvedSubjects = mutableSetOf<ResolvedSubject>()
 
   override fun visitSuite(suite: Suite) {
+    context.suiteName = suite.name
     configuration = suite.configuration
     suite.macros.forEach { mac -> visitMacro(mac) }
     val previousContext = context
@@ -37,6 +38,7 @@ class SuiteVisitor(private val messageCollector: MessageCollector) : SuiteIrVisi
   }
 
   override fun visitSubject(subject: Subject) {
+    context.subjektName = subject.name.source
     val previousContext = context
     subject.macros.map { it.toResolvedMacro(context, messageCollector) }.forEach { macro -> context.putMacro(macro) }
     subject.parameters.permute { parConfiguration ->
