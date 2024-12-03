@@ -6,6 +6,8 @@ class Context() {
 
   val parameters = mutableMapOf<String, Any>()
   private val macros = mutableMapOf<String, Macro>()
+  var subjektName: String = ""
+  var suiteName: String = ""
 
   fun parameterSnapshot(): Map<String, Any> =
     parameters.toMap()
