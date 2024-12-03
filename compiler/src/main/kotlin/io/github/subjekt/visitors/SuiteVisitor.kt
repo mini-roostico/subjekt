@@ -12,11 +12,18 @@ import io.github.subjekt.resolved.ResolvedSubject
 import io.github.subjekt.utils.MessageCollector
 import io.github.subjekt.utils.Permutations.permute
 
-class SuiteVisitor(private val messageCollector: MessageCollector) : SuiteIrVisitor<Unit> {
+class SuiteVisitor(
+  private val messageCollector: MessageCollector,
+  modules: List<Any> = emptyList(),
+) : SuiteIrVisitor<Unit> {
 
   private var context: Context = emptyContext()
 
   val resolvedSubjects = mutableSetOf<ResolvedSubject>()
+
+  init {
+    modules.forEach { module -> context.registerModule(module, messageCollector) }
+  }
 
   override fun visitSuite(suite: Suite) {
     context.suiteName = suite.name

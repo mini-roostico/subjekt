@@ -18,6 +18,8 @@ class ExpressionIrCreationVisitor(
 
   override fun visitCall(ctx: ExpressionParser.CallContext): Node? = visit(ctx.macroCall())
 
+  override fun visitModuleCall(ctx: ExpressionParser.ModuleCallContext): Node? = visit(ctx.dotCall())
+
   override fun visitVariable(ctx: ExpressionParser.VariableContext): Node? = Node.Id(ctx.text, ctx.start.line)
 
   override fun visitPlusExpr(ctx: ExpressionParser.PlusExprContext): Node? {
@@ -59,6 +61,22 @@ class ExpressionIrCreationVisitor(
     val arguments = ctx.expression().map { visit(it) }
     return Node.Call(
       id,
+      arguments,
+      ctx.start.line,
+    )
+  }
+
+  override fun visitDotCall(ctx: ExpressionParser.DotCallContext?): Node? {
+    val moduleId = ctx?.ID(0)?.text
+    val macroId = ctx?.ID(1)?.text
+    if (moduleId == null || macroId == null) {
+      ctx?.createError("module call has no identifier")
+      return null
+    }
+    val arguments = ctx.expression().map { visit(it) }
+    return Node.DotCall(
+      moduleId,
+      macroId,
       arguments,
       ctx.start.line,
     )

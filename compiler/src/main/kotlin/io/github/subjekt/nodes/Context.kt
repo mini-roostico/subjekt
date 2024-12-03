@@ -1,12 +1,18 @@
 package io.github.subjekt.nodes
 
+import io.github.subjekt.conversion.CustomMacro
+import io.github.subjekt.conversion.SubjektModule
 import io.github.subjekt.nodes.suite.Macro
+import io.github.subjekt.utils.MessageCollector
 import io.github.subjekt.yaml.Configuration
+import java.lang.reflect.Modifier
+import kotlin.reflect.full.findAnnotation
 
 class Context(var configuration: Configuration = Configuration()) {
 
   val parameters = mutableMapOf<String, Any>()
   private val macros = mutableMapOf<String, Macro>()
+  private val modules = mutableMapOf<String, Map<String, CustomMacro>>()
   var subjektName: String = ""
   var suiteName: String = ""
 
@@ -18,12 +24,37 @@ class Context(var configuration: Configuration = Configuration()) {
 
   fun lookupMacro(identifier: String): Macro? = macros[identifier]
 
+  fun lookupModule(moduleName: String, macroName: String): CustomMacro? {
+    return modules[moduleName]?.get(macroName)
+  }
+
   fun putParameter(identifier: String, value: Any) {
     parameters[identifier] = value
   }
 
   fun putMacro(macro: Macro) {
     macros[macro.identifier] = macro
+  }
+
+  fun registerModule(module: Any, messageCollector: MessageCollector) {
+    val clazz = module::class
+    val annotation = clazz.findAnnotation<SubjektModule>()
+    if (annotation == null) {
+      messageCollector.error("Class ${clazz.simpleName} is not annotated with @SubjektModule", this, -1)
+      return
+    }
+    val moduleName = annotation.name
+    val staticMethods =
+      clazz.java.declaredMethods.filter { Modifier.isStatic(it.modifiers) }.filterNot { it.name.contains("$") }
+    if (staticMethods.isEmpty()) {
+      messageCollector.warning("Registered module '$moduleName' has no available methods", this, -1)
+      return
+    }
+    staticMethods.mapNotNull { method ->
+      CustomMacro.fromKotlinStatic(method, this, messageCollector)
+    }.forEach { customMacro ->
+      modules[moduleName] = modules.getOrDefault(moduleName, emptyMap()).plus(customMacro.id to customMacro)
+    }
   }
 
   companion object {

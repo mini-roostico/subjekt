@@ -7,6 +7,7 @@ interface ExpressionIrVisitor<T> {
   fun visitId(node: Node.Id): T
   fun visitPlus(node: Node.Plus): T
   fun visitLiteral(node: Node.Literal): T
+  fun visitDotCall(node: Node.DotCall): T
 
   fun visit(node: Node) =
     when (node) {
@@ -14,5 +15,6 @@ interface ExpressionIrVisitor<T> {
       is Node.Id -> visitId(node)
       is Node.Plus -> visitPlus(node)
       is Node.Literal -> visitLiteral(node)
+      is Node.DotCall -> visitDotCall(node)
     }
 }

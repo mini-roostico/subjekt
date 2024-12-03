@@ -1,5 +1,6 @@
 package io.github.subjekt.visitors
 
+import io.github.subjekt.conversion.Stdlib
 import io.github.subjekt.nodes.suite.Macro
 import io.github.subjekt.nodes.suite.Outcome
 import io.github.subjekt.nodes.suite.Parameter
@@ -17,7 +18,7 @@ class SuiteVisitorTest {
   private val collector: MessageCollector = MessageCollector.SimpleCollector()
 
   private fun compile(suite: Suite): MutableSet<ResolvedSubject> {
-    val visitor = SuiteVisitor(collector)
+    val visitor = SuiteVisitor(collector, listOf(Stdlib))
     visitor.visitSuite(suite)
     return visitor.resolvedSubjects
   }
@@ -37,7 +38,7 @@ class SuiteVisitorTest {
     val expected = mutableSetOf(
       ResolvedSubject("Subject 1", "This is the test code", emptyList()),
     )
-    assert(collector.messages.isEmpty())
+    assert(!collector.hasErrors())
     assertEquals(expected, subjects)
   }
 
@@ -63,7 +64,7 @@ class SuiteVisitorTest {
       ResolvedSubject("Subject 1", "This is the test code 1 4", emptyList()),
       ResolvedSubject("Subject 1", "This is the test code 2 4", emptyList()),
     )
-    assert(collector.messages.isEmpty())
+    assert(!collector.hasErrors())
     assertEquals(expected, subjects)
   }
 
@@ -87,7 +88,7 @@ class SuiteVisitorTest {
     val expected = mutableSetOf(
       ResolvedSubject("Subject 1", "This is the test code", listOf(ResolvedOutcome.Warning("This is a warning"))),
     )
-    assert(collector.messages.isEmpty())
+    assert(!collector.hasErrors())
     assertEquals(expected, subjects)
   }
 
@@ -118,7 +119,7 @@ class SuiteVisitorTest {
     val expected = mutableSetOf(
       ResolvedSubject("SubjectGeneratedName", "This is the test code 1", emptyList()),
     )
-    assert(collector.messages.isEmpty())
+    assert(!collector.hasErrors())
     assertEquals(expected, subjects)
   }
 
@@ -152,7 +153,7 @@ class SuiteVisitorTest {
       ResolvedSubject("Test Subject", "Generated: Foo2: Bar1: 1", emptyList()),
       ResolvedSubject("Test Subject", "Generated: Foo2: Bar2: 1", emptyList()),
     )
-    assert(collector.messages.isEmpty())
+    assert(!collector.hasErrors())
     assertEquals(expected, subjects)
   }
 
@@ -186,7 +187,7 @@ class SuiteVisitorTest {
       ResolvedSubject("Test Subject", "Generated: Foo2: 1 Bar1: 2", emptyList()),
       ResolvedSubject("Test Subject", "Generated: Foo2: 1 Bar2: 2", emptyList()),
     )
-    assert(collector.messages.isEmpty())
+    assert(!collector.hasErrors())
     assertEquals(expected, subjects)
   }
 
@@ -210,7 +211,7 @@ class SuiteVisitorTest {
       ResolvedSubject("Subject 1", "This is the test code", emptyList()),
       ResolvedSubject("Subject 2", "This is the test code", emptyList()),
     )
-    assert(collector.messages.isEmpty())
+    assert(!collector.hasErrors())
     assertEquals(expected, subjects)
   }
 
@@ -232,7 +233,7 @@ class SuiteVisitorTest {
       ResolvedSubject("Subject 1", "This is the test code Macro(1)", emptyList()),
       ResolvedSubject("Subject 1", "This is the test code Macro(2)", emptyList()),
     )
-    assert(collector.messages.isEmpty())
+    assert(!collector.hasErrors())
     assertEquals(expected, subjects)
   }
 
@@ -265,7 +266,7 @@ class SuiteVisitorTest {
       ResolvedSubject("Subject 1", "This is the test code (2)", emptyList()),
       ResolvedSubject("Subject 1", "This is the test code {2}", emptyList()),
     )
-    assert(collector.messages.isEmpty())
+    assert(!collector.hasErrors())
     assertEquals(expected, subjects)
   }
 
@@ -306,7 +307,26 @@ class SuiteVisitorTest {
       ResolvedSubject("Subject 1", "Test code: {3, 4}", emptyList()),
       ResolvedSubject("Subject 1", "Test code: {4, 4}", emptyList()),
     )
-    assert(collector.messages.isEmpty())
+    assert(!collector.hasErrors())
+    assertEquals(expected, subjects)
+  }
+
+  @Test
+  fun `Simple stdlib call`() {
+    val suite = Suite(
+      "Test suite",
+      subjects = listOf(
+        Subject(
+          Template.parse("Subject 1"),
+          code = Template.parse("\${{std.capitalizeFirst(\"test\")}}"),
+        ),
+      ),
+    )
+    val subjects = compile(suite)
+    val expected = mutableSetOf(
+      ResolvedSubject("Subject 1", "Test", emptyList()),
+    )
+    assert(!collector.hasErrors())
     assertEquals(expected, subjects)
   }
 }
