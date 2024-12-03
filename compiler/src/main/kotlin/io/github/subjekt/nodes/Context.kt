@@ -1,27 +1,22 @@
 package io.github.subjekt.nodes
 
 import io.github.subjekt.nodes.suite.Macro
+import io.github.subjekt.yaml.Configuration
 
-class Context() {
+class Context(var configuration: Configuration = Configuration()) {
 
   val parameters = mutableMapOf<String, Any>()
   private val macros = mutableMapOf<String, Macro>()
   var subjektName: String = ""
   var suiteName: String = ""
 
-  fun parameterSnapshot(): Map<String, Any> =
-    parameters.toMap()
+  fun parameterSnapshot(): Map<String, Any> = parameters.toMap()
 
-  fun macroSnapshot(): Map<String, Macro> =
-    macros.toMap()
+  fun macroSnapshot(): Map<String, Macro> = macros.toMap()
 
-  fun lookupParameter(identifier: String): Any? {
-    return parameters[identifier]
-  }
+  fun lookupParameter(identifier: String): Any? = parameters[identifier]
 
-  fun lookupMacro(identifier: String): Macro? {
-    return macros[identifier]
-  }
+  fun lookupMacro(identifier: String): Macro? = macros[identifier]
 
   fun putParameter(identifier: String, value: Any) {
     parameters[identifier] = value
@@ -32,9 +27,7 @@ class Context() {
   }
 
   companion object {
-    fun emptyContext(): Context {
-      return Context()
-    }
+    fun emptyContext(): Context = Context()
 
     fun of(
       vararg parameters: Pair<String, Any>,

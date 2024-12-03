@@ -11,18 +11,16 @@ import io.github.subjekt.nodes.suite.Template
 import io.github.subjekt.resolved.ResolvedSubject
 import io.github.subjekt.utils.MessageCollector
 import io.github.subjekt.utils.Permutations.permute
-import io.github.subjekt.yaml.Configuration
 
 class SuiteVisitor(private val messageCollector: MessageCollector) : SuiteIrVisitor<Unit> {
 
   private var context: Context = emptyContext()
-  private lateinit var configuration: Configuration
 
   val resolvedSubjects = mutableSetOf<ResolvedSubject>()
 
   override fun visitSuite(suite: Suite) {
     context.suiteName = suite.name
-    configuration = suite.configuration
+    context.configuration = suite.configuration
     suite.macros.forEach { mac -> visitMacro(mac) }
     val previousContext = context
     suite.parameters.permute { parConfiguration ->

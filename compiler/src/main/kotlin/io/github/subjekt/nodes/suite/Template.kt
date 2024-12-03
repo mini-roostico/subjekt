@@ -45,8 +45,8 @@ data class Template(
 
   companion object {
 
-    private fun processTemplate(input: String): Pair<String, List<String>> {
-      val regex = Regex("""\$\{\{(.*?)}}""") // Match ${{ ... }} blocks
+    private fun processTemplate(input: String, prefix: String, suffix: String): Pair<String, List<String>> {
+      val regex = Regex("""\Q$prefix\E(.*?)\Q$suffix\E""") // Match prefix ... suffix blocks
       val foundBlocks = mutableListOf<String>()
 
       val replaced = regex.replace(input) {
@@ -57,8 +57,8 @@ data class Template(
       return replaced to foundBlocks
     }
 
-    fun parse(code: String): Template {
-      val (template, blocks) = processTemplate(code)
+    fun parse(code: String, prefix: String = "\${{", suffix: String = "}}"): Template {
+      val (template, blocks) = processTemplate(code, prefix, suffix)
       return Template(template, blocks, code)
     }
   }
