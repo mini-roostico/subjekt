@@ -25,7 +25,14 @@ data class Template(
               -1,
             )
           }
-        }.first()
+        }.firstOrNull() ?: {
+          messageCollector.error(
+            "Expression $expr in template $source could not be resolved.",
+            context,
+            -1,
+          )
+          ""
+        }
       }
       ).toTypedArray()
     return toFormat.format(*firstResolvedExpression)
