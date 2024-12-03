@@ -16,11 +16,9 @@ class ExpressionIrCreationVisitor(
     messageCollector.error(message, context, this.start.line to this.start.charPositionInLine)
   }
 
-  override fun visitCall(ctx: ExpressionParser.CallContext): Node? =
-    visit(ctx.macroCall())
+  override fun visitCall(ctx: ExpressionParser.CallContext): Node? = visit(ctx.macroCall())
 
-  override fun visitVariable(ctx: ExpressionParser.VariableContext): Node? =
-    Node.Id(ctx.text, ctx.start.line)
+  override fun visitVariable(ctx: ExpressionParser.VariableContext): Node? = Node.Id(ctx.text, ctx.start.line)
 
   override fun visitPlusExpr(ctx: ExpressionParser.PlusExprContext): Node? {
     val left = visit(ctx.expression(0))
@@ -40,8 +38,17 @@ class ExpressionIrCreationVisitor(
     )
   }
 
-  override fun visitLiteral(ctx: ExpressionParser.LiteralContext): Node? =
-    Node.Literal(ctx.text.trim().removePrefix("\"").removeSuffix("\""), ctx.start.line)
+  override fun visitLiteral(ctx: ExpressionParser.LiteralContext): Node? = Node.Literal(
+    ctx.text
+      .trim()
+      .removePrefix("\"")
+      .removePrefix("'")
+      .removeSuffix("\"")
+      .removeSuffix("'")
+      .replace("\\\"", "\"")
+      .replace("\\'", "'"),
+    ctx.start.line,
+  )
 
   override fun visitMacroCall(ctx: ExpressionParser.MacroCallContext): Node? {
     val id = ctx.ID()?.text

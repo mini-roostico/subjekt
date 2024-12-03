@@ -15,7 +15,8 @@ macroCall
     : ID '(' (expression (',' expression)*)? ')'
     ;
 
-STRING : '"' ~('\r' | '\n' | '"')* '"' ;
+STRING : '"' (ESC | ~[\r\n"\\])* '"' | '\'' (ESC | ~[\r\n'\\])* '\'' ;
+ESC : '\\' . ;
 ID  	: ('a'..'z'|'A'..'Z')('a'..'z' | 'A'..'Z' | '0'..'9' | '_')* ;
 
 WHITESP  : ( '\t' | ' ' | '\n' | '\r' )+    -> channel(HIDDEN) ;
