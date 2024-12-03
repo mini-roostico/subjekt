@@ -160,4 +160,29 @@ class CompilerTests {
     assert(collector.messages.isEmpty())
     assertEquals(setOf("(a)", "{a}", "(b)", "{b}"), generated)
   }
+
+  @Test
+  fun `Suite with custom expression delimiters`() {
+    val generated = compile(
+      """
+      |---
+      |name: Test suite
+      |config:
+      |  expressionPrefix: "%%"
+      |  expressionSuffix: "%%"
+      |macros:
+      |  - def: macro(a)
+      |    values:
+      |    - "(%%a%%)"
+      |    - "{%%a%%}"
+      |subjects:
+      |- name: Test subject
+      |  code: "%%macro(\"test\")%%"
+      |  outcomes: []
+      """.trimMargin(),
+      collector,
+    )!!.toCode()
+    assert(collector.messages.isEmpty())
+    assertEquals(setOf("(test)", "{test}"), generated)
+  }
 }
