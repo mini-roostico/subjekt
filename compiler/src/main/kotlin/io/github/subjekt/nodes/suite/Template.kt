@@ -9,6 +9,7 @@ import io.github.subjekt.utils.Permutations.permute
 data class Template(
   val toFormat: String,
   val expressions: List<String>,
+  override val source: String
 ) : Resolvable {
 
   override fun resolveOne(context: Context, messageCollector: MessageCollector): String {
@@ -20,6 +21,8 @@ data class Template(
             messageCollector.warning(
               "'resolveOne' was called inside template $toFormat, but expression $expr has" +
                 "multiple possible values. Taking only the first value.",
+              context,
+              -1
             )
           }
         }.first()
@@ -50,7 +53,7 @@ data class Template(
 
     fun parse(code: String): Template {
       val (template, blocks) = processTemplate(code)
-      return Template(template, blocks)
+      return Template(template, blocks, code)
     }
   }
 }
