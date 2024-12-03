@@ -27,10 +27,10 @@ parameters:
     values: [ "neighboring(0)"]
 
 subjects:
-  - name: Iteration${{ util.prettify(AGGREGATE, loop(AGGREGATE)) }}
+  - name: Iteration${{ AGGREGATE + loop(AGGREGATE, "1") }}
     code: |-
       fun Aggregate<Int>.entry() {
-          ${{ loop(AGGREGATE, 5) }}
+          ${{ loop(AGGREGATE, "5") }}
       }
     outcomes:
       - warning: "Warning: aggregate function '${{ AGGREGATE }}' called inside a loop with no manual alignment operation"
