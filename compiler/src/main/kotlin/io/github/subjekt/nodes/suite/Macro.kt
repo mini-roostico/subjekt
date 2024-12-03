@@ -13,20 +13,6 @@ class Macro(
   val argumentsNumber: Int
     get() = argumentsIdentifiers.size
 
-  fun toResolvedMacro(context: Context, messageCollector: MessageCollector): Macro {
-    val selectedContext = Context.emptyContext().also {
-      context.parameterSnapshot().filterNot { (name, _) -> argumentsIdentifiers.contains(name) }
-        .forEach { (name, value) ->
-          it.putParameter(name, value)
-        }
-    }
-    return Macro(
-      identifier,
-      argumentsIdentifiers,
-      bodies.map { Template.parse(it.resolveOne(selectedContext, messageCollector)) },
-    )
-  }
-
   companion object {
     fun fromYamlMacro(macro: io.github.subjekt.yaml.Macro): Macro {
       if (!macro.def.contains("(")) {
