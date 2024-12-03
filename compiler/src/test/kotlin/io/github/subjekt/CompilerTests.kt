@@ -34,7 +34,7 @@ class CompilerTests {
       """.trimMargin(),
       collector,
     )!!.toCode()
-    assert(collector.messages.isEmpty())
+    assert(!collector.hasErrors())
     assertEquals(setOf("Subject code here!"), generated)
   }
 
@@ -104,7 +104,7 @@ class CompilerTests {
       """.trimMargin(),
       collector,
     )!!.toCode()
-    assert(collector.messages.isEmpty())
+    assert(!collector.hasErrors())
     assertEquals(setOf("(test)", "{test}"), generated)
   }
 
@@ -130,7 +130,7 @@ class CompilerTests {
       """.trimMargin(),
       collector,
     )!!.toCode()
-    assert(collector.messages.isEmpty())
+    assert(!collector.hasErrors())
     assertEquals(setOf("(1test1)", "(2test2)", "{1test1}", "{2test2}"), generated)
   }
 
@@ -157,7 +157,7 @@ class CompilerTests {
       """.trimMargin(),
       collector,
     )!!.toCode()
-    assert(collector.messages.isEmpty())
+    assert(!collector.hasErrors())
     assertEquals(setOf("(a)", "{a}", "(b)", "{b}"), generated)
   }
 
@@ -182,7 +182,7 @@ class CompilerTests {
       """.trimMargin(),
       collector,
     )!!.toCode()
-    assert(collector.messages.isEmpty())
+    assert(!collector.hasErrors())
     assertEquals(setOf("(\"test\")", "{\"test\"}"), generated)
   }
 }
