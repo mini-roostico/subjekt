@@ -21,7 +21,3 @@ ID  	: ('a'..'z'|'A'..'Z')('a'..'z' | 'A'..'Z' | '0'..'9' | '_')* ;
 WHITESP  : ( '\t' | ' ' | '\n' | '\r' )+    -> channel(HIDDEN) ;
 
 COMMENT : '/*' .*? '*/' -> channel(HIDDEN) ;
-
-ERR   	 : . {
-    System.err.println("Line " + getLine() + ": invalid char '"+getText()+"'");
-} -> channel(HIDDEN);
