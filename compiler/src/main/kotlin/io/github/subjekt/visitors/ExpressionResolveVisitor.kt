@@ -17,8 +17,13 @@ class ExpressionResolveVisitor(
   override fun visitCall(node: Node.Call): List<String> {
     val macro = context.lookupMacro(node.identifier)
     if (macro == null) {
-      node.createError("Macro '${node.identifier}' is not defined")
-      return emptyList()
+      // if the macro is not found in the current context, we try to find it in the standard module
+      val macro = context.lookupModule("std", node.identifier)
+      if (macro == null) {
+        node.createError("Macro '${node.identifier}' is not defined")
+        return emptyList()
+      }
+      return visit(Node.DotCall("std", node.identifier, node.arguments, node.line))
     }
     if (macro.argumentsNumber != node.arguments.size) {
       node.createError("Macro '${node.identifier}' expects ${macro.argumentsNumber} arguments, but got ${node.arguments.size}")
@@ -43,12 +48,12 @@ class ExpressionResolveVisitor(
       node.createError("Macro '${node.callId}' is not defined in module '${node.moduleId}'")
       return emptyList()
     }
-    if (customMacro.numberOfArguments != node.arguments.size) {
+    if (customMacro.numberOfArguments != -1 && customMacro.numberOfArguments != node.arguments.size) {
       node.createError("Macro '${node.callId}' expects ${customMacro.numberOfArguments} arguments, but got ${node.arguments.size}")
       return emptyList()
     }
     return node.arguments.map { arg -> visit(arg) }.permute().fold(emptyList<String>()) { acc, argsConfiguration ->
-      if (argsConfiguration.toList().size != customMacro.numberOfArguments) {
+      if (customMacro.numberOfArguments != -1 && argsConfiguration.toList().size != customMacro.numberOfArguments) {
         node.createError("Internal error while evaluating macro '${node.callId}'")
         return emptyList()
       }
