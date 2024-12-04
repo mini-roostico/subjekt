@@ -24,9 +24,7 @@ class Context(var configuration: Configuration = Configuration()) {
 
   fun lookupMacro(identifier: String): Macro? = macros[identifier]
 
-  fun lookupModule(moduleName: String, macroName: String): CustomMacro? {
-    return modules[moduleName]?.get(macroName)
-  }
+  fun lookupModule(moduleName: String, macroName: String): CustomMacro? = modules[moduleName]?.get(macroName)
 
   fun putParameter(identifier: String, value: Any) {
     parameters[identifier] = value
@@ -45,7 +43,13 @@ class Context(var configuration: Configuration = Configuration()) {
     }
     val moduleName = annotation.name
     val staticMethods =
-      clazz.java.declaredMethods.filter { Modifier.isStatic(it.modifiers) }.filterNot { it.name.contains("$") }
+      clazz.java.declaredMethods.filter {
+        it.isAnnotationPresent(io.github.subjekt.conversion.Macro::class.java)
+      }.onEach {
+        if (!Modifier.isStatic(it.modifiers)) {
+          messageCollector.warning("Declared macro: '${it.name}' in module '$moduleName' is not static", this, -1)
+        }
+      }.filter { Modifier.isStatic(it.modifiers) }.filterNot { it.name.contains("$") }
     if (staticMethods.isEmpty()) {
       messageCollector.warning("Registered module '$moduleName' has no available methods", this, -1)
       return

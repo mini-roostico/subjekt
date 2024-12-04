@@ -20,15 +20,22 @@ interface CustomMacro {
           -1,
         )
         return null
+      } else if (method.returnType != List::class.java) {
+        messageCollector.warning(
+          "Skipping method '${method.name}' as it does not return a List<String>",
+          context,
+          -1,
+        )
+        return null
       }
       return object : CustomMacro {
-        override val id: String = method.name
+        override val id: String = method.getAnnotation(Macro::class.java).name
         override val numberOfArguments: Int
           get() = method.parameterTypes.size
 
         override fun eval(args: List<String>, messageCollector: MessageCollector): List<String> {
           try {
-            val result = method.invoke(null, *args.toTypedArray()) as List<String>
+            val result = (method.invoke(null, *args.toTypedArray()) as List<*>).map { it.toString() }
             return result
           } catch (e: Exception) {
             messageCollector.error("Failed to invoke method '${method.name}': ${e.message}", context, -1)
