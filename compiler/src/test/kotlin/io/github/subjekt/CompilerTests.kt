@@ -50,7 +50,7 @@ class CompilerTests {
       """.trimMargin(),
       collector,
     )
-    assertEquals(1, collector.messages.size)
+    assert(collector.hasErrors())
     assertNull(generated)
   }
 
@@ -66,7 +66,7 @@ class CompilerTests {
       """.trimMargin(),
       collector,
     )
-    assertEquals(1, collector.messages.size)
+    assert(collector.hasErrors())
     assertNull(generated)
   }
 
@@ -82,7 +82,7 @@ class CompilerTests {
       """.trimMargin(),
       collector,
     )
-    assertEquals(1, collector.messages.size)
+    assert(collector.hasErrors())
     assertNull(generated)
   }
 
@@ -184,5 +184,86 @@ class CompilerTests {
     )!!.toCode()
     assert(!collector.hasErrors())
     assertEquals(setOf("(\"test\")", "{\"test\"}"), generated)
+  }
+
+  @Test
+  fun `Suite with wrong dot calls`() {
+    val generated = compile(
+      """
+      |---
+      |name: Test suite
+      |subjects:
+      |- name: Test subject
+      |  code: "${"\${{a.b.c}}"}"
+      |  outcomes: []
+      """.trimMargin(),
+      collector,
+    )
+    assert(collector.hasErrors())
+    assert(generated?.subjects?.isEmpty() == true)
+  }
+
+  @Test
+  fun `Missing module`() {
+    val generated = compile(
+      """
+      |---
+      |name: Test suite
+      |subjects:
+      |- name: Test subject
+      |  code: "${"\${{a.b()}}"}"
+      |  outcomes: []
+      """.trimMargin(),
+      collector,
+    )
+    assert(collector.hasErrors())
+    assert(
+      collector.messages.first { message -> message.type == MessageCollector.MessageType.ERROR }
+        .message.contains("Macro 'b' is not defined in module 'a'"),
+    )
+    assert(generated?.subjects?.isEmpty() == true)
+  }
+
+  @Test
+  fun `Missing macro in module`() {
+    val generated = compile(
+      """
+      |---
+      |name: Test suite
+      |subjects:
+      |- name: Test subject
+      |  code: "${"\${{std.b()}}"}"
+      |  outcomes: []
+      """.trimMargin(),
+      collector,
+    )
+    assert(collector.hasErrors())
+    assert(
+      collector.messages.first { message -> message.type == MessageCollector.MessageType.ERROR }
+        .message.contains("Macro 'b' is not defined in module 'std'"),
+    )
+    assert(generated?.subjects?.isEmpty() == true)
+  }
+
+  @Test
+  fun `Nested call with dot call`() {
+    val generated = compile(
+      """
+      |---
+      |name: Test suite
+      |macros:
+      |- def: macro(a)
+      |  values:
+      |  - "(${"\${{a}}"})"
+      |  - "{${"\${{a}}"}}"
+      |subjects:
+      |- name: Test subject
+      |  code: ${"\${{macro(std.capitalizeFirst(\"test\"))}}"}
+      |  outcomes: []
+      """.trimMargin(),
+      collector,
+    )!!.toCode()
+    assert(!collector.hasErrors())
+    assertEquals(setOf("(Test)", "{Test}"), generated)
   }
 }
