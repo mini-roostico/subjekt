@@ -4,13 +4,29 @@ import io.github.subjekt.nodes.Context
 import io.github.subjekt.utils.MessageCollector
 import java.lang.reflect.Method
 
+/**
+ * A custom macro that can be used in Subjekt expressions.
+ */
 interface CustomMacro {
+  /**
+   * The unique identifier of the macro. This is the name that will be used in Subjekt expressions.
+   */
   val id: String
+
+  /**
+   * The number of arguments that the macro accepts. If this is -1, the macro accepts a variable number of arguments.
+   */
   val numberOfArguments: Int
 
+  /**
+   * Evaluates the macro with the given [args] and collecting messages with [messageCollector].
+   */
   fun eval(args: List<String>, messageCollector: MessageCollector): List<String>
 
   companion object {
+    /**
+     * Creates a [CustomMacro] from a Kotlin static method. Returns `null` if the method does not meet the requirements.
+     */
     fun fromKotlinStatic(method: Method, context: Context, messageCollector: MessageCollector): CustomMacro? {
       val paramTypes = method.parameterTypes
       val isVarArgs = method.isVarArgs
