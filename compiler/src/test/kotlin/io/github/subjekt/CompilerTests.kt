@@ -246,6 +246,23 @@ class CompilerTests {
   }
 
   @Test
+  fun `Inferred call to the standard library`() {
+    val generated = compile(
+      """
+      |---
+      |name: Test suite
+      |subjects:
+      |- name: Test subject
+      |  code: ${"\${{capitalizeFirst(\"test\"))}}"}
+      |  outcomes: []
+      """.trimMargin(),
+      collector,
+    )!!.toCode()
+    assert(!collector.hasErrors())
+    assertEquals(setOf("Test"), generated)
+  }
+
+  @Test
   fun `Nested call with dot call`() {
     val generated = compile(
       """
@@ -265,5 +282,22 @@ class CompilerTests {
     )!!.toCode()
     assert(!collector.hasErrors())
     assertEquals(setOf("(Test)", "{Test}"), generated)
+  }
+
+  @Test
+  fun `Custom macro vararg argument`() {
+    val generated = compile(
+      """
+      |---
+      |name: Test suite
+      |subjects:
+      |- name: Test subject
+      |  code: ${"\${{std.prettify('hello', 'World', 'how', 'Are', 'you')}}"}
+      |  outcomes: []
+      """.trimMargin(),
+      collector,
+    )!!.toCode()
+    assert(!collector.hasErrors())
+    assertEquals(setOf("HelloWorldHowAreYou"), generated)
   }
 }
