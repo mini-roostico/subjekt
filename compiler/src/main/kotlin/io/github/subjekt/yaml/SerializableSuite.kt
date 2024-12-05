@@ -45,9 +45,13 @@ data class Outcome(val warning: String?, val error: String?)
 
 /**
  * Serializable representation of the configuration of a suite. It also stores the default values for the configuration.
+ * It can be used to store arbitrary key-value pairs.
  */
-data class Configuration(
-  val codePreamble: String = "",
-  val expressionPrefix: String = "\${{",
-  val expressionSuffix: String = "}}",
-)
+class Configuration : MutableMap<String, String> by mutableMapOf<String, String>(){
+  val codePreamble: String
+    get() = this["codePreamble"] ?: ""
+  val expressionPrefix: String
+    get() = this["expressionPrefix"] ?: "\${{"
+  val expressionSuffix: String
+    get() = this["expressionSuffix"] ?: "}}"
+}
