@@ -1,4 +1,24 @@
 
+# [1.1.0] - 2024-12-05
+Significant changes to the , , and  modules.
+
+### Compiler Enhancements
+
+- Developed the  object to compile YAML code, files, and resources into  instances.
+- Added ANTLR grammar for parsing expressions, including macro calls and dot calls.
+
+### DSL and Context Implementation
+
+- Introduced the  object as the main entry point for the DSL, including a  and  function.
+- New class to manage source files and directories for the DSL.
+- Created the  class for handling YAML source files and generating subjects.
+
+### Utility Functions and File Generation
+
+- Added utility functions for file handling, such as .
+- Implemented the  object to generate files from a .
+
+
 # [1.0.0] - 2024-11-15
 ## Features
 - Generation of Kotlin sources from YAML files
