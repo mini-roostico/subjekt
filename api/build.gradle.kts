@@ -13,6 +13,7 @@ repositories {
 }
 
 mavenPublishing {
+  coordinates("io.github.freshmag", "subjekt-api", "1.0.0")
   configure(
     KotlinJvm(
       // configures the -javadoc artifact, possible values:
@@ -22,7 +23,7 @@ mavenPublishing {
       javadocJar = JavadocJar.Dokka("dokkaHtml"),
       // whether to publish a sources jar
       sourcesJar = true,
-    )
+    ),
   )
 }
 
@@ -37,4 +38,8 @@ dependencies {
   implementation(libs.velocity)
 
   testImplementation(kotlin("test"))
+}
+
+kotlin {
+  jvmToolchain(17)
 }
