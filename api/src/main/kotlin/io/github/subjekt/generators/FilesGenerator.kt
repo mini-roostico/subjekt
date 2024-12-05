@@ -4,8 +4,14 @@ import io.github.subjekt.dsl.SubjektContext
 import io.github.subjekt.files.Utils.cleanName
 import java.io.File
 
+/**
+ * Generator for files from a SubjektContext
+ */
 object FilesGenerator {
 
+  /**
+   * Generates files from a SubjektContext at the specified [path] with the specified [extension]
+   */
   fun SubjektContext.toFiles(path: String, extension: String) {
     val dir = File(path)
     dir.mkdirs()

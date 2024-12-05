@@ -7,15 +7,24 @@ import io.github.subjekt.resolved.ResolvedSuite
 import io.github.subjekt.yaml.Configuration
 import java.io.File
 
+/**
+ * A source of Subjekt [code].
+ */
 class SubjektSource(val code: String) {
 
   private val suite: ResolvedSuite? by lazy {
     SubjektCompiler.compile(code, Subjekt.reporter)
   }
 
+  /**
+   * The configuration of the suite.
+   */
   val configuration: Configuration
     get() = suite?.configuration ?: Configuration()
 
+  /**
+   * Generates the subjects from the source YAML code.
+   */
   fun getGeneratedSubjects(): Set<ResolvedSubject> =
     if (suite == null) {
       emptySet()
@@ -24,6 +33,9 @@ class SubjektSource(val code: String) {
     }
 
   companion object {
+    /**
+     * Creates a [SubjektSource] from a YAML [file].
+     */
     fun fromFile(file: File): SubjektSource {
       return SubjektSource(file.readText())
     }
