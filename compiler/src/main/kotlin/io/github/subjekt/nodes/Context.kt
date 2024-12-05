@@ -8,32 +8,81 @@ import io.github.subjekt.yaml.Configuration
 import java.lang.reflect.Modifier
 import kotlin.reflect.full.findAnnotation
 
-class Context(var configuration: Configuration = Configuration()) {
-
+/**
+ * Represents a context for the compiler. This context is used to store global parameters and macros for ONLY ONE
+ * possible instance of a suite. Different parameter values correspond to different Contexts.
+ */
+class Context(
+  /**
+   * The configuration of the wrapping suite.
+   */
+  var configuration: Configuration = Configuration(),
+) {
+  /**
+   * The map of global parameters. These parameters can be used in the bodies of the macros.
+   */
   val parameters = mutableMapOf<String, Any>()
   private val macros = mutableMapOf<String, Macro>()
   private val modules = mutableMapOf<String, Map<String, CustomMacro>>()
+
+  /**
+   * The name of the subject within which this context is currently being processed.
+   */
   var subjektName: String = ""
+
+  /**
+   * The name of the suite within which this context is currently being processed.
+   */
   var suiteName: String = ""
 
+  /**
+   * Returns an immutable snapshot of the parameters.
+   */
   fun parameterSnapshot(): Map<String, Any> = parameters.toMap()
 
+  /**
+   * Returns an immutable snapshot of the macros.
+   */
   fun macroSnapshot(): Map<String, Macro> = macros.toMap()
 
+  /**
+   * Used to look up a parameter by its identifier. Returns null if the parameter is not defined.
+   */
   fun lookupParameter(identifier: String): Any? = parameters[identifier]
 
+  /**
+   * Used to look up a macro by its identifier. Returns null if the macro is not defined.
+   */
   fun lookupMacro(identifier: String): Macro? = macros[identifier]
 
+  /**
+   * Used to look up a module's custom macro by its module and macro names. Returns null if the module or macro is not defined.
+   */
   fun lookupModule(moduleName: String, macroName: String): CustomMacro? = modules[moduleName]?.get(macroName)
 
+  /**
+   * Puts a parameter in the context. If the parameter already exists, it will be overwritten.
+   */
   fun putParameter(identifier: String, value: Any) {
     parameters[identifier] = value
   }
 
+  /**
+   * Puts a macro in the context. If the macro already exists, it will be overwritten.
+   */
   fun putMacro(macro: Macro) {
     macros[macro.identifier] = macro
   }
 
+  /**
+   * Registers a module in the context. If the module already exists, it will be overwritten.
+   *
+   * A [module] must be an object annotated with [SubjektModule]. The module must contain static methods annotated with
+   * [io.github.subjekt.conversion.Macro]. The module name used to call macros is defined by the [SubjektModule.name]
+   * annotation parameter.
+   *
+   * Errors and warnings will be reported to the [messageCollector].
+   */
   fun registerModule(module: Any, messageCollector: MessageCollector) {
     val clazz = module::class
     val annotation = clazz.findAnnotation<SubjektModule>()
@@ -62,8 +111,14 @@ class Context(var configuration: Configuration = Configuration()) {
   }
 
   companion object {
+    /**
+     * Returns an empty context.
+     */
     fun emptyContext(): Context = Context()
 
+    /**
+     * Returns a context with the given parameters.
+     */
     fun of(
       vararg parameters: Pair<String, Any>,
     ) = Context().also { context ->
