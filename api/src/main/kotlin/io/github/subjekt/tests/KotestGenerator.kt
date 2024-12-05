@@ -4,7 +4,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 
-class KotestGenerator(val preamble: String = "")  {
+class KotestGenerator(val preamble: String = "") {
 
   private fun writeTestFile(className: String, path: Path, testContent: String, outputPackage: String) {
     Files.createDirectories(path.parent)
