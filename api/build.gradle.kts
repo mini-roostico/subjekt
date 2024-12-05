@@ -4,6 +4,7 @@ import com.vanniktech.maven.publish.KotlinJvm
 plugins {
   id("io.github.subjekt.kotlin-library-conventions")
   kotlin("jvm")
+  alias(libs.plugins.ktlint)
   alias(libs.plugins.mavenPublish)
   alias(libs.plugins.dokka)
 }
