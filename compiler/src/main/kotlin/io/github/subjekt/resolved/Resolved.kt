@@ -9,7 +9,7 @@ sealed class ResolvedOutcome(
   /**
    * The message of the outcome.
    */
-  open val message: String
+  open val message: String,
 ) {
   /**
    * Represents a resolved warning.
