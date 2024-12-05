@@ -1,9 +1,6 @@
 ---
 name: "Invalid iteration of aggregate calls"
 config:
-  engine: "velocity"
-  lint: True
-  testFormat: "kotest"
   codePreamble: |-
     /**
       * This file has been auto-generated. 
@@ -11,25 +8,37 @@ config:
       * for details.
     */
     import it.unibo.collektive.aggregate.api.Aggregate
+
 macros:
-  - name: loop
-    accepts: [code]
+  - def: loop(code)
     values:
       - |-
          for(i in 1..3) {
-           $code
+           ${{ code }}
          }
       - |- 
          (1..3).forEach {
-           $code
+           ${{ code }}
          }
-  - name: alignedOn
-    accepts: [code]
+  - def: alignedOn(code)
     values:
       - |-
          alignedOn(0) {
-           $code
+           ${{ code }}
          }
+  - def: nestedFun(code)
+    values:
+      - |-
+        fun Aggregate<Int>.nested() {
+          ${{ code }}
+        }
+  - def: aggregate(code)
+    values:
+      - |-
+        aggregate(0) {
+          ${{ code }}
+        }
+
 parameters:
   - name: "AGGREGATE"
     values: [ "neighboring(0)"]
@@ -38,63 +47,53 @@ parameters:
 subjects:
 
 # SIMPLE ITERATIONS
-  - name: Iteration$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+  - name: Iteration${{ prettify(AGGREGATE, loop(AGGREGATE)) }}
     code: |-
       fun Aggregate<Int>.entry() {
-          #loop(
-              $AGGREGATE
-          )
+        ${{ loop(AGGREGATE) }}
       }
     outcomes:
-      - warning: "Warning: aggregate function '${AGGREGATE}' called inside a loop with no manual alignment operation"
+      - warning: "Warning: aggregate function '${{ AGGREGATE }}' called inside a loop with no manual alignment operation"
 
   - name: |-
-      IterationExtAlign$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+      IterationExtAlign${{ prettify(AGGREGATE, loop(AGGREGATE)) }}
     code: |-
-      #set($INNER = "#loop($AGGREGATE)")
       fun Aggregate<Int>.entry() {
-          #alignedOn($INNER)
+        ${{ alignedOn(loop(AGGREGATE)) }}
       }
     outcomes:
-      - warning: "Warning: aggregate function '${AGGREGATE}' called inside a loop with no manual alignment operation"
+      - warning: "Warning: aggregate function '${{ AGGREGATE }}' called inside a loop with no manual alignment operation"
 
-  - name: IterationAlign$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+  - name: IterationAlign${{ prettify(AGGREGATE, loop(AGGREGATE)) }}
     code: |-
-      #set($INNER = "#alignedOn($AGGREGATE)")
       fun Aggregate<Int>.entry() {
-          #loop( 
-            $INNER
-          ) 
+        ${{ loop(alignedOn(AGGREGATE)) }}
       }
     outcomes: []
 
-  - name: IterationWithNestedFun$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+  - name: IterationWithNestedFun${{ prettify(AGGREGATE, loop(AGGREGATE)) }}
     code: |-
       fun Aggregate<Int>.entry() {
-         #loop("
-            fun Aggregate<Int>.nested() {
-                $AGGREGATE
-            }")
+        ${{ loop(nestedFun(AGGREGATE)) }}
       }
     outcomes: []
 
 # DELEGATES
 
-  - name: IterationAlignDelegate$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+  - name: IterationAlignDelegate${{ prettify(AGGREGATE, loop(AGGREGATE)) }}
     code: |-
-      #set($INNER = "#alignedOn('delegate(this)')")
       fun delegate(aggregate: Aggregate<Int>) {
-          aggregate.$AGGREGATE
+          aggregate.${{ AGGREGATE }}
       }
 
       fun Aggregate<Int>.entry() {
-          #loop($INNER)
+        ${{ loop(alignedOn("delegate(this)")) }}
       }
     outcomes:
-      - warning: "Warning: suspicious call of function '$AGGREGATE' with aggregate argument inside a loop with no 
+      - warning: "Warning: suspicious call of function '${{ AGGREGATE }}' with aggregate argument inside a loop with no 
       manual alignment operation"
 
-  - name: IterationDelegateAlign$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+  - name: IterationDelegateAlign${{ prettify(AGGREGATE, loop(AGGREGATE)) }}
     code: |-
       fun delegate(aggregate: Aggregate<Int>) {
           aggregate.#alignedOn("aggregate.$AGGREGATE")
@@ -105,7 +104,7 @@ subjects:
       }
     outcomes: []
 
-  - name: IterationDelegate$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+  - name: IterationDelegate${{ prettify(AGGREGATE, loop(AGGREGATE)) }}
     code: |-
       fun delegate(aggregate: Aggregate<Int>) {
           aggregate.$AGGREGATE
@@ -118,37 +117,37 @@ subjects:
       - warning: "Warning: suspicious call of function '$AGGREGATE' with aggregate argument
       inside a loop with no manual alignment operation"
 
-  - name: IterationDelegateWithNestedFun$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+  - name: IterationDelegateWithNestedFun${{ prettify(AGGREGATE, loop(AGGREGATE)) }}
     code: |-
       fun delegate(aggregate: Aggregate<Int>) {
           fun nested() {
-            aggregate.$AGGREGATE
+            aggregate.${{ AGGREGATE }}
           }
       }
 
       fun Aggregate<Int>.entry() {
-          #loop("delegate(this)")
+          ${{ loop("delegate(this)") }}
       }
     outcomes: []
 
-  - name: IterationRecursiveDelegate$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+  - name: IterationRecursiveDelegate${{ prettify(AGGREGATE, loop(AGGREGATE)) }}
     code: |-
       fun delegate(aggregate: Aggregate<Int>) {
         delegate2(aggregate)
       }
       
       fun delegate2(aggregate: Aggregate<Int>) {
-        aggregate.$AGGREGATE
+        aggregate.${{ AGGREGATE }}
       }
 
       fun Aggregate<Int>.entry() {
-          #loop("delegate(this)")
+        ${{ loop("delegate(this)") }}
       }
     outcomes:
       - warning: "Warning: suspicious call of function 'delegate' with aggregate argument
       inside a loop with no manual alignment operation"
 
-  - name: IterationRecursiveDelegateAlign$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+  - name: IterationRecursiveDelegateAlign${{ prettify(AGGREGATE, loop(AGGREGATE)) }}
     code: |-
       fun delegate(aggregate: Aggregate<Int>) {
         delegate2(aggregate)
@@ -156,16 +155,16 @@ subjects:
 
       fun delegate2(aggregate: Aggregate<Int>) {
         aggregate.alignedOn(0) {
-          aggregate.$AGGREGATE
+          aggregate.${{ AGGREGATE }}
         }
       }
 
       fun Aggregate<Int>.entry() {
-          #loop("delegate(this)")
+          ${{ loop("delegate(this)") }}
       }
     outcomes: []
 
-  - name: IterationAlignRecursiveDelegate$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+  - name: IterationAlignRecursiveDelegate${{ prettify(AGGREGATE, loop(AGGREGATE)) }}
     code: |-
       fun delegate(aggregate: Aggregate<Int>) {
         aggregate.alignedOn(0) {
@@ -174,51 +173,51 @@ subjects:
       }
 
       fun delegate2(aggregate: Aggregate<Int>) {
-          aggregate.$AGGREGATE
+          aggregate.${{ AGGREGATE }}
       }
 
       fun Aggregate<Int>.entry() {
-          #loop("delegate(this)")
+          ${{ loop("delegate(this)") }}
       }
-    outcomes: [ ]
+    outcomes: []
 
-  - name: IterationDelegatedNestedFun$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+  - name: IterationDelegatedNestedFun${{ prettify(AGGREGATE, loop(AGGREGATE)) }}
     code: |-
       fun delegate(aggregate: Aggregate<Int>) {
         fun delegate2() {
-          aggregate.$AGGREGATE
+          aggregate.${{ AGGREGATE }}
         }
         delegate2()
       }
 
       fun Aggregate<Int>.entry() {
-          #loop("delegate(this)")
+          ${{ loop("delegate(this)") }}
       }
     outcomes:
       - warning: "Warning: suspicious call of function 'delegate' with aggregate argument
       inside a loop with no manual alignment operation"
 
-  - name: IterationDelegatedNestedFunAlign$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+  - name: IterationDelegatedNestedFunAlign${{ prettify(AGGREGATE, loop(AGGREGATE)) }}
     code: |-
       fun delegate(aggregate: Aggregate<Int>) {
         fun delegate2() {
           aggregate.alignedOn(0) {
-            aggregate.$AGGREGATE
+            aggregate.${{ AGGREGATE }}
           }
         }
         delegate2()
       }
 
       fun Aggregate<Int>.entry() {
-          #loop("delegate(this)")
+          ${{ loop("delegate(this)") }}
       }
     outcomes: []
 
-  - name: IterationAlignDelegatedNestedFun$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+  - name: IterationAlignDelegatedNestedFun${{ prettify(AGGREGATE, loop(AGGREGATE)) }}
     code: |-
       fun delegate(aggregate: Aggregate<Int>) {
         fun delegate2() {
-          aggregate.$AGGREGATE
+          aggregate.${{ AGGREGATE }}
         }
         aggregate.alignedOn(0) {
           delegate2()
@@ -226,22 +225,18 @@ subjects:
       }
 
       fun Aggregate<Int>.entry() {
-          #loop("delegate(this)")
+          ${{ loop("delegate(this)") }}
       }
-    outcomes: [ ]
+    outcomes: []
 
 
 # OUTSIDE
 
-  - name: OutsideAggregate$util.prettify($AGGREGATE, "#loop($AGGREGATE)")
+  - name: OutsideAggregate${{ prettify(AGGREGATE, loop(AGGREGATE)) }}
     code: |-
       import it.unibo.collektive.Collektive.Companion.aggregate
       
       fun entry() {
-        #loop("
-          aggregate(0) {
-            $AGGREGATE
-          }
-        ")
+        ${{ loop(aggregate(AGGREGATE)) }}
       }
     outcomes: []
