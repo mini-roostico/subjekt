@@ -6,25 +6,43 @@ import io.github.subjekt.resolved.ResolvedOutcome
 import io.github.subjekt.utils.MessageCollector
 import io.github.subjekt.yaml.Configuration
 
-sealed class Outcome(open val message: Resolvable) {
+/**
+ * Represents an outcome definition node.
+ */
+sealed class Outcome(
+  /**
+   * The message to be displayed when the outcome is triggered.
+   */
+  open val message: Resolvable,
+) {
+  /**
+   * Represents a warning outcome.
+   */
   data class Warning(override val message: Resolvable) : Outcome(message)
+
+  /**
+   * Represents an error outcome.
+   */
   data class Error(override val message: Resolvable) : Outcome(message)
 
-  fun toResolvedOutcome(context: Context, messageCollector: MessageCollector): ResolvedOutcome =
-    when (this) {
-      is Warning -> ResolvedOutcome.Warning(message.resolveOne(context, messageCollector))
-      is Error -> ResolvedOutcome.Error(message.resolveOne(context, messageCollector))
-    }
+  /**
+   * Resolves the outcome message with the given [context] and reporting to the [messageCollector].
+   */
+  fun toResolvedOutcome(context: Context, messageCollector: MessageCollector): ResolvedOutcome = when (this) {
+    is Warning -> ResolvedOutcome.Warning(message.resolveOne(context, messageCollector))
+    is Error -> ResolvedOutcome.Error(message.resolveOne(context, messageCollector))
+  }
 
   companion object {
-    fun fromYamlOutcome(yamlOutcome: io.github.subjekt.yaml.Outcome, config: Configuration): Outcome {
-      return if (yamlOutcome.warning != null) {
-        Warning(Template.parse(yamlOutcome.warning, config.expressionPrefix, config.expressionSuffix))
-      } else if (yamlOutcome.error != null) {
-        Error(Template.parse(yamlOutcome.error, config.expressionPrefix, config.expressionSuffix))
-      } else {
-        throw IllegalArgumentException("Illegal outcome definition. Expected 'warning' or 'error' in $yamlOutcome")
-      }
+    /**
+     * Creates an Outcome node from a YAML [outcome] parsed data class. The [config] is used to parse the message.
+     */
+    fun fromYamlOutcome(outcome: io.github.subjekt.yaml.Outcome, config: Configuration): Outcome = if (outcome.warning != null) {
+      Warning(Template.parse(outcome.warning, config.expressionPrefix, config.expressionSuffix))
+    } else if (outcome.error != null) {
+      Error(Template.parse(outcome.error, config.expressionPrefix, config.expressionSuffix))
+    } else {
+      throw IllegalArgumentException("Illegal outcome definition. Expected 'warning' or 'error' in $outcome")
     }
   }
 }
