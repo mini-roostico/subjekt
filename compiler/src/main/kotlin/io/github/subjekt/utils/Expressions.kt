@@ -8,8 +8,17 @@ import io.github.subjekt.visitors.ExpressionResolveVisitor
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 
+/**
+ * Utility object for expressions.
+ */
 object Expressions {
 
+  /**
+   * Evaluates the receiver [String] as a Subjekt expression, using the provided [context] to resolve parameters and
+   * macros' calls. The [messageCollector] is used to report any error that occurs during the evaluation.
+   *
+   * Returns a list of strings representing the possible results of the expression. It internally uses the visitors.
+   */
   fun String.evaluate(context: Context, messageCollector: MessageCollector): List<String> {
     val stream = CharStreams.fromString(this)
     val lexer = ExpressionLexer(stream)
