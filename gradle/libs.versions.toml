@@ -6,9 +6,12 @@ picocli = "4.7.6"
 
 # plugins
 kotlin = "2.0.21"
+ktlint = "12.1.2"
 shadowJar = "8.3.5"
 
 [libraries]
+antlr = "org.antlr:antlr4:4.13.2"
+antlr-runtime = "org.antlr:antlr4-runtime:4.13.2"
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 jackson = "com.fasterxml.jackson.module:jackson-module-kotlin:2.18.1"
 jackson-yaml = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.1"
@@ -19,5 +22,8 @@ slf4j-simple = "org.slf4j:slf4j-simple:2.0.16"
 velocity = "org.apache.velocity:velocity-engine-core:2.3"
 
 [plugins]
+dokka = { id = "org.jetbrains.dokka", version = "1.9.20" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.30.0" }
 shadowJar = { id = "com.gradleup.shadow", version.ref = "shadowJar" }

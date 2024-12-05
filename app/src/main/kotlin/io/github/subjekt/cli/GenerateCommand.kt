@@ -1,6 +1,5 @@
 package io.github.subjekt.cli
 
-import io.github.subjekt.Subjekt
 import picocli.CommandLine.*
 import java.io.File
 import kotlin.io.path.Path
@@ -38,6 +37,6 @@ class GenerateSourcesSubcommand : Runnable {
 
   override fun run() {
     Path(outPath).createDirectories()
-    Subjekt.file(File(path)).toKotlinSources(Path(outPath))
+    TODO()
   }
 }
