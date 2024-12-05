@@ -12,13 +12,28 @@ import io.github.subjekt.resolved.ResolvedSubject
 import io.github.subjekt.utils.MessageCollector
 import io.github.subjekt.utils.Permutations.permute
 
+/**
+ * Main visitor used by the compiler to resolve a [Suite] to a list of [ResolvedSubject]s (and therefore a
+ * [io.github.subjekt.resolved.ResolvedSuite]). It must be called to visit a [Suite] node converted from the YAML
+ * input one.
+ */
 class SuiteVisitor(
+  /**
+   * Message collector to report errors.
+   */
   private val messageCollector: MessageCollector,
+  /**
+   * List of modules to register in the context. By default, all the macros not found in the current context will be
+   * searched inside the `std` module, which is automatically added to this list.
+   */
   modules: List<Any> = emptyList(),
 ) : SuiteIrVisitor<Unit> {
 
   private var context: Context = emptyContext()
 
+  /**
+   * List of resolved subjects found in the suite, result of this visitor.
+   */
   val resolvedSubjects = mutableSetOf<ResolvedSubject>()
 
   init {

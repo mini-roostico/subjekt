@@ -7,8 +7,17 @@ import io.github.subjekt.nodes.expression.Node
 import io.github.subjekt.utils.MessageCollector
 import org.antlr.v4.runtime.ParserRuleContext
 
+/**
+ * Visitor that creates the intermediate representation of the expression (a tree of [Node]s).
+ */
 class ExpressionIrCreationVisitor(
+  /**
+   * Starting context for the expression.
+   */
   val context: Context,
+  /**
+   * Message collector to report errors.
+   */
   val messageCollector: MessageCollector,
 ) : ExpressionBaseVisitor<Node>() {
 

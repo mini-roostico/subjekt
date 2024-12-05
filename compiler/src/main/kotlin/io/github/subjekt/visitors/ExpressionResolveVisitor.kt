@@ -5,8 +5,18 @@ import io.github.subjekt.nodes.expression.Node
 import io.github.subjekt.utils.MessageCollector
 import io.github.subjekt.utils.Permutations.permute
 
+/**
+ * Visitor used to resolve an expression to a list of possible string values. This is used to evaluate the expressions
+ * inside a [io.github.subjekt.nodes.suite.Template].
+ */
 class ExpressionResolveVisitor(
+  /**
+   * Starting context for the expression.
+   */
   var context: Context,
+  /**
+   * Message collector to report errors.
+   */
   val messageCollector: MessageCollector,
 ) : ExpressionIrVisitor<List<String>> {
 
