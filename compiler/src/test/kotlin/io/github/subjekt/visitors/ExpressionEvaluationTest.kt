@@ -42,9 +42,9 @@ class ExpressionEvaluationTest {
     val code = "\${{ $expr }}"
     return Template.parse(code).resolveCalls(context, collector).permuteDefinitions()
       .fold(emptyList<String>()) { acc, calls ->
-      context = context.withDefinedCalls(calls)
-      acc + expr.evaluate(context, collector)
-    }.filterNot(String::isBlank)
+        context = context.withDefinedCalls(calls)
+        acc + expr.evaluate(context, collector)
+      }.filterNot(String::isBlank)
   }
 
   @Test

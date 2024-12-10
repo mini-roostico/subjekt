@@ -79,8 +79,10 @@ data class Context(
   }
 
   fun withParameters(parameters: Iterable<ResolvedParameter>): Context = copy(
-    parameters = (parameters.associate { par -> par.identifier to par.value }
-      .toMutableMap()).run { (this@Context.parameters + this).toMutableMap() },
+    parameters = (
+      parameters.associate { par -> par.identifier to par.value }
+        .toMutableMap()
+      ).run { (this@Context.parameters + this).toMutableMap() },
   )
 
   fun withDefinedCalls(definedCalls: Iterable<DefinedCall>): Context = copy(

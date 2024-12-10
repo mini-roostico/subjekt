@@ -29,8 +29,8 @@ object SubjektCompiler {
     visitor.visitSuite(suite)
     return ResolvedSuite(
       suite.name,
-      visitor.resolvedSubjects.filterNot { it.code.isBlank() || it.name.isBlank()}.toSet(),
-      suite.configuration
+      visitor.resolvedSubjects.filterNot { it.code.isBlank() || it.name.isBlank() }.toSet(),
+      suite.configuration,
     )
   }
 
