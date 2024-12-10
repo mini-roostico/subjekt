@@ -16,7 +16,7 @@ import kotlin.test.assertEquals
 class ExpressionEvaluationTest {
 
   private var context = Context.emptyContext()
-  private val collector: MessageCollector = MessageCollector.SimpleCollector(silent = true)
+  private val collector: MessageCollector = MessageCollector.SimpleCollector(showErrors = false)
 
   @BeforeEach
   fun setUp() {
