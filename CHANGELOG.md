@@ -1,4 +1,17 @@
 
+# [1.1.1] - 2024-12-10
+## Compiler
+- Added better expression resolution
+- Custom macros now work with single string result
+- Single expression resolution to provide more consistent and predictable results
+
+## API
+- Added automatic linting to generated sources
+
+## Gradle plugin
+- Implemented a simple gradle plugin to use Subjekt through gradle
+
+
 # [1.1.0] - 2024-12-05
 Significant changes to the , , and  modules.
 
