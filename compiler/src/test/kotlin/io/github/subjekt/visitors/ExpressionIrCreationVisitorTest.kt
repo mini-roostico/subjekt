@@ -16,7 +16,7 @@ import kotlin.test.assertNull
 
 class ExpressionIrCreationVisitorTest {
 
-  private val collector: MessageCollector = MessageCollector.SimpleCollector(silent = true)
+  private val collector: MessageCollector = MessageCollector.SimpleCollector(showErrors = false)
 
   fun String.visitExpression(): Node? {
     val stream = CharStreams.fromString(this)

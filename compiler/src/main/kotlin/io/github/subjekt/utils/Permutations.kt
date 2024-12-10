@@ -1,6 +1,7 @@
 package io.github.subjekt.utils
 
 import io.github.subjekt.nodes.suite.Parameter
+import io.github.subjekt.resolved.DefinedCall
 import io.github.subjekt.resolved.ResolvedParameter
 
 /**
@@ -32,11 +33,19 @@ object Permutations {
    * Generates all possible permutations of the given [List] of [List]s and returns them.
    * For example: `[["a", "b"], ["1", "2"]]` will return `[["a", "1"], ["a", "2"], ["b", "1"], ["b", "2"]]`.
    */
-  fun <T> Iterable<Iterable<T>>.permute(): Iterable<Iterable<T>> = fold(listOf(emptyList<T>()) as Iterable<List<T>>) { acc, iterable ->
-    acc.flatMap { combination ->
-      iterable.map { element ->
-        combination + element
+  fun <T> Iterable<Iterable<T>>.permute(): Iterable<Iterable<T>> =
+    fold(listOf(emptyList<T>()) as Iterable<List<T>>) { acc, iterable ->
+      acc.flatMap { combination ->
+        iterable.map { element ->
+          combination + element
+        }
       }
     }
-  }
+
+  /**
+   * Generated all possible permutations for the given definitions. Returns an [Iterable] of [Iterable]s where each
+   * corresponds to a possible instance of definitions that can be used for a unique context.
+   */
+  fun Iterable<DefinedCall>.permuteDefinitions(): Iterable<Iterable<DefinedCall>> =
+    this.groupBy(DefinedCall::identifier).values.permute()
 }

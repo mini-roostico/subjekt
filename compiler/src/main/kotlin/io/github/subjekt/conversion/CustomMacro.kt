@@ -21,7 +21,7 @@ interface CustomMacro {
   /**
    * Evaluates the macro with the given [args] and collecting messages with [messageCollector].
    */
-  fun eval(args: List<String>, messageCollector: MessageCollector): List<String>
+  fun eval(args: List<String>, messageCollector: MessageCollector): String
 
   companion object {
     /**
@@ -45,7 +45,7 @@ interface CustomMacro {
           -1,
         )
         return null
-      } else if (method.returnType != List::class.java) {
+      } else if (method.returnType != String::class.java) {
         messageCollector.warning(
           "Skipping method '${method.name}' as it does not return a List<String>",
           context,
@@ -59,19 +59,19 @@ interface CustomMacro {
         override val numberOfArguments: Int
           get() = if (isVarArgs) -1 else method.parameterTypes.size // -1 denotes varargs
 
-        override fun eval(args: List<String>, messageCollector: MessageCollector): List<String> {
+        override fun eval(args: List<String>, messageCollector: MessageCollector): String {
           try {
-            val result: List<*> = if (isVarArgs) {
+            val result: String = if (isVarArgs) {
               val fixedArgs = paramTypes.dropLast(1).mapIndexed { index, _ -> args[index] }.toTypedArray()
               val varArgArray = args.drop(fixedArgs.size).toTypedArray()
-              method.invoke(null, *fixedArgs, varArgArray) as List<*>
+              method.invoke(null, *fixedArgs, varArgArray) as String
             } else {
-              method.invoke(null, *args.toTypedArray()) as List<*>
+              method.invoke(null, *args.toTypedArray()) as String
             }
-            return result.map { it.toString() }
+            return result
           } catch (e: Exception) {
             messageCollector.error("Failed to invoke method '${method.name}': ${e.message}", context, -1)
-            return emptyList()
+            return ""
           }
         }
       }

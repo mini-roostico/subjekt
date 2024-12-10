@@ -188,9 +188,13 @@ sealed class MessageCollector {
 
   /**
    * Simple message collector that stores the messages in a list and reports all the messages into the console by
-   * default. It can be silenced by setting [silent] to true.
+   * default. It can be silenced by setting [showErrors] to true.
    */
-  class SimpleCollector(private val silent: Boolean = false) : MessageCollector() {
+  class SimpleCollector(
+    private val showErrors: Boolean = true,
+    private val showWarnings: Boolean = true,
+    private val showInfos: Boolean = false,
+  ) : MessageCollector() {
     override var messages = emptyList<Message>()
       private set
 
@@ -204,7 +208,9 @@ sealed class MessageCollector {
     override fun report(message: Message, context: Context, position: Position) {
       val message = message.copy(message = preprocessMessage(message.message, context, position))
       messages += message
-      if (!silent) showInConsole(message)
+      if (showErrors && message.type == MessageType.ERROR) showInConsole(message)
+      if (showWarnings && message.type == MessageType.WARNING) showInConsole(message)
+      if (showInfos && message.type == MessageType.INFO) showInConsole(message)
     }
 
     override fun flushMessages() {
