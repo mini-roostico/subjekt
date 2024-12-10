@@ -1,7 +1,9 @@
 package io.github.subjekt.generators
 
+import io.github.subjekt.Subjekt
 import io.github.subjekt.dsl.SubjektContext
 import io.github.subjekt.files.Utils.cleanName
+import io.github.subjekt.linting.Linter
 import java.io.File
 
 /**
@@ -20,14 +22,15 @@ object FilesGenerator {
       generatedSubjects.forEach {
         var fileName = cleanName(it.name)
         var file = File("$path/$fileName.$extension")
-        var redundancyIndex = 1
-        while (file.exists()) {
-          var fileName = cleanName(it.name) + redundancyIndex
-          file = File("$path/$fileName.$extension")
-          redundancyIndex++
+        if (file.exists()) {
+          file.delete()
         }
         val preamble = source.configuration.codePreamble
-        file.writeText(preamble + "\n" + it.code)
+        var code = preamble + "\n" + it.code
+        if (source.configuration.lint) {
+          code = Linter.lint(code, Subjekt.reporter)
+        }
+        file.writeText(code)
       }
     }
   }

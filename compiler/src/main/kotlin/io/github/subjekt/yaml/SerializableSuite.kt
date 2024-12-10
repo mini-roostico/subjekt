@@ -54,4 +54,6 @@ class Configuration : MutableMap<String, String> by mutableMapOf<String, String>
     get() = this["expressionPrefix"] ?: "\${{"
   val expressionSuffix: String
     get() = this["expressionSuffix"] ?: "}}"
+  val lint: Boolean
+    get() = this["lint"]?.toBooleanStrictOrNull() != false
 }
