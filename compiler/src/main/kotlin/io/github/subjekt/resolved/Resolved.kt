@@ -23,6 +23,15 @@ sealed class ResolvedOutcome(
 }
 
 /**
+ * Represents a defined call in one of its possible values.
+ */
+data class DefinedCall(
+  val identifier: String,
+  val argumentsIdentifiers: List<String>,
+  val body: Resolvable,
+)
+
+/**
  * Represents a defined parameter in one of its possible values.
  */
 data class ResolvedParameter(
