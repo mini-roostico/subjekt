@@ -1,41 +1,35 @@
 plugins {
-  alias(libs.plugins.ktlint)
-  `java-gradle-plugin`
-  `kotlin-dsl`
-  id("com.gradle.plugin-publish") version "1.2.1"
+    alias(libs.plugins.ktlint)
+    `java-gradle-plugin`
+    `kotlin-dsl`
+    alias(libs.plugins.gradle.publish)
 }
 
 group = "io.github.freshmag"
 version = "1.0.0"
 
-publishing {
-  repositories {
-    maven {
-      url = uri("/Users/fresh/.m2/repository")
-    }
-  }
-}
-
 gradlePlugin {
-  website = "https://freshmag.github.io/subjekt-doc/"
-  vcsUrl = "https://github.com/FreshMag/subjekt"
-  plugins {
-    create("io.github.subjekt") {
-      id = "io.github.subjekt"
-      implementationClass = "io.github.subjekt.SubjektPlugin"
+    website = "https://freshmag.github.io/subjekt-doc/"
+    vcsUrl = "https://github.com/FreshMag/subjekt"
+    plugins {
+        create("io.github.subjekt") {
+            id = "io.github.subjekt"
+            displayName = "Subjekt"
+            description = "A Gradle plugin for generating Kotlin code and tests from YAML configuration files"
+            tags = listOf("generation", "test", "auto-generated")
+            implementationClass = "io.github.subjekt.SubjektPlugin"
+        }
     }
-  }
 }
 
 repositories {
-  mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-  implementation(project(":api"))
+    implementation(project(":api"))
 }
 
-
 kotlin {
-  jvmToolchain(17)
+    jvmToolchain(17)
 }
