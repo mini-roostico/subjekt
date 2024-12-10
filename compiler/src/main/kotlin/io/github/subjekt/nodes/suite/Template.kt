@@ -1,10 +1,12 @@
 package io.github.subjekt.nodes.suite
 
 import io.github.subjekt.nodes.Context
+import io.github.subjekt.resolved.DefinedCall
 import io.github.subjekt.resolved.Resolvable
+import io.github.subjekt.utils.Expressions.acceptExpressionVisitor
 import io.github.subjekt.utils.Expressions.evaluate
 import io.github.subjekt.utils.MessageCollector
-import io.github.subjekt.utils.Permutations.permute
+import io.github.subjekt.visitors.ExpressionCallsVisitor
 
 /**
  * Main [Resolvable] implementation. It represents a template with expressions that can be resolved into
@@ -16,36 +18,29 @@ data class Template(
   override val source: String,
 ) : Resolvable {
 
-  override fun resolveOne(context: Context, messageCollector: MessageCollector): String {
+  override fun resolve(context: Context, messageCollector: MessageCollector): String {
     if (expressions.isEmpty()) return toFormat
-    val firstResolvedExpression = (
-      expressions.map { expr ->
-        expr.evaluate(context, messageCollector).also {
-          if (it.size > 1) {
-            messageCollector.warning(
-              "'resolveOne' was called inside template $source, but expression $expr has " +
-                "multiple possible values. Taking only the first value.",
-              context,
-              -1,
-            )
-          }
-        }.firstOrNull() ?: "".also {
-          messageCollector.error(
-            "Expression $expr in template $source could not be resolved.",
-            context,
-            -1,
-          )
-        }
-      }
-      ).toTypedArray()
-    return toFormat.format(*firstResolvedExpression)
+    return toFormat.format(
+      *(expressions.map { expr -> expr.evaluate(context, messageCollector) }).toList().toTypedArray(),
+    )
   }
 
-  override fun resolve(context: Context, messageCollector: MessageCollector): Iterable<String> {
-    if (expressions.isEmpty()) return listOf(toFormat)
-    return expressions.map { expr -> expr.evaluate(context, messageCollector) }.permute()
-      .map { toFormat.format(*it.toList().toTypedArray()) }
-  }
+  override fun resolveCalls(
+    context: Context,
+    messageCollector: MessageCollector,
+  ): Iterable<DefinedCall> =
+    if (expressions.isEmpty()) {
+      emptySet()
+    } else {
+      expressions.flatMap {
+        it.acceptExpressionVisitor(
+          ExpressionCallsVisitor(context, messageCollector),
+          context,
+          messageCollector,
+          emptySet<DefinedCall>(),
+        )
+      }
+    }
 
   companion object {
 

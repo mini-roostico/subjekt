@@ -96,25 +96,25 @@ subjects:
   - name: IterationDelegateAlign${{ prettify(AGGREGATE, loop(AGGREGATE)) }}
     code: |-
       fun delegate(aggregate: Aggregate<Int>) {
-          aggregate.#alignedOn("aggregate.$AGGREGATE")
+          aggregate.${{ alignedOn("aggregate." + AGGREGATE) }}
       }
 
       fun Aggregate<Int>.entry() {
-         #loop('delegate(this)')
+         ${{ loop('delegate(this)') }}
       }
     outcomes: []
 
   - name: IterationDelegate${{ prettify(AGGREGATE, loop(AGGREGATE)) }}
     code: |-
       fun delegate(aggregate: Aggregate<Int>) {
-          aggregate.$AGGREGATE
+          aggregate.${{ AGGREGATE }}
       }
 
       fun Aggregate<Int>.entry() {
-          #loop("delegate(this)")
+          ${{ loop("delegate(this)") }}
       }
     outcomes:
-      - warning: "Warning: suspicious call of function '$AGGREGATE' with aggregate argument
+      - warning: "Warning: suspicious call of function '${{ AGGREGATE }}' with aggregate argument
       inside a loop with no manual alignment operation"
 
   - name: IterationDelegateWithNestedFun${{ prettify(AGGREGATE, loop(AGGREGATE)) }}

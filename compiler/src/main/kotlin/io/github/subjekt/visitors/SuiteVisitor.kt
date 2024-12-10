@@ -9,8 +9,10 @@ import io.github.subjekt.nodes.suite.Subject
 import io.github.subjekt.nodes.suite.Suite
 import io.github.subjekt.nodes.suite.Template
 import io.github.subjekt.resolved.ResolvedSubject
+import io.github.subjekt.utils.Expressions.resolveCalls
 import io.github.subjekt.utils.MessageCollector
 import io.github.subjekt.utils.Permutations.permute
+import io.github.subjekt.utils.Permutations.permuteDefinitions
 
 /**
  * Main visitor used by the compiler to resolve a [Suite] to a list of [ResolvedSubject]s (and therefore a
@@ -62,17 +64,17 @@ class SuiteVisitor(
     val previousContext = context
     subject.macros.forEach { macro -> context.putMacro(macro) }
     subject.parameters.permute { parConfiguration ->
-      context = previousContext
       parConfiguration.forEach { par -> context.putParameter(par.identifier, par.value) }
-      val outcomes = subject.outcomes.map { it.toResolvedOutcome(context, messageCollector) }
-      subject.code.resolve(context, messageCollector).forEach { code ->
+      subject.resolveCalls(context, messageCollector).permuteDefinitions().forEach { definedCalls ->
+        val definedContext = context.withDefinedCalls(definedCalls).withParameters(parConfiguration)
         resolvedSubjects += ResolvedSubject(
-          subject.name.resolveOne(context, messageCollector),
-          code,
-          outcomes,
+          subject.name.resolve(definedContext, messageCollector),
+          subject.code.resolve(definedContext, messageCollector),
+          subject.outcomes.map { outcome -> outcome.toResolvedOutcome(definedContext, messageCollector) },
         )
       }
     }
+    context = previousContext
   }
 
   override fun visitOutcome(outcome: Outcome) {}

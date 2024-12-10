@@ -27,7 +27,11 @@ object SubjektCompiler {
     val suite = Suite.fromYamlSuite(this)
     val visitor = SuiteVisitor(messageCollector, listOf(Stdlib))
     visitor.visitSuite(suite)
-    return ResolvedSuite(suite.name, visitor.resolvedSubjects.toSet(), suite.configuration)
+    return ResolvedSuite(
+      suite.name,
+      visitor.resolvedSubjects.filterNot { it.code.isBlank() || it.name.isBlank() }.toSet(),
+      suite.configuration,
+    )
   }
 
   /**
