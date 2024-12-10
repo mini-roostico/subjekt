@@ -11,49 +11,47 @@ import org.gradle.api.tasks.TaskAction
 import java.io.File
 
 open class GenerateSubjektFilesExtension {
-  var inputPaths: List<File> = emptyList()
-  var outputDir: File? = null
+    var inputPaths: List<File> = emptyList()
+    var outputDir: File? = null
 }
 
 abstract class GenerateSubjektFilesTask : DefaultTask() {
-  @Input
-  lateinit var inputPaths: List<File>
+    @Input
+    lateinit var inputPaths: List<File>
 
-  @OutputDirectory
-  lateinit var outputDir: File
+    @OutputDirectory
+    lateinit var outputDir: File
 
-  @TaskAction
-  fun generateFiles() {
-    println("Processing files from: $inputPaths")
-    println("Output directory: $outputDir")
+    @TaskAction
+    fun generateFiles() {
+        println("Processing files from: $inputPaths to $outputDir")
 
-    subjekt {
-      inputPaths.forEach { file ->
-        if (file.isDirectory) {
-          addSourceDir(file)
-        } else {
-          addSource(file)
-        }
-      }
-    }.toFiles(outputDir.absolutePath, "kt")
+        subjekt {
+            inputPaths.forEach { file ->
+                if (file.isDirectory) {
+                    addSourceDir(file)
+                } else {
+                    addSource(file)
+                }
+            }
+        }.toFiles(outputDir.absolutePath, "kt")
 
-    println("File generation complete.")
-  }
+        println("Done.")
+    }
 }
 
 class SubjektPlugin : Plugin<Project> {
-  override fun apply(project: Project) {
-    // Create the extension for user configuration
-    val extension = project.extensions.create("subjekt", GenerateSubjektFilesExtension::class.java)
+    override fun apply(project: Project) {
+        val extension = project.extensions.create("subjekt", GenerateSubjektFilesExtension::class.java)
 
-    project.tasks.register("generateSubjektFiles", GenerateSubjektFilesTask::class.java) {
-      group = "generation"
-      description = "Generates files from the specified directories or files."
+        project.tasks.register("generateSubjektFiles", GenerateSubjektFilesTask::class.java) {
+            group = "generation"
+            description = "Generates files from the specified directories or files."
 
-      inputPaths = extension.inputPaths
-      outputDir = extension.outputDir
-        ?: throw IllegalArgumentException("Output directory must be specified in the 'generateSubjekt' extension.")
+            inputPaths = extension.inputPaths
+            outputDir = extension.outputDir
+                ?: throw IllegalArgumentException("Output directory must be specified in the 'subjekt' extension.")
+        }
+
     }
-
-  }
 }
