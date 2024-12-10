@@ -29,8 +29,8 @@ sealed class Outcome(
    * Resolves the outcome message with the given [context] and reporting to the [messageCollector].
    */
   fun toResolvedOutcome(context: Context, messageCollector: MessageCollector): ResolvedOutcome = when (this) {
-    is Warning -> ResolvedOutcome.Warning(message.resolveOne(context, messageCollector))
-    is Error -> ResolvedOutcome.Error(message.resolveOne(context, messageCollector))
+    is Warning -> ResolvedOutcome.Warning(message.resolve(context, messageCollector))
+    is Error -> ResolvedOutcome.Error(message.resolve(context, messageCollector))
   }
 
   companion object {
