@@ -38,6 +38,17 @@ dependencies {
 
   implementation(libs.velocity)
 
+  // https://mvnrepository.com/artifact/com.pinterest.ktlint/ktlint-core
+  implementation("com.pinterest.ktlint:ktlint-core:0.49.1")
+  // https://mvnrepository.com/artifact/com.pinterest.ktlint/ktlint-ruleset-standard
+  runtimeOnly("com.pinterest.ktlint:ktlint-ruleset-standard:1.5.0")
+  // https://mvnrepository.com/artifact/com.pinterest.ktlint/ktlint-rule-engine-core
+  implementation("com.pinterest.ktlint:ktlint-rule-engine-core:1.5.0")
+  // https://mvnrepository.com/artifact/com.pinterest.ktlint/ktlint-rule-engine
+  implementation("com.pinterest.ktlint:ktlint-rule-engine:1.5.0")
+  // https://mvnrepository.com/artifact/com.pinterest.ktlint/ktlint-cli-ruleset-core
+  implementation("com.pinterest.ktlint:ktlint-cli-ruleset-core:1.5.0")
+
   testImplementation(kotlin("test"))
 }
 
