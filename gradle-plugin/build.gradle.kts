@@ -12,8 +12,8 @@ gradlePlugin {
     website = "https://freshmag.github.io/subjekt-doc/"
     vcsUrl = "https://github.com/FreshMag/subjekt"
     plugins {
-        create("io.github.subjekt") {
-            id = "io.github.subjekt"
+        create("subjektPlugin") {
+            id = "io.github.freshmag.subjekt"
             displayName = "Subjekt"
             description = "A Gradle plugin for generating Kotlin code and tests from YAML configuration files"
             tags = listOf("generation", "test", "auto-generated")
