@@ -12,6 +12,9 @@ interface Resolvable {
    */
   fun resolve(context: Context, messageCollector: MessageCollector): String
 
+  /**
+   * Resolves all the calls present in this resolvable, returned as an Iterable of [DefinedCall]s.
+   */
   fun resolveCalls(context: Context, messageCollector: MessageCollector): Iterable<DefinedCall>
 
   /**

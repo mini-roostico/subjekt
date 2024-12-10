@@ -78,6 +78,9 @@ data class Context(
     macros[macro.identifier] = macro
   }
 
+  /**
+   * Creates a copy of this context with the given [parameters]. If a parameter already exists, it will be overwritten.
+   */
   fun withParameters(parameters: Iterable<ResolvedParameter>): Context = copy(
     parameters = (
       parameters.associate { par -> par.identifier to par.value }
@@ -85,6 +88,9 @@ data class Context(
       ).run { (this@Context.parameters + this).toMutableMap() },
   )
 
+  /**
+   * Creates a copy of this context with the given [macros]. If a macro already exists, it will be overwritten.
+   */
   fun withDefinedCalls(definedCalls: Iterable<DefinedCall>): Context = copy(
     definedCalls = (definedCalls.associate { call -> call.identifier to call }.toMutableMap()).run {
       (this@Context.definedCalls + this).toMutableMap()

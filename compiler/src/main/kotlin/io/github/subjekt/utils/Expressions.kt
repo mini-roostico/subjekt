@@ -30,6 +30,13 @@ object Expressions {
       "",
     )
 
+  /**
+   * Accepts the receiver [String] as a Subjekt expression and visits it with the provided [visitor]. The [context] is
+   * the one used to resolve parameters and macros' calls. The [messageCollector] is used to report any error that occurs.
+   * The [defaultValueIfError] is the value that will be returned if an error occurs during the evaluation.
+   *
+   * Returns the result of the given [visitor].
+   */
   fun <T> String.acceptExpressionVisitor(
     visitor: ExpressionIrVisitor<T>,
     context: Context,

@@ -6,6 +6,9 @@ import io.github.subjekt.nodes.suite.Template
 import io.github.subjekt.resolved.DefinedCall
 import io.github.subjekt.utils.MessageCollector
 
+/**
+ * Visitor that traverses the expression and collects all the calls that are made.
+ */
 class ExpressionCallsVisitor(
   /**
    * Starting context for the expression.

@@ -42,6 +42,10 @@ object Permutations {
       }
     }
 
+  /**
+   * Generated all possible permutations for the given definitions. Returns an [Iterable] of [Iterable]s where each
+   * corresponds to a possible instance of definitions that can be used for a unique context.
+   */
   fun Iterable<DefinedCall>.permuteDefinitions(): Iterable<Iterable<DefinedCall>> =
     this.groupBy(DefinedCall::identifier).values.permute()
 }
