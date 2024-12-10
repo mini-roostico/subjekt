@@ -300,4 +300,52 @@ class CompilerTests {
     assert(!collector.hasErrors())
     assertEquals(setOf("HelloWorldHowAreYou"), generated)
   }
+
+  @Test
+  fun `Multiple same names resolution`() {
+    val generatedSubjects = compile(
+      """
+      |---
+      |name: Test suite
+      |parameters:
+      |- name: test
+      |  values: [1, 2]
+      |macros:
+      |  - def: macro(a)
+      |    values: ["(${"\${{a}}"})", "{${"\${{a}}"}}"]
+      |subjects:
+      |  - name: "Test subject${"\${{test}}"}"
+      |    macros: 
+      |      - def: inner(b)
+      |        values: ["[${"\${{b + test}}"}]", "#${"\${{b + test}}"}#"]
+      |    code: "${"\${{macro(test)}}"}${"\${{inner(test)}}"}"
+      |    outcomes: []    
+      """.trimMargin(),
+      collector,
+    )
+    assert(!collector.hasErrors())
+    assertEquals(8, generatedSubjects?.subjects?.size)
+    val names = generatedSubjects!!.subjects.map(ResolvedSubject::name).toSet()
+    assertEquals(
+      setOf(
+        "Test subject1",
+        "Test subject2",
+      ),
+      names.toSet(),
+    )
+    val generated = generatedSubjects!!.toCode()
+    assertEquals(
+      setOf(
+        "(1)[11]",
+        "(1)#11#",
+        "{1}[11]",
+        "{1}#11#",
+        "(2)[22]",
+        "(2)#22#",
+        "{2}[22]",
+        "{2}#22#",
+      ),
+      generated,
+    )
+  }
 }

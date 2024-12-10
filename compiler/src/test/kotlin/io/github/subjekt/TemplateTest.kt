@@ -24,7 +24,7 @@ class TemplateTest {
     val template = Template.parse(templateString)
     val context = Context.of("name" to "World")
     val resolved = template.resolve(context, messageCollector)
-    val expected = listOf("Hello, World!")
+    val expected = "Hello, World!"
     assertEquals(expected, resolved)
   }
 
@@ -34,7 +34,7 @@ class TemplateTest {
     val template = Template.parse(templateString)
     val context = Context.of("name" to "World", "age" to 42)
     val resolved = template.resolve(context, messageCollector)
-    val expected = listOf("Hello, World! I'm 42 years old.")
+    val expected = "Hello, World! I'm 42 years old."
     assertEquals(expected, resolved)
   }
 }
