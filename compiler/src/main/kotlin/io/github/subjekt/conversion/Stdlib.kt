@@ -13,7 +13,7 @@ object Stdlib {
    */
   @JvmStatic
   @Macro("capitalizeFirst")
-  fun capitalizeFirst(str: String): List<String> = listOf(str.replaceFirstChar(Char::titlecase))
+  fun capitalizeFirst(str: String): String = str.replaceFirstChar(Char::titlecase)
 
   /**
    * Prettifies [arguments] by removing all non-alphanumeric characters and joining them together following a Pascal case
@@ -21,7 +21,7 @@ object Stdlib {
    */
   @JvmStatic
   @Macro("prettify")
-  fun prettify(vararg arguments: String): List<String> = listOf(arguments.joinToString("") { idFromCode(it) })
+  fun prettify(vararg arguments: String): String = arguments.joinToString("") { idFromCode(it) }
 
   private fun String.substringStartingFromFirstValidChar(): String {
     val startIndex = indexOfFirst { it.isLetter() }
