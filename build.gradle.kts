@@ -3,7 +3,7 @@ import java.util.Date
 
 allprojects {
   group = "io.github.freshmag"
-  version = "1.1.1"
+  version = "1.1.2"
 
   repositories {
     mavenCentral()
