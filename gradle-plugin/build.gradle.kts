@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.github.freshmag"
-version = "1.0.0"
+version = "1.0.1"
 
 gradlePlugin {
     website = "https://freshmag.github.io/subjekt-doc/"
