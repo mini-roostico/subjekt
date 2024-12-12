@@ -1,5 +1,6 @@
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinJvm
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
   id("io.github.subjekt.kotlin-library-conventions")
@@ -9,12 +10,17 @@ plugins {
   alias(libs.plugins.dokka)
 }
 
+java {
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
+}
+
 repositories {
   mavenCentral()
 }
 
 mavenPublishing {
-  coordinates("io.github.freshmag", "subjekt-api", "1.1.2")
+  coordinates("io.github.freshmag", "subjekt-api", "1.1.3")
   configure(
     KotlinJvm(
       // configures the -javadoc artifact, possible values:
@@ -53,5 +59,7 @@ dependencies {
 }
 
 kotlin {
-  jvmToolchain(17)
+  compilerOptions {
+    jvmTarget.set(JvmTarget.JVM_1_8)
+  }
 }

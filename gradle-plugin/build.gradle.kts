@@ -29,7 +29,3 @@ repositories {
 dependencies {
     implementation(project(":api"))
 }
-
-kotlin {
-    jvmToolchain(17)
-}
