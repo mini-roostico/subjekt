@@ -1,4 +1,9 @@
 
+# [1.1.3] - 2024-12-12
+- Updated compatibility with Java 8
+- Added more generators in the API
+
+
 # [1.1.2] - 2024-12-11
 - General bug fixes
 - Fixed Ktlint rule providers
