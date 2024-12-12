@@ -1,10 +1,7 @@
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
 
 allprojects {
-  group = "io.github.freshmag"
-  version = "1.1.2"
-
   repositories {
     mavenCentral()
   }
