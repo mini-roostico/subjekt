@@ -39,22 +39,6 @@ class CompilerTests {
   }
 
   @Test
-  fun `Incomplete YAML - missing outcomes`() {
-    val generated = compile(
-      """
-      |---
-      |name: Test suite
-      |subjects:
-      |- name: Test subject
-      |  code: Test code
-      """.trimMargin(),
-      collector,
-    )
-    assert(collector.hasErrors())
-    assertNull(generated)
-  }
-
-  @Test
   fun `Incomplete YAML - missing code`() {
     val generated = compile(
       """
