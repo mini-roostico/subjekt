@@ -9,35 +9,8 @@ config:
     */
     import it.unibo.collektive.aggregate.api.Aggregate
 
-macros:
-  - def: loop(code)
-    values:
-      - |-
-         for(i in 1..3) {
-           ${{ code }}
-         }
-      - |- 
-         (1..3).forEach {
-           ${{ code }}
-         }
-  - def: alignedOn(code)
-    values:
-      - |-
-         alignedOn(0) {
-           ${{ code }}
-         }
-  - def: nestedFun(code)
-    values:
-      - |-
-        fun Aggregate<Int>.nested() {
-          ${{ code }}
-        }
-  - def: aggregate(code)
-    values:
-      - |-
-        aggregate(0) {
-          ${{ code }}
-        }
+import:
+  "./api/src/main/resources/subjects/macros.yaml"
 
 parameters:
   - name: "AGGREGATE"
