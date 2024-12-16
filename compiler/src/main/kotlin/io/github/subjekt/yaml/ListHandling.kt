@@ -13,6 +13,9 @@ import com.fasterxml.jackson.databind.jsontype.TypeDeserializer
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.type.CollectionType
 
+/**
+ * Deserializer for lists that can handle both single elements and YAML (JSON) arrays.
+ */
 class GenericListDeserializer<T>(private val valueType: JavaType) : StdDeserializer<List<T>>(valueType) {
   override fun deserialize(parser: JsonParser, context: DeserializationContext): List<T> {
     val codec = parser.codec
@@ -26,6 +29,9 @@ class GenericListDeserializer<T>(private val valueType: JavaType) : StdDeseriali
   }
 }
 
+/**
+ * Module that adds a deserializer for lists that can handle both single elements and YAML (JSON) arrays.
+ */
 class ListHandlingModule : SimpleModule() {
   override fun setupModule(context: SetupContext) {
     context.addDeserializers(object : Deserializers.Base() {
