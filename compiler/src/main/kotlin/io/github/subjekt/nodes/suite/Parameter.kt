@@ -20,7 +20,10 @@ data class Parameter(
      * Creates a Parameter node from a YAML [parameter] parsed data class.
      */
     fun fromYamlParameter(parameter: io.github.subjekt.yaml.Parameter): Parameter {
-      return Parameter(parameter.name, parameter.values)
+      if (parameter.values == null && parameter.value == null) {
+        throw IllegalArgumentException("Illegal parameter definition. Expected 'values' or 'value' in $parameter")
+      }
+      return Parameter(parameter.name, parameter.values ?: listOf(parameter.value!!))
     }
   }
 }

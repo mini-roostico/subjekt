@@ -38,7 +38,13 @@ class Subject(
       val macros = yamlSubject.macros?.map { Macro.fromYamlMacro(it, config) } ?: emptyList()
       val parameters = yamlSubject.parameters?.map { Parameter.fromYamlParameter(it) } ?: emptyList()
       val code = Template.parse(yamlSubject.code, config.expressionPrefix, config.expressionSuffix)
-      return Subject(name, macros, parameters, code, yamlSubject.outcomes.map { Outcome.fromYamlOutcome(it, config) })
+      return Subject(
+        name,
+        macros,
+        parameters,
+        code,
+        yamlSubject.outcomes?.map { Outcome.fromYamlOutcome(it, config) } ?: emptyList(),
+      )
     }
   }
 }

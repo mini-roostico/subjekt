@@ -37,7 +37,12 @@ class Macro(
       val clean = macro.def.replace(" ", "")
       val identifier = clean.substringBefore("(")
       val arguments = clean.substringAfter("(").substringBefore(")").split(",").filter(String::isNotBlank)
-      val bodies = macro.values.map { Template.parse(it, config.expressionPrefix, config.expressionSuffix) }
+      if (macro.values == null && macro.value == null) {
+        throw IllegalArgumentException("Illegal macro definition. Expected 'values' or 'value' in $macro")
+      }
+      val bodies = macro.values?.map {
+        Template.parse(it, config.expressionPrefix, config.expressionSuffix)
+      } ?: listOf(Template.parse(macro.value!!, config.expressionPrefix, config.expressionSuffix))
       return Macro(identifier, arguments, bodies)
     }
   }

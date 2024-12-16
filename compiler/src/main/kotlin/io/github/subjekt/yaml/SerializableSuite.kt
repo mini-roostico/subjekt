@@ -19,7 +19,8 @@ data class Subject(
   val parameters: List<Parameter>?,
   val macros: List<Macro>?,
   val code: String,
-  val outcomes: List<Outcome>,
+  val outcomes: List<Outcome>?,
+  val properties: Map<String, Any>?,
 )
 
 /**
@@ -30,13 +31,18 @@ data class Macro(
    * Textual definition of the macro in the form `macroName(param1, param2, ...)`.
    */
   val def: String,
-  val values: List<String>,
+  val values: List<String>?,
+  val value: String?,
 )
 
 /**
  * Serializable representation of a parameter. It can be converted to a [io.github.subjekt.nodes.suite.Parameter] node.
  */
-data class Parameter(val name: String, val values: List<Any>)
+data class Parameter(
+  val name: String,
+  val values: List<String>?,
+  val value: String?,
+)
 
 /**
  * Serializable representation of an outcome. It can be converted to a [io.github.subjekt.nodes.suite.Outcome] node.
@@ -55,5 +61,5 @@ class Configuration : MutableMap<String, String> by mutableMapOf<String, String>
   val expressionSuffix: String
     get() = this["expressionSuffix"] ?: "}}"
   val lint: Boolean
-    get() = this["lint"]?.toBooleanStrictOrNull() != false
+    get() = this["lint"]?.toBooleanStrictOrNull() != false // Default to true
 }
