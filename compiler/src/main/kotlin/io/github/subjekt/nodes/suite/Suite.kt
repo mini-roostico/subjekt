@@ -26,6 +26,10 @@ data class Suite(
    * The list of global parameters defined in the suite.
    */
   val parameters: List<Parameter> = emptyList(),
+  /**
+   * The list of imports to include in the suite.
+   */
+  val imports: List<String> = emptyList(),
 ) {
 
   companion object {
@@ -36,10 +40,11 @@ data class Suite(
       val config = yamlSuite.config ?: Configuration()
       return Suite(
         yamlSuite.name,
-        yamlSuite.subjects.map { Subject.fromYamlSubject(it, config) },
+        yamlSuite.subjects?.map { Subject.fromYamlSubject(it, config) } ?: emptyList(),
         config,
         yamlSuite.macros?.map { Macro.fromYamlMacro(it, config) } ?: emptyList(),
         yamlSuite.parameters?.map { Parameter.fromYamlParameter(it) } ?: emptyList(),
+        yamlSuite.import ?: emptyList(),
       )
     }
   }

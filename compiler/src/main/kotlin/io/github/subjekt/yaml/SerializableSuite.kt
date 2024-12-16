@@ -7,7 +7,7 @@ data class Suite(
   val name: String,
   val config: Configuration?,
   val macros: List<Macro>?,
-  val subjects: List<Subject>,
+  val subjects: List<Subject>?,
   val parameters: List<Parameter>?,
   val import: List<String>? = null,
 )
