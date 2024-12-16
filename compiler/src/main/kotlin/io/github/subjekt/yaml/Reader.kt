@@ -1,6 +1,7 @@
 package io.github.subjekt.yaml
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.subjekt.nodes.Context
@@ -14,7 +15,16 @@ object Reader {
 
   private val mapper = ObjectMapper(YAMLFactory()).apply {
     findAndRegisterModules()
+
+    SimpleModule().also {
+      this.registerModule(ListHandlingModule())
+    }
   }
+
+  /**
+   * Read a value of type [T] from a YAML [string].
+   */
+  internal inline fun <reified T : Any> readYaml(string: String): T = mapper.readValue<T>(string)
 
   /**
    * Parse a YAML [file] into a [Suite] object. It reports errors to the [messageCollector]. Returns the [Suite] object
