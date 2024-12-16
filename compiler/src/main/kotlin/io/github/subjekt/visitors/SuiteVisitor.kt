@@ -71,6 +71,7 @@ class SuiteVisitor(
           subject.name.resolve(definedContext, messageCollector),
           subject.code.resolve(definedContext, messageCollector),
           subject.outcomes.map { outcome -> outcome.toResolvedOutcome(definedContext, messageCollector) },
+          subject.properties.mapValues { (_, value) -> value.resolve(definedContext, messageCollector) },
         )
       }
     }

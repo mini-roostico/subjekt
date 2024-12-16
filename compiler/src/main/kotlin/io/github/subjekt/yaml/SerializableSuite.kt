@@ -9,6 +9,7 @@ data class Suite(
   val macros: List<Macro>?,
   val subjects: List<Subject>,
   val parameters: List<Parameter>?,
+  val import: List<String>? = null,
 )
 
 /**
@@ -20,7 +21,7 @@ data class Subject(
   val macros: List<Macro>?,
   val code: String,
   val outcomes: List<Outcome>?,
-  val properties: Map<String, Any>?,
+  val properties: Map<String, String>? = null,
 )
 
 /**
