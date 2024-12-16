@@ -1,10 +1,8 @@
 package io.github.subjekt.generators
 
-import io.github.subjekt.Subjekt
 import io.github.subjekt.dsl.SubjektContext
 import io.github.subjekt.files.Utils.cleanName
 import io.github.subjekt.generators.SubjectGenerator.toResolvedSubjects
-import io.github.subjekt.linting.Linter
 import java.io.File
 
 /**
@@ -38,5 +36,4 @@ object FilesGenerator {
       file.writeText(subject.code)
       fileName to file
     }
-
 }
