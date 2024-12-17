@@ -1,4 +1,12 @@
 
+# [1.1.4] - 2024-12-17
+## Features
+- YAML imports from other Subjekt YAMLs
+- Flexible YAML arrays, supporting direct elements as single-element arrays
+- Flexible YAML fields, supporting missing fields in the YAML
+- Added resolvable, custom properties in subjects, customizable by the user
+
+
 # [1.1.3] - 2024-12-12
 - Updated compatibility with Java 8
 - Added more generators in the API
