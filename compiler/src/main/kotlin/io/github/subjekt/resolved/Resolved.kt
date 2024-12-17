@@ -47,6 +47,7 @@ data class ResolvedSubject(
   val name: String,
   val code: String,
   val outcomes: List<ResolvedOutcome>,
+  val properties: Map<String, String> = emptyMap(),
 )
 
 /**

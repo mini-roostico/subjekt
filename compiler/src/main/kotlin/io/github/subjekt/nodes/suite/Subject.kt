@@ -27,6 +27,10 @@ class Subject(
    * The list of outcomes of the subject.
    */
   val outcomes: List<Outcome> = emptyList(),
+  /**
+   * Additional properties that can be used to store arbitrary key-value pairs.
+   */
+  val properties: Map<String, Resolvable> = emptyMap(),
 ) {
 
   companion object {
@@ -38,7 +42,17 @@ class Subject(
       val macros = yamlSubject.macros?.map { Macro.fromYamlMacro(it, config) } ?: emptyList()
       val parameters = yamlSubject.parameters?.map { Parameter.fromYamlParameter(it) } ?: emptyList()
       val code = Template.parse(yamlSubject.code, config.expressionPrefix, config.expressionSuffix)
-      return Subject(name, macros, parameters, code, yamlSubject.outcomes.map { Outcome.fromYamlOutcome(it, config) })
+      return Subject(
+        name,
+        macros,
+        parameters,
+        code,
+        yamlSubject.outcomes?.map { Outcome.fromYamlOutcome(it, config) } ?: emptyList(),
+        yamlSubject.properties?.mapValues {
+            (_, value) ->
+          Template.parse(value, config.expressionPrefix, config.expressionSuffix)
+        } ?: emptyMap(),
+      )
     }
   }
 }

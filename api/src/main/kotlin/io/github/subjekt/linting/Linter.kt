@@ -13,7 +13,7 @@ import io.github.subjekt.utils.MessageCollector
  */
 object Linter {
   private val runtimeLoadedRuleProviders: Set<RuleProvider> = setOf(
-    *StandardRuleSetProvider().getRuleProviders().toTypedArray()
+    *StandardRuleSetProvider().getRuleProviders().toTypedArray(),
   )
 
   private val apiConsumerKtLintRuleEngine = KtLintRuleEngine(ruleProviders = runtimeLoadedRuleProviders)

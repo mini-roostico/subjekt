@@ -39,22 +39,6 @@ class CompilerTests {
   }
 
   @Test
-  fun `Incomplete YAML - missing outcomes`() {
-    val generated = compile(
-      """
-      |---
-      |name: Test suite
-      |subjects:
-      |- name: Test subject
-      |  code: Test code
-      """.trimMargin(),
-      collector,
-    )
-    assert(collector.hasErrors())
-    assertNull(generated)
-  }
-
-  @Test
   fun `Incomplete YAML - missing code`() {
     val generated = compile(
       """
@@ -318,8 +302,7 @@ class CompilerTests {
       |    macros: 
       |      - def: inner(b)
       |        values: ["[${"\${{b + test}}"}]", "#${"\${{b + test}}"}#"]
-      |    code: "${"\${{macro(test)}}"}${"\${{inner(test)}}"}"
-      |    outcomes: []    
+      |    code: "${"\${{macro(test)}}"}${"\${{inner(test)}}"}"  
       """.trimMargin(),
       collector,
     )
@@ -346,6 +329,43 @@ class CompilerTests {
         "{2}#22#",
       ),
       generated,
+    )
+  }
+
+  @Test
+  fun `Subject properties resolution`() {
+    val generatedSubjects = compile(
+      """
+      |---
+      |name: Test suite
+      |parameters:
+      |- name: test
+      |  values: [1, 2]
+      |macros:
+      |  - def: macro(a)
+      |    value: "(${"\${{a}}"})"
+      |subjects:
+      |  - name: "Test subject${"\${{test}}"}"
+      |    macros: 
+      |      - def: inner(b)
+      |        values: ["[${"\${{b + test}}"}]", "#${"\${{b + test}}"}#"]
+      |    code: "${"\${{macro(test)}}"}${"\${{inner(test)}}"}"  
+      |    properties:
+      |      prop1: "${"\${{macro(test)}}"}${"\${{inner(test)}}"}"  
+      |      prop2: "${"\${{inner(test)}}"}${"\${{macro(test)}}"}"
+      """.trimMargin(),
+      collector,
+    )
+    assert(!collector.hasErrors())
+    val properties = generatedSubjects!!.subjects.map { subject -> subject.properties }
+    assertEquals(
+      setOf(
+        mapOf("prop1" to "(1)[11]", "prop2" to "[11](1)"),
+        mapOf("prop1" to "(2)[22]", "prop2" to "[22](2)"),
+        mapOf("prop1" to "(1)#11#", "prop2" to "#11#(1)"),
+        mapOf("prop1" to "(2)#22#", "prop2" to "#22#(2)"),
+      ),
+      properties.toSet(),
     )
   }
 }

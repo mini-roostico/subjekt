@@ -7,12 +7,15 @@ import io.github.subjekt.nodes.suite.Outcome
 import io.github.subjekt.nodes.suite.Parameter
 import io.github.subjekt.nodes.suite.Subject
 import io.github.subjekt.nodes.suite.Suite
+import io.github.subjekt.nodes.suite.Suite.Companion.fromYamlSuite
 import io.github.subjekt.nodes.suite.Template
 import io.github.subjekt.resolved.ResolvedSubject
 import io.github.subjekt.utils.Expressions.resolveCalls
 import io.github.subjekt.utils.MessageCollector
 import io.github.subjekt.utils.Permutations.permute
 import io.github.subjekt.utils.Permutations.permuteDefinitions
+import io.github.subjekt.yaml.Reader.suiteFromYaml
+import java.io.File
 
 /**
  * Main visitor used by the compiler to resolve a [Suite] to a list of [ResolvedSubject]s (and therefore a
@@ -28,7 +31,8 @@ class SuiteVisitor(
    * List of modules to register in the context. By default, all the macros not found in the current context will be
    * searched inside the `std` module, which is automatically added to this list.
    */
-  modules: List<Any> = emptyList(),
+  private val modules: List<Any> = emptyList(),
+
 ) : SuiteIrVisitor<Unit> {
 
   private var context: Context = emptyContext()
@@ -42,9 +46,19 @@ class SuiteVisitor(
     modules.forEach { module -> context.registerModule(module, messageCollector) }
   }
 
+  private fun resolveImports(imports: List<String>) {
+    imports.forEach { import ->
+      suiteFromYaml(File(import), messageCollector)?.let { yamlSuite ->
+        val suite = fromYamlSuite(yamlSuite)
+        suite.macros.forEach { visitMacro(it) }
+      }
+    }
+  }
+
   override fun visitSuite(suite: Suite) {
     context.suiteName = suite.name
     context.configuration = suite.configuration
+    resolveImports(suite.imports)
     suite.macros.forEach { mac -> visitMacro(mac) }
     val previousContext = context
     suite.parameters.permute { parConfiguration ->
@@ -71,6 +85,7 @@ class SuiteVisitor(
           subject.name.resolve(definedContext, messageCollector),
           subject.code.resolve(definedContext, messageCollector),
           subject.outcomes.map { outcome -> outcome.toResolvedOutcome(definedContext, messageCollector) },
+          subject.properties.mapValues { (_, value) -> value.resolve(definedContext, messageCollector) },
         )
       }
     }
