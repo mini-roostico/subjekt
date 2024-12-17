@@ -20,7 +20,7 @@ repositories {
 }
 
 mavenPublishing {
-  coordinates("io.github.freshmag", "subjekt-api", "1.1.3")
+  coordinates("io.github.freshmag", "subjekt-api", "1.1.4")
   configure(
     KotlinJvm(
       // configures the -javadoc artifact, possible values:
