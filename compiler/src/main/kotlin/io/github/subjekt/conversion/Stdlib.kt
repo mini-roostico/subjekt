@@ -36,7 +36,7 @@ object Stdlib {
   /**
    * Obtains an identifier from a code snippet.
    */
-  private fun idFromCode(code: String, maxLength: Int = 20): String = code
+  private fun idFromCode(code: String, maxLength: Int = 50): String = code
     .substringStartingFromFirstValidChar()
     .trim()
     .substringUntilFirstInvalidChar()
