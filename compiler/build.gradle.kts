@@ -35,7 +35,7 @@ sourceSets {
 }
 
 mavenPublishing {
-  coordinates("io.github.freshmag", "subjekt-compiler", "1.1.3")
+  coordinates("io.github.freshmag", "subjekt-compiler", "1.1.4")
   configure(
     KotlinJvm(
       // configures the -javadoc artifact, possible values:
