@@ -1,0 +1,10 @@
+{
+  "name": "subjekt",
+  "devDependencies": {
+    "semantic-release-preconfigured-conventional-commits": "1.1.119"
+  },
+  "engines": {
+    "node": "22.13.0"
+  },
+  "version": ""
+}

@@ -1,0 +1,25 @@
+name: Test Extensively
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ windows-2022, macos-14, ubuntu-24.04 ]
+    runs-on: ${{ matrix.os }}
+    concurrency:
+      group: build-${{ github.workflow }}-${{ matrix.os }}-${{ github.event.number || github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+      - uses: DanySK/build-check-deploy-gradle-action@3.7.0
+        with:
+          check-command: |
+            ./gradlew check --parallel
+          should-run-codecov: false

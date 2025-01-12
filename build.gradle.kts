@@ -1,43 +1,86 @@
-import java.text.SimpleDateFormat
-import java.util.*
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-allprojects {
-  repositories {
-    mavenCentral()
+plugins {
+  alias(libs.plugins.antlr.kotlin)
+  alias(libs.plugins.dokka)
+  alias(libs.plugins.gitSemVer)
+  alias(libs.plugins.kotlin.multiplatform)
+  alias(libs.plugins.kotest.multiplatform)
+  alias(libs.plugins.kotlin.qa)
+  alias(libs.plugins.npm.publish)
+  alias(libs.plugins.multiJvmTesting)
+  alias(libs.plugins.taskTree)
+  alias(libs.plugins.mavenPublish)
+  alias(libs.plugins.serialization)
+}
+
+group = "io.github.mini-roostico"
+
+repositories {
+  google()
+  mavenCentral()
+}
+
+multiJvm {
+  jvmVersionForCompilation.set(21)
+}
+
+kotlin {
+  jvmToolchain(21)
+
+  jvm {
+    testRuns["test"].executionTask.configure {
+      useJUnitPlatform()
+    }
+    compilations.all {
+      compileTaskProvider.configure {
+        compilerOptions {
+          jvmTarget = JvmTarget.JVM_1_8
+        }
+      }
+    }
+  }
+
+  sourceSets {
+    commonMain {
+      kotlin {
+        srcDir(layout.buildDirectory.dir("generatedAntlr"))
+      }
+
+      dependencies {
+        implementation(libs.antlr.runtime)
+        implementation(libs.yamlkt)
+      }
+    }
+
+    commonTest.dependencies {
+      implementation(libs.bundles.kotlin.testing.common)
+      implementation(libs.bundles.kotest.common)
+    }
+
+    jvmTest.dependencies {
+      implementation(libs.kotest.runner.junit5)
+    }
+  }
+
+  js(IR) {
+    moduleName = "subjekt"
+    browser()
+    nodejs()
+    binaries.library()
+  }
+
+  applyDefaultHierarchyTemplate()
+
+  targets.all {
+    compilations.all {
+      compileTaskProvider.configure {
+        compilerOptions {
+          allWarningsAsErrors = true
+          freeCompilerArgs.add("-Xexpect-actual-classes")
+        }
+      }
+    }
   }
 }
 
-/**
- * Usage:
- * ```bash
- * ./gradlew changelog -Pversion="1.0.4" -PchangelogText="Added new feature."
- * ```
- */
-tasks.register("updateVersionAndChangelog") {
-  description = "Updates version in build.gradle.kts and appends a changelog entry."
-  group = "Versioning"
-
-  // Define input properties for the task
-  val newVersion: String by project
-  val changelogText: String by project
-
-  doLast {
-    val buildFile = file("build.gradle.kts")
-    // Update the version in build.gradle.kts
-    buildFile.writeText(buildFile.readText().replace("version = \"$version\"", "version = \"$newVersion\""))
-    println("Version updated to $newVersion in build.gradle.kts")
-
-    // Update the CHANGELOG.md
-    val changelogFile = file("CHANGELOG.md")
-    val currentDate = SimpleDateFormat("yyyy-MM-dd").format(Date())
-    val newChangelogEntry = """
-            |# [$newVersion] - $currentDate
-            |${changelogText.trimIndent()}
-        """.trimMargin()
-
-    val existingChangelog = if (changelogFile.exists()) changelogFile.readText() else ""
-    val updatedChangelog = "\n$newChangelogEntry\n\n$existingChangelog"
-    changelogFile.writeText(updatedChangelog)
-    println("Changelog updated with version $newVersion")
-  }
-}

@@ -1,30 +1,37 @@
 [versions]
-# libraries
-junit = "4.13.2"
-kotlinLogging = "7.0.0"
-picocli = "4.7.6"
-
-# plugins
-kotlin = "2.0.21"
-ktlint = "12.1.2"
-shadowJar = "8.3.5"
+kotest = "6.0.0.M1"
+kotlin = "2.1.0"
+antlr-kotlin = "1.0.1"
 
 [libraries]
-antlr = "org.antlr:antlr4:4.13.2"
-antlr-runtime = "org.antlr:antlr4-runtime:4.13.2"
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-jackson = "com.fasterxml.jackson.module:jackson-module-kotlin:2.18.1"
-jackson-yaml = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.1"
-kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlinLogging" }
-picocli = { module = "info.picocli:picocli", version.ref = "picocli" }
-slf4j = "org.slf4j:slf4j-api:2.0.16"
-slf4j-simple = "org.slf4j:slf4j-simple:2.0.16"
-velocity = "org.apache.velocity:velocity-engine-core:2.3"
+antlr-runtime = { module = "com.strumenta:antlr-kotlin-runtime", version.ref = "antlr-kotlin" }
+kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
+kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
+kotlin-test-common = { module = "org.jetbrains.kotlin:kotlin-test-common", version.ref = "kotlin" }
+kotlin-test-annotations-common = { module = "org.jetbrains.kotlin:kotlin-test-annotations-common", version.ref = "kotlin" }
+yamlkt = "net.mamoe.yamlkt:yamlkt:0.13.0"
+
+[bundles]
+kotest-common = [
+    "kotest-assertions-core",
+    "kotest-framework-engine",
+]
+kotlin-testing-common = [
+    "kotlin-test-common",
+    "kotlin-test-annotations-common",
+]
 
 [plugins]
-dokka = { id = "org.jetbrains.dokka", version = "1.9.20" }
-gradle-publish = { id = "com.gradle.plugin-publish", version = "1.2.1"}
-kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+antlr-kotlin = { id = "com.strumenta.antlr-kotlin", version.ref = "antlr-kotlin" }
+dokka = "org.jetbrains.dokka:2.0.0"
+gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:3.1.7"
+kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.78.0"
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.30.0" }
-shadowJar = { id = "com.gradleup.shadow", version.ref = "shadowJar" }
+multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:3.1.2"
+npm-publish = "dev.petuska.npm.publish:3.5.1"
+taskTree = "com.dorongold.task-tree:4.0.0"
+serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+

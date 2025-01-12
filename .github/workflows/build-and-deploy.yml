@@ -1,0 +1,95 @@
+name: CI/CD Process
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  check-secrets:
+    runs-on: ubuntu-24.04
+    outputs:
+      run-with-secrets: ${{ steps.require-secrets.outputs.run-with-secrets }}
+    steps:
+      - name: Find if secrets are available
+        id: detect-secrets
+        uses: DanySK/are-secrets-available@1.0.0
+        with:
+          secrets: ${{ toJson(secrets) }}
+      - name: Set condition
+        id: require-secrets
+        run: |
+          echo "run-with-secrets=${{ steps.detect-secrets.outputs.has-secrets == 'true' && !github.event.repository.fork }}" >> $GITHUB_OUTPUT
+
+  test-extensively:
+    needs:
+      - check-secrets
+    if: github.ref_name != 'master' || github.event.commits[0].author.name != 'renovate[bot]'
+    uses: ./.github/workflows/test-extensively.yml
+    secrets: inherit
+
+  release:
+    concurrency:
+      # Only one release job at a time per branch, as only master releases.
+      # Strictly sequential.
+      group: release-${{ github.event.number || github.ref }}
+    needs:
+      - check-secrets
+      - test-extensively
+    runs-on: ubuntu-24.04
+    permissions: write-all
+    if: |
+      always() &&
+      needs.check-secrets.outputs.run-with-secrets == 'true' &&
+      needs.test-extensively.result == 'success'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          token: ${{ secrets.DEPLOYMENT_TOKEN }}
+      - name: Find the version of Node from package.json
+        id: node-version
+        run: echo "version=$(jq -r .engines.node package.json)" >> $GITHUB_OUTPUT
+      - name: Install Node
+        uses: actions/setup-node@v4.1.0
+        with:
+          node-version: ${{ steps.node-version.outputs.version }}
+          registry-url: 'https://registry.npmjs.org/'
+      - name: Set NPM Registry
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+      - name: Semantic release
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          ORG_GRADLE_PROJECT_githubPackagesUsername: ${{ secrets.PACKAGES_USERNAME }}
+          ORG_GRADLE_PROJECT_githubPackagesPassword: ${{ secrets.DEPLOYMENT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.DEPLOYMENT_TOKEN }}
+          GH_TOKEN: ${{ secrets.DEPLOYMENT_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm install
+          npm ci
+          npx semantic-release
+          
+
+  success:
+    runs-on: ubuntu-24.04
+    needs:
+      - check-secrets
+      - test-extensively
+      - release
+    if: >-
+      always() && (
+        contains(join(needs.*.result, ','), 'failure')
+        || !contains(join(needs.*.result, ','), 'cancelled')
+      )
+    steps:
+      - name: Verify that there were no failures
+        run: ${{ !contains(join(needs.*.result, ','), 'failure') }}
