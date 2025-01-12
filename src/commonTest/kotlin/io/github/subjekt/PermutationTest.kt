@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
+ * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
+ *
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *
+ */
+
 package io.github.subjekt
 
 import io.github.subjekt.nodes.suite.Parameter
@@ -6,54 +14,54 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class PermutationTest {
-
-  @Test
-  fun `Simple parameter permutation`() {
-    val par1 = Parameter("test", listOf("1", "2"))
-    val par2 = Parameter("test2", listOf("3", "4"))
-    val result = mutableSetOf<String>()
-    listOf(par1, par2).permute {
-      result.add(it.joinToString(separator = "") { it.value.toString() })
+    @Test
+    fun `Simple parameter permutation`() {
+        val par1 = Parameter("test", listOf("1", "2"))
+        val par2 = Parameter("test2", listOf("3", "4"))
+        val result = mutableSetOf<String>()
+        listOf(par1, par2).permute {
+            result.add(it.joinToString(separator = "") { it.value.toString() })
+        }
+        val expected = setOf("13", "14", "23", "24")
+        assertEquals(expected, result)
     }
-    val expected = setOf("13", "14", "23", "24")
-    assertEquals(expected, result)
-  }
 
-  @Test
-  fun `One single parameter list`() {
-    val par1 = Parameter("test", listOf("1", "2"))
-    val par2 = Parameter("test2", listOf("3"))
-    val result = mutableSetOf<String>()
-    listOf(par1, par2).permute {
-      result.add(it.joinToString(separator = "") { it.value.toString() })
+    @Test
+    fun `One single parameter list`() {
+        val par1 = Parameter("test", listOf("1", "2"))
+        val par2 = Parameter("test2", listOf("3"))
+        val result = mutableSetOf<String>()
+        listOf(par1, par2).permute {
+            result.add(it.joinToString(separator = "") { it.value.toString() })
+        }
+        val expected = setOf("13", "23")
+        assertEquals(expected, result)
     }
-    val expected = setOf("13", "23")
-    assertEquals(expected, result)
-  }
 
-  @Test
-  fun `Both single parameter list`() {
-    val par1 = Parameter("test", listOf("1"))
-    val par2 = Parameter("test2", listOf("3"))
-    val result = mutableSetOf<String>()
-    listOf(par1, par2).permute {
-      result.add(it.joinToString(separator = "") { it.value.toString() })
+    @Test
+    fun `Both single parameter list`() {
+        val par1 = Parameter("test", listOf("1"))
+        val par2 = Parameter("test2", listOf("3"))
+        val result = mutableSetOf<String>()
+        listOf(par1, par2).permute {
+            result.add(it.joinToString(separator = "") { it.value.toString() })
+        }
+        val expected = setOf("13")
+        assertEquals(expected, result)
     }
-    val expected = setOf("13")
-    assertEquals(expected, result)
-  }
 
-  @Test
-  fun `Simple permutations of Iterable-Iterable-String`() {
-    val list = listOf(listOf(1, 2), listOf(3, 4, 5))
-    val expected = listOf(
-      listOf(1, 3),
-      listOf(1, 4),
-      listOf(1, 5),
-      listOf(2, 3),
-      listOf(2, 4),
-      listOf(2, 5),
-    )
-    assertEquals(expected, list.permute())
-  }
+    @Test
+    fun `Simple permutations of Iterable-Iterable-String`() {
+        val list = listOf(listOf(1, 2), listOf(3, 4, 5))
+        val expected =
+            listOf(
+                listOf(1, 3),
+                listOf(1, 4),
+                listOf(1, 5),
+                listOf(2, 3),
+                listOf(2, 4),
+                listOf(2, 5),
+            )
+        assertEquals(expected, list.permute())
+    }
 }

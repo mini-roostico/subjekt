@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
+ * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
+ *
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *
+ */
+
 import com.strumenta.antlrkotlin.gradle.AntlrKotlinTask
 import com.vanniktech.maven.publish.SonatypeHost
 import de.aaschmid.gradle.plugins.cpd.Cpd
@@ -8,89 +16,88 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
-  alias(libs.plugins.antlr.kotlin)
-  alias(libs.plugins.dokka)
-  alias(libs.plugins.gitSemVer)
-  alias(libs.plugins.kotlin.multiplatform)
-  alias(libs.plugins.kotest.multiplatform)
-  alias(libs.plugins.kotlin.qa)
-  alias(libs.plugins.npm.publish)
-  alias(libs.plugins.multiJvmTesting)
-  alias(libs.plugins.taskTree)
-  alias(libs.plugins.mavenPublish)
-  alias(libs.plugins.serialization)
+    alias(libs.plugins.antlr.kotlin)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.gitSemVer)
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotest.multiplatform)
+    alias(libs.plugins.kotlin.qa)
+    alias(libs.plugins.npm.publish)
+    alias(libs.plugins.multiJvmTesting)
+    alias(libs.plugins.taskTree)
+    alias(libs.plugins.mavenPublish)
+    alias(libs.plugins.serialization)
 }
 
 group = "io.github.mini-roostico"
 
 repositories {
-  google()
-  mavenCentral()
+    google()
+    mavenCentral()
 }
 
 multiJvm {
-  jvmVersionForCompilation.set(21)
+    jvmVersionForCompilation.set(21)
 }
 
 kotlin {
-  jvmToolchain(21)
+    jvmToolchain(21)
 
-  jvm {
-    testRuns["test"].executionTask.configure {
-      useJUnitPlatform()
-    }
-    compilations.all {
-      compileTaskProvider.configure {
-        compilerOptions {
-          jvmTarget = JvmTarget.JVM_1_8
+    jvm {
+        testRuns["test"].executionTask.configure {
+            useJUnitPlatform()
         }
-      }
-    }
-  }
-
-  sourceSets {
-    commonMain {
-      kotlin {
-        srcDir(layout.buildDirectory.dir("generatedAntlr"))
-      }
-
-      dependencies {
-        implementation(libs.antlr.runtime)
-        implementation(libs.yamlkt)
-      }
-    }
-
-    commonTest.dependencies {
-      implementation(libs.bundles.kotlin.testing.common)
-      implementation(libs.bundles.kotest.common)
-    }
-
-    jvmTest.dependencies {
-      implementation(libs.kotest.runner.junit5)
-    }
-  }
-
-  js(IR) {
-    moduleName = "subjekt"
-    browser()
-    nodejs()
-    binaries.library()
-  }
-
-  applyDefaultHierarchyTemplate()
-
-  targets.all {
-    compilations.all {
-      compileTaskProvider.configure {
-        compilerOptions {
-          allWarningsAsErrors = true
-          freeCompilerArgs.add("-Xexpect-actual-classes")
+        compilations.all {
+            compileTaskProvider.configure {
+                compilerOptions {
+                    jvmTarget = JvmTarget.JVM_1_8
+                }
+            }
         }
-      }
     }
-  }
+
+    sourceSets {
+        commonMain {
+            kotlin {
+                srcDir(layout.buildDirectory.dir("generatedAntlr"))
+            }
+
+            dependencies {
+                implementation(libs.antlr.runtime)
+                implementation(libs.yamlkt)
+            }
+        }
+
+        commonTest.dependencies {
+            implementation(libs.bundles.kotlin.testing.common)
+            implementation(libs.bundles.kotest.common)
+        }
+
+        jvmTest.dependencies {
+            implementation(libs.kotest.runner.junit5)
+        }
+    }
+
+    js(IR) {
+        moduleName = "subjekt"
+        browser()
+        nodejs()
+        binaries.library()
+    }
+
+    applyDefaultHierarchyTemplate()
+
+    targets.all {
+        compilations.all {
+            compileTaskProvider.configure {
+                compilerOptions {
+                    allWarningsAsErrors = true
+                    freeCompilerArgs.add("-Xexpect-actual-classes")
+                }
+            }
+        }
+    }
 }
-
 
 // Package set for generated ANTLR files
 val generatedFilesPackage = "io.github.subjekt.parsers.generated"
@@ -145,15 +152,16 @@ generateKotlinGrammarSource.configure {
     }
 }
 
-tasks.matching {
-    name in setOf("jsSourcesJar", "jvmSourcesJar", "sourcesJar", "dokkaHtml") ||
+tasks
+    .matching {
+        name in setOf("jsSourcesJar", "jvmSourcesJar", "sourcesJar", "dokkaHtml") ||
             it is Jar ||
             it is KotlinCompilationTask<*> ||
             it is Detekt ||
             it is Cpd
-}.configureEach {
-    dependsOn(generateKotlinGrammarSource)
-}
+    }.configureEach {
+        dependsOn(generateKotlinGrammarSource)
+    }
 
 tasks.withType<Detekt>().configureEach {
     exclude("**/generated/**")
