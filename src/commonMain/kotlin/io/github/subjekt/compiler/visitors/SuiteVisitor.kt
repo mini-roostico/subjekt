@@ -46,9 +46,9 @@ class SuiteVisitor(
      */
     val resolvedSubjects = mutableSetOf<ResolvedSubject>()
 
-    init {
-        modules.forEach { module -> context.registerModule(module, messageCollector) }
-    }
+//    init {
+//        modules.forEach { module -> context.registerModule(module, messageCollector) }
+//    }
 
     private fun resolveImports(imports: List<String>) {
         imports.forEach { import ->
