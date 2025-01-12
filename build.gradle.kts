@@ -1,4 +1,11 @@
+import com.strumenta.antlrkotlin.gradle.AntlrKotlinTask
+import com.vanniktech.maven.publish.SonatypeHost
+import de.aaschmid.gradle.plugins.cpd.Cpd
+import io.gitlab.arturbosch.detekt.Detekt
+import org.gradle.kotlin.dsl.register
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
   alias(libs.plugins.antlr.kotlin)
@@ -84,3 +91,148 @@ kotlin {
   }
 }
 
+
+// Package set for generated ANTLR files
+val generatedFilesPackage = "io.github.subjekt.parsers.generated"
+
+// Output dir where ANTLR outputs are generated
+val generatedFilesOutputDir = "generatedAntlr/${generatedFilesPackage.replace(".", "/")}"
+
+val generateKotlinGrammarSource =
+    tasks.register<AntlrKotlinTask>("generateKotlinGrammarSource") {
+        dependsOn("cleanGenerateKotlinGrammarSource")
+
+        source =
+            fileTree(layout.projectDirectory.dir("antlr")) {
+                include("**/*.g4")
+            }
+        packageName = generatedFilesPackage
+        arguments = listOf("-visitor")
+
+        outputDirectory =
+            layout.buildDirectory
+                .dir(generatedFilesOutputDir)
+                .get()
+                .asFile
+    }
+
+/**
+ * Unfortunately, the generated code contains some unsafe calls suppression annotations that are not needed.
+ * At the time of writing, there is an open issue of the antlr-kotlin plugin that will address this
+ * (https://github.com/Strumenta/antlr-kotlin/issues/200).
+ *
+ * For the time being, this ugly workaround will remove the annotations from the generated code.
+ */
+generateKotlinGrammarSource.configure {
+    doLast {
+        val outputDirectory =
+            layout.buildDirectory
+                .dir(generatedFilesOutputDir)
+                .get()
+                .asFile
+
+        outputDirectory
+            .walkTopDown()
+            .filter { it.isFile && it.extension == "kt" }
+            .forEach { file ->
+                val updatedLines =
+                    file
+                        .readLines()
+                        .filterNot { it.contains("@Suppress(\"UNSAFE_CALL\")") }
+
+                file.writeText(updatedLines.joinToString("\n"))
+            }
+    }
+}
+
+tasks.matching {
+    name in setOf("jsSourcesJar", "jvmSourcesJar", "sourcesJar", "dokkaHtml") ||
+            it is Jar ||
+            it is KotlinCompilationTask<*> ||
+            it is Detekt ||
+            it is Cpd
+}.configureEach {
+    dependsOn(generateKotlinGrammarSource)
+}
+
+tasks.withType<Detekt>().configureEach {
+    exclude("**/generated/**")
+}
+
+tasks.withType<Cpd>().configureEach {
+    source = files("src/").asFileTree
+}
+ktlint {
+    filter {
+        exclude("**/generated/**")
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "githubPackages"
+            url = uri("https://maven.pkg.github.com/mini-roostico/subjekt")
+            credentials(PasswordCredentials::class)
+        }
+    }
+}
+
+mavenPublishing {
+
+    // Configure POM metadata for the published artifact
+    pom {
+        name.set("Subjekt")
+        description.set("Utility software to generate Kotlin testing cases for compiler plugins.")
+        inceptionYear.set("2024")
+        url.set("https://github.com/mini-roostico/subjekt")
+
+        licenses {
+            license {
+                name.set("Apache License 2.0")
+                url.set("https://opensource.org/license/Apache-2.0/")
+            }
+        }
+
+        // Specify developer information
+        developers {
+            developer {
+                id.set("FreshMag")
+                name.set("Francesco Magnani")
+                email.set("magnani.franci2000@gmail.com")
+            }
+        }
+
+        // Specify SCM information
+        scm {
+            url.set("https://github.com/mini-roostico/subjekt")
+        }
+    }
+    // Enable GPG signing for all publications
+    signAllPublications()
+
+    if (System.getenv("CI") == "true") {
+        publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, automaticRelease = false)
+    }
+}
+
+npmPublish {
+    packages {
+        named("js") {
+            packageName = "subjekt"
+        }
+    }
+
+    registries {
+        register("npmjs") {
+            uri.set("https://registry.npmjs.org")
+            if (System.getenv("CI") == "true") {
+                authToken.set(System.getenv("NPM_TOKEN"))
+            } else {
+                val npmToken: String? by project
+                authToken.set(npmToken)
+                dry.set(npmToken.isNullOrBlank())
+            }
+        }
+    }
+}
