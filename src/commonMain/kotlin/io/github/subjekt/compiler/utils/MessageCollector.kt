@@ -9,13 +9,12 @@
 package io.github.subjekt.compiler.utils
 
 import io.github.subjekt.compiler.nodes.Context
-import org.antlr.v4.runtime.BaseErrorListener
-import org.antlr.v4.runtime.ConsoleErrorListener
-import org.antlr.v4.runtime.Lexer
-import org.antlr.v4.runtime.Parser
-import org.antlr.v4.runtime.RecognitionException
-import org.antlr.v4.runtime.Recognizer
-import java.lang.System
+import org.antlr.v4.kotlinruntime.BaseErrorListener
+import org.antlr.v4.kotlinruntime.ConsoleErrorListener
+import org.antlr.v4.kotlinruntime.Lexer
+import org.antlr.v4.kotlinruntime.Parser
+import org.antlr.v4.kotlinruntime.RecognitionException
+import org.antlr.v4.kotlinruntime.Recognizer
 
 /**
  * Utility class used for reporting and collecting compilation messages.
@@ -199,7 +198,7 @@ sealed class MessageCollector {
         when (message.type) {
             MessageType.INFO -> println("i: ${message.message}")
             MessageType.WARNING -> println("w: ${message.message}")
-            MessageType.ERROR -> System.err.println("e: ${message.message}")
+            MessageType.ERROR -> println("e: ${message.message}")
         }
     }
 
@@ -216,14 +215,14 @@ sealed class MessageCollector {
     private fun createListener(context: Context): BaseErrorListener =
         object : BaseErrorListener() {
             override fun syntaxError(
-                recognizer: Recognizer<*, *>?,
+                recognizer: Recognizer<*, *>,
                 offendingSymbol: Any?,
                 line: Int,
                 charPositionInLine: Int,
-                msg: String?,
+                msg: String,
                 e: RecognitionException?,
             ) {
-                error(msg ?: "Error", context, Position(line, charPositionInLine))
+                error(msg, context, Position(line, charPositionInLine))
             }
         }
 

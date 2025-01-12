@@ -8,10 +8,8 @@
 
 package io.github.subjekt.generators
 
-import io.github.subjekt.Subjekt
+import io.github.subjekt.compiler.resolved.ResolvedSubject
 import io.github.subjekt.dsl.SubjektContext
-import io.github.subjekt.linting.Linter
-import io.github.subjekt.resolved.ResolvedSubject
 
 /**
  * Generator for subjects from a SubjektContext
@@ -28,7 +26,8 @@ object SubjectGenerator {
                     val preamble = source.configuration.codePreamble
                     var code = (if (preamble.isNotBlank()) preamble + "\n" else "") + it.code
                     if (source.configuration.lint) {
-                        code = Linter.lint(code, Subjekt.reporter)
+                        // todo: implement linting
+                        // code = Linter.lint(code, Subjekt.reporter)
                     }
                     ResolvedSubject(it.name, code, it.outcomes)
                 }
