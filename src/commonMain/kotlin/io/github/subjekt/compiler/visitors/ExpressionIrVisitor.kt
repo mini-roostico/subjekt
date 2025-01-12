@@ -49,5 +49,6 @@ interface ExpressionIrVisitor<T> {
             is Node.Plus -> visitPlus(node)
             is Node.Literal -> visitLiteral(node)
             is Node.DotCall -> visitDotCall(node)
+            is Node.Error -> TODO()
         }
 }

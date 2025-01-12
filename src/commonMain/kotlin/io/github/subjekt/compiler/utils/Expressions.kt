@@ -8,16 +8,16 @@
 
 package io.github.subjekt.compiler.utils
 
-import io.github.subjekt.ExpressionLexer
-import io.github.subjekt.ExpressionParser
 import io.github.subjekt.compiler.nodes.Context
 import io.github.subjekt.compiler.nodes.suite.Subject
 import io.github.subjekt.compiler.resolved.DefinedCall
 import io.github.subjekt.compiler.visitors.ExpressionIrCreationVisitor
 import io.github.subjekt.compiler.visitors.ExpressionIrVisitor
 import io.github.subjekt.compiler.visitors.ExpressionResolveVisitor
-import org.antlr.v4.runtime.CharStreams
-import org.antlr.v4.runtime.CommonTokenStream
+import io.github.subjekt.parsers.generated.ExpressionLexer
+import io.github.subjekt.parsers.generated.ExpressionParser
+import org.antlr.v4.kotlinruntime.CharStreams
+import org.antlr.v4.kotlinruntime.CommonTokenStream
 
 /**
  * Utility object for expressions.
@@ -63,7 +63,7 @@ object Expressions {
         if (parser.numberOfSyntaxErrors > 0) {
             return defaultValueIfError
         }
-        val ast = ExpressionIrCreationVisitor(context, messageCollector).visit(tree)
+        val ast = ExpressionIrCreationVisitor(context, messageCollector).visit(tree)!!
         return visitor.visit(ast)
     }
 

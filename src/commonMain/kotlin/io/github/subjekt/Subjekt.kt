@@ -8,8 +8,8 @@
 
 package io.github.subjekt
 
+import io.github.subjekt.compiler.utils.MessageCollector
 import io.github.subjekt.dsl.SubjektContext
-import io.github.subjekt.utils.MessageCollector
 
 /**
  * The main entry point for the Subjekt DSL

@@ -12,7 +12,6 @@ import io.github.subjekt.compiler.nodes.Context
 import io.github.subjekt.compiler.resolved.DefinedCall
 import io.github.subjekt.compiler.resolved.Resolvable
 import io.github.subjekt.compiler.utils.Expressions.acceptExpressionVisitor
-import io.github.subjekt.compiler.utils.Expressions.evaluate
 import io.github.subjekt.compiler.utils.MessageCollector
 import io.github.subjekt.compiler.visitors.ExpressionCallsVisitor
 
@@ -30,9 +29,11 @@ data class Template(
         messageCollector: MessageCollector,
     ): String {
         if (expressions.isEmpty()) return toFormat
-        return toFormat.format(
-            *(expressions.map { expr -> expr.evaluate(context, messageCollector) }).toList().toTypedArray(),
-        )
+        // todo `format` is not available in Kotlin multiplatform. We need to find a way to implement this.
+        TODO()
+//        return toFormat.format(
+//            *(expressions.map { expr -> expr.evaluate(context, messageCollector) }).toList().toTypedArray(),
+//        )
     }
 
     override fun resolveCalls(

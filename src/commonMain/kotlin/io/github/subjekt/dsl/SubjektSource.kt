@@ -9,11 +9,10 @@
 package io.github.subjekt.dsl
 
 import io.github.subjekt.Subjekt
-import io.github.subjekt.SubjektCompiler
-import io.github.subjekt.resolved.ResolvedSubject
-import io.github.subjekt.resolved.ResolvedSuite
-import io.github.subjekt.yaml.Configuration
-import java.io.File
+import io.github.subjekt.compiler.SubjektCompiler
+import io.github.subjekt.compiler.resolved.ResolvedSubject
+import io.github.subjekt.compiler.resolved.ResolvedSuite
+import io.github.subjekt.compiler.yaml.Configuration
 
 /**
  * A source of Subjekt [code].
@@ -45,6 +44,6 @@ class SubjektSource(
         /**
          * Creates a [SubjektSource] from a YAML [file].
          */
-        fun fromFile(file: File): SubjektSource = SubjektSource(file.readText())
+        fun fromFile(filePath: String): SubjektSource = TODO()
     }
 }

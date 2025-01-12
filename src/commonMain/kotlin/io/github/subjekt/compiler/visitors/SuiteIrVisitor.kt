@@ -17,7 +17,7 @@ import io.github.subjekt.compiler.nodes.suite.Template
 
 /**
  * Visitor for the intermediate representation of a suite. Unlike the [io.github.subjekt.compiler.nodes.expression.Node]
- * representation, this visitor visits the nodes specified in the [io.github.subjekt.nodes.suite] package.
+ * representation, this visitor visits the nodes specified in the [io.github.subjekt.compiler.nodes.suite] package.
  */
 interface SuiteIrVisitor<T> {
     /**

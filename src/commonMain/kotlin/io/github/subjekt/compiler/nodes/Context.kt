@@ -9,14 +9,10 @@
 package io.github.subjekt.compiler.nodes
 
 import io.github.subjekt.compiler.conversion.CustomMacro
-import io.github.subjekt.compiler.conversion.SubjektModule
 import io.github.subjekt.compiler.nodes.suite.Macro
 import io.github.subjekt.compiler.resolved.DefinedCall
 import io.github.subjekt.compiler.resolved.ResolvedParameter
-import io.github.subjekt.compiler.utils.MessageCollector
 import io.github.subjekt.compiler.yaml.Configuration
-import java.lang.reflect.Modifier
-import kotlin.reflect.full.findAnnotation
 
 /**
  * Represents a context for the compiler. This context is used to store global parameters and macros for ONLY ONE
@@ -115,51 +111,51 @@ data class Context(
                 },
         )
 
-    /**
-     * Registers a module in the context. If the module already exists, it will be overwritten.
-     *
-     * A [module] must be an object annotated with [SubjektModule]. The module must contain static methods annotated with
-     * [io.github.subjekt.compiler.conversion.Macro]. The module name used to call macros is defined by the [SubjektModule.name]
-     * annotation parameter.
-     *
-     * Errors and warnings will be reported to the [messageCollector].
-     */
-    fun registerModule(
-        module: Any,
-        messageCollector: MessageCollector,
-    ) {
-        val clazz = module::class
-        val annotation = clazz.findAnnotation<SubjektModule>()
-        if (annotation == null) {
-            messageCollector.error("Class ${clazz.simpleName} is not annotated with @SubjektModule", this, -1)
-            return
-        }
-        val moduleName = annotation.name
-        val staticMethods =
-            clazz.java.declaredMethods
-                .filter {
-                    it.isAnnotationPresent(io.github.subjekt.compiler.conversion.Macro::class.java)
-                }.onEach {
-                    if (!Modifier.isStatic(it.modifiers)) {
-                        messageCollector.warning(
-                            "Declared macro: '${it.name}' in module '$moduleName' is not static",
-                            this,
-                            -1,
-                        )
-                    }
-                }.filter { Modifier.isStatic(it.modifiers) }
-                .filterNot { it.name.contains("$") }
-        if (staticMethods.isEmpty()) {
-            messageCollector.warning("Registered module '$moduleName' has no available methods", this, -1)
-            return
-        }
-        staticMethods
-            .mapNotNull { method ->
-                CustomMacro.Companion.fromKotlinStatic(method, this, messageCollector)
-            }.forEach { customMacro ->
-                modules[moduleName] = modules.getOrDefault(moduleName, emptyMap()).plus(customMacro.id to customMacro)
-            }
-    }
+//    /**
+//     * Registers a module in the context. If the module already exists, it will be overwritten.
+//     *
+//     * A [module] must be an object annotated with [SubjektModule]. The module must contain static methods annotated with
+//     * [io.github.subjekt.compiler.conversion.Macro]. The module name used to call macros is defined by the [SubjektModule.name]
+//     * annotation parameter.
+//     *
+//     * Errors and warnings will be reported to the [messageCollector].
+//     */
+//    fun registerModule(
+//        module: Any,
+//        messageCollector: MessageCollector,
+//    ) {
+//        val clazz = module::class
+//        val annotation = clazz.findAnnotation<SubjektModule>()
+//        if (annotation == null) {
+//            messageCollector.error("Class ${clazz.simpleName} is not annotated with @SubjektModule", this, -1)
+//            return
+//        }
+//        val moduleName = annotation.name
+//        val staticMethods =
+//            clazz.java.declaredMethods
+//                .filter {
+//                    it.isAnnotationPresent(io.github.subjekt.compiler.conversion.Macro::class.java)
+//                }.onEach {
+//                    if (!Modifier.isStatic(it.modifiers)) {
+//                        messageCollector.warning(
+//                            "Declared macro: '${it.name}' in module '$moduleName' is not static",
+//                            this,
+//                            -1,
+//                        )
+//                    }
+//                }.filter { Modifier.isStatic(it.modifiers) }
+//                .filterNot { it.name.contains("$") }
+//        if (staticMethods.isEmpty()) {
+//            messageCollector.warning("Registered module '$moduleName' has no available methods", this, -1)
+//            return
+//        }
+//        staticMethods
+//            .mapNotNull { method ->
+//                CustomMacro.Companion.fromKotlinStatic(method, this, messageCollector)
+//            }.forEach { customMacro ->
+//                modules[moduleName] = modules.getOrDefault(moduleName, emptyMap()).plus(customMacro.id to customMacro)
+//            }
+//    }
 
     companion object {
         /**

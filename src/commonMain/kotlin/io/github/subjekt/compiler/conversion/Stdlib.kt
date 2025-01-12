@@ -8,6 +8,7 @@
 
 package io.github.subjekt.compiler.conversion
 
+import kotlin.jvm.JvmStatic
 import kotlin.math.min
 
 /**

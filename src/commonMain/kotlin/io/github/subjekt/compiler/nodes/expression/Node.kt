@@ -93,4 +93,11 @@ sealed class Node(
         val arguments: List<Node>,
         line: Int,
     ) : Node(line)
+
+    /**
+     * Represents an error node.
+     */
+    class Error(
+        line: Int,
+    ) : Node(line)
 }
