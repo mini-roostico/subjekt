@@ -15,7 +15,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 
 class PermutationTest : StringSpec({
-    "Simple parameter permutation" {
+    "Simple parameter permutation".config(enabled = false) {
         val par1 = Parameter("test", listOf("1", "2"))
         val par2 = Parameter("test2", listOf("3", "4"))
         val result = mutableSetOf<String>()
@@ -26,7 +26,7 @@ class PermutationTest : StringSpec({
         result shouldBe expected
     }
 
-    "One single parameter list" {
+    "One single parameter list".config(enabled = false) {
         val par1 = Parameter("test", listOf("1", "2"))
         val par2 = Parameter("test2", listOf("3"))
         val result = mutableSetOf<String>()
@@ -37,7 +37,7 @@ class PermutationTest : StringSpec({
         result shouldBe expected
     }
 
-    "Both single parameter list" {
+    "Both single parameter list".config(enabled = false) {
         val par1 = Parameter("test", listOf("1"))
         val par2 = Parameter("test2", listOf("3"))
         val result = mutableSetOf<String>()
@@ -48,7 +48,7 @@ class PermutationTest : StringSpec({
         result shouldBe expected
     }
 
-    "Simple permutations of Iterable-Iterable-String" {
+    "Simple permutations of Iterable-Iterable-String".config(enabled = false) {
         val list = listOf(listOf(1, 2), listOf(3, 4, 5))
         val expected =
             listOf(

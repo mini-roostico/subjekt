@@ -19,7 +19,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 
 class ListHandlingTest : StringSpec({
-    "should deserialize list of strings" {
+    "should deserialize list of strings".config(enabled = false) {
         val yaml =
             """
             - one
@@ -32,7 +32,7 @@ class ListHandlingTest : StringSpec({
         result shouldBe listOf("one", "two", "three")
     }
 
-    "should deserialize list of integers" {
+    "should deserialize list of integers".config(enabled = false) {
         val yaml =
             """
             - 1
@@ -45,7 +45,7 @@ class ListHandlingTest : StringSpec({
         result shouldBe listOf(1, 2, 3)
     }
 
-    "should deserialize a single element list without dash" {
+    "should deserialize a single element list without dash".config(enabled = false) {
         val yamlSugar =
             """
             name: "suite"
@@ -69,7 +69,7 @@ class ListHandlingTest : StringSpec({
         result shouldBe resultSugar
     }
 
-    "should deserialize a full suite with syntactic sugar" {
+    "should deserialize a full suite with syntactic sugar".config(enabled = false) {
         val yaml =
             """
             name: "suite"

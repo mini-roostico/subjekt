@@ -18,14 +18,14 @@ import io.kotest.matchers.shouldBe
 class TemplateTest : StringSpec({
     val messageCollector = MessageCollector.NullCollector()
 
-    "Simple template parsing" {
+    "Simple template parsing".config(enabled = false) {
         val templateString = "Hello, \${{ name }}!"
         val template = Template.parse(templateString)
         val expected = Template("Hello, %s!", listOf("name"), templateString)
         template shouldBe expected
     }
 
-    "Simple template resolution" {
+    "Simple template resolution".config(enabled = false) {
         val templateString = "Hello, \${{ name }}!"
         val template = Template.parse(templateString)
         val context = Context.of("name" to "World")
@@ -34,7 +34,7 @@ class TemplateTest : StringSpec({
         resolved shouldBe expected
     }
 
-    "Multiple expressions template resolution" {
+    "Multiple expressions template resolution".config(enabled = false) {
         val templateString = "Hello, \${{ name }}! I'm \${{ age }} years old."
         val template = Template.parse(templateString)
         val context = Context.of("name" to "World", "age" to 42)

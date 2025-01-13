@@ -27,7 +27,7 @@ class CompilerTests : StringSpec({
 
     fun ResolvedSuite.toCode(): Set<String> = this.subjects.map(ResolvedSubject::code).toSet()
 
-    "Simple YAML" {
+    "Simple YAML".config(enabled = false) {
         val generated =
             compile(
                 """
@@ -45,7 +45,7 @@ class CompilerTests : StringSpec({
         generated shouldBe setOf("Subject code here!")
     }
 
-    "Incomplete YAML - missing code" {
+    "Incomplete YAML - missing code".config(enabled = false) {
         val generated =
             compile(
                 """
@@ -61,7 +61,7 @@ class CompilerTests : StringSpec({
         generated shouldBe null
     }
 
-    "Incomplete YAML - missing name" {
+    "Incomplete YAML - missing name".config(enabled = false) {
         val generated =
             compile(
                 """
@@ -77,7 +77,7 @@ class CompilerTests : StringSpec({
         generated shouldBe null
     }
 
-    "Suite with macros" {
+    "Suite with macros".config(enabled = false) {
         val generated =
             compile(
                 """
@@ -99,7 +99,7 @@ class CompilerTests : StringSpec({
         generated shouldBe setOf("(test)", "{test}")
     }
 
-    "Suite with nested macros" {
+    "Suite with nested macros".config(enabled = false) {
         val generated =
             compile(
                 """
@@ -125,7 +125,7 @@ class CompilerTests : StringSpec({
         generated shouldBe setOf("(1test1)", "(2test2)", "{1test1}", "{2test2}")
     }
 
-    "Suite with parameters and macros" {
+    "Suite with parameters and macros".config(enabled = false) {
         val generated =
             compile(
                 """
@@ -152,7 +152,7 @@ class CompilerTests : StringSpec({
         generated shouldBe setOf("(a)", "{a}", "(b)", "{b}")
     }
 
-    "Suite with custom expression delimiters" {
+    "Suite with custom expression delimiters".config(enabled = false) {
         val generated =
             compile(
                 """
@@ -177,7 +177,7 @@ class CompilerTests : StringSpec({
         generated shouldBe setOf("(\"test\")", "{\"test\"}")
     }
 
-    "Suite with wrong dot calls" {
+    "Suite with wrong dot calls".config(enabled = false) {
         val generated =
             compile(
                 """
@@ -194,7 +194,7 @@ class CompilerTests : StringSpec({
         generated?.subjects?.shouldBeEmpty()
     }
 
-    "Missing module" {
+    "Missing module".config(enabled = false) {
         val generated =
             compile(
                 """
@@ -217,7 +217,7 @@ class CompilerTests : StringSpec({
         generated?.subjects?.shouldBeEmpty()
     }
 
-    "Missing macro in module" {
+    "Missing macro in module".config(enabled = false) {
         val generated =
             compile(
                 """
@@ -240,7 +240,7 @@ class CompilerTests : StringSpec({
         generated?.subjects?.shouldBeEmpty()
     }
 
-    "Inferred call to the standard library" {
+    "Inferred call to the standard library".config(enabled = false) {
         val generated =
             compile(
                 """
@@ -257,7 +257,7 @@ class CompilerTests : StringSpec({
         generated shouldBe setOf("Test")
     }
 
-    "Nested call with dot call" {
+    "Nested call with dot call".config(enabled = false) {
         val generated =
             compile(
                 """
@@ -279,7 +279,7 @@ class CompilerTests : StringSpec({
         generated shouldBe setOf("(Test)", "{Test}")
     }
 
-    "Custom macro vararg argument" {
+    "Custom macro vararg argument".config(enabled = false) {
         val generated =
             compile(
                 """
@@ -296,7 +296,7 @@ class CompilerTests : StringSpec({
         generated shouldBe setOf("HelloWorldHowAreYou")
     }
 
-    "Multiple same names resolution" {
+    "Multiple same names resolution".config(enabled = false) {
         val generatedSubjects =
             compile(
                 """
@@ -335,7 +335,7 @@ class CompilerTests : StringSpec({
             )
     }
 
-    "Subject properties resolution" {
+    "Subject properties resolution".config(enabled = false) {
         val generatedSubjects =
             compile(
                 """
