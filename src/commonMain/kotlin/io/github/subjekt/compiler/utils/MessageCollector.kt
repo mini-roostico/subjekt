@@ -2,7 +2,8 @@
  * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
- *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the
+ *  LICENSE file in this project's repository's top directory.
  *
  */
 
@@ -24,8 +25,19 @@ sealed class MessageCollector {
      * Represents a message type.
      */
     enum class MessageType {
+        /**
+         * Info message.
+         */
         INFO,
+
+        /**
+         * Warning message.
+         */
         WARNING,
+
+        /**
+         * Error message.
+         */
         ERROR,
     }
 
@@ -33,7 +45,13 @@ sealed class MessageCollector {
      * Utility class used to represent a reported position in the source code.
      */
     data class Position(
+        /**
+         * The line number.
+         */
         val line: Int = -1,
+        /**
+         * The character position in the line.
+         */
         val charPositionInLine: Int = -1,
     ) {
         override fun toString(): String {
@@ -49,40 +67,7 @@ sealed class MessageCollector {
     abstract val messages: List<Message>
 
     /**
-     * Reports an info [message], in the given [position] within the given [context]
-     */
-    fun info(
-        message: String,
-        context: Context,
-        position: Position,
-    ) {
-        report(Message(MessageType.INFO, message), context, position)
-    }
-
-    /**
-     * Reports an info [message], in the given [position] `(line, charInLine)` within the given [context]
-     */
-    fun info(
-        message: String,
-        context: Context,
-        position: Pair<Int, Int>,
-    ) {
-        report(Message(MessageType.INFO, message), context, position)
-    }
-
-    /**
-     * Reports an info [message], referring to the given [line] within the given [context]
-     */
-    fun info(
-        message: String,
-        context: Context,
-        line: Int,
-    ) {
-        report(Message(MessageType.INFO, message), context, line)
-    }
-
-    /**
-     * Reports a warning [message], in the given [position] within the given [context]
+     * Reports a warning [message], in the given [position] within the given [context].
      */
     fun warning(
         message: String,
@@ -93,18 +78,7 @@ sealed class MessageCollector {
     }
 
     /**
-     * Reports a warning [message], in the given [position] `(line, charInLine)` within the given [context]
-     */
-    fun warning(
-        message: String,
-        context: Context,
-        position: Pair<Int, Int>,
-    ) {
-        report(Message(MessageType.WARNING, message), context, position)
-    }
-
-    /**
-     * Reports an info [message], referring to the given [line] within the given [context]
+     * Reports an info [message], referring to the given [line] within the given [context].
      */
     fun warning(
         message: String,
@@ -115,7 +89,7 @@ sealed class MessageCollector {
     }
 
     /**
-     * Reports an error [message], in the given [position] within the given [context]
+     * Reports an error [message], in the given [position] within the given [context].
      */
     fun error(
         message: String,
@@ -126,18 +100,7 @@ sealed class MessageCollector {
     }
 
     /**
-     * Reports an error [message], in the given [position] `(line, charInLine)` within the given [context]
-     */
-    fun error(
-        message: String,
-        context: Context,
-        position: Pair<Int, Int>,
-    ) {
-        report(Message(MessageType.ERROR, message), context, position)
-    }
-
-    /**
-     * Reports an error [message], referring to the given [line] within the given [context]
+     * Reports an error [message], referring to the given [line] within the given [context].
      */
     fun error(
         message: String,
@@ -159,17 +122,6 @@ sealed class MessageCollector {
         val type: MessageType,
         val message: String,
     )
-
-    /**
-     * Main method to report a [message] in the given [context] at the given [position] `(line, charInLine)`.
-     */
-    fun report(
-        message: Message,
-        context: Context,
-        position: Pair<Int, Int>,
-    ) {
-        report(message, context, Position(position.first, position.second))
-    }
 
     /**
      * Main method to report a [message] in the given [context] at the given [line].
@@ -227,23 +179,15 @@ sealed class MessageCollector {
         }
 
     /**
-     * Adds a listener to the given ANTLR [lexer].
+     * Adds a listener to the given ANTLR [lexer] and [parser].
      */
-    fun useLexer(
+    fun setLexerAndParser(
         lexer: Lexer,
+        parser: Parser,
         context: Context,
     ) {
         lexer.removeErrorListener(ConsoleErrorListener.INSTANCE)
         lexer.addErrorListener(createListener(context))
-    }
-
-    /**
-     * Adds a listener to the given ANTLR [parser].
-     */
-    fun useParser(
-        parser: Parser,
-        context: Context,
-    ) {
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE)
         parser.addErrorListener(createListener(context))
     }
@@ -303,8 +247,12 @@ sealed class MessageCollector {
             message: Message,
             context: Context,
             position: Position,
-        ) {}
+        ) {
+            // do nothing
+        }
 
-        override fun flushMessages() {}
+        override fun flushMessages() {
+            // do nothing
+        }
     }
 }

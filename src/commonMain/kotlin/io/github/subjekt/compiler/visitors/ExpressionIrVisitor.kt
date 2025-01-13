@@ -2,7 +2,8 @@
  * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
- *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the
+ *  LICENSE file in this project's repository's top directory.
  *
  */
 
@@ -15,27 +16,27 @@ import io.github.subjekt.compiler.nodes.expression.Node
  */
 interface ExpressionIrVisitor<T> {
     /**
-     * Visits a [Node.Call]
+     * Visits a [Node.Call].
      */
     fun visitCall(node: Node.Call): T
 
     /**
-     * Visits a [Node.Id]
+     * Visits a [Node.Id].
      */
     fun visitId(node: Node.Id): T
 
     /**
-     * Visits a [Node.Plus]
+     * Visits a [Node.Plus].
      */
     fun visitPlus(node: Node.Plus): T
 
     /**
-     * Visits a [Node.Literal]
+     * Visits a [Node.Literal].
      */
     fun visitLiteral(node: Node.Literal): T
 
     /**
-     * Visits a [Node.DotCall]
+     * Visits a [Node.DotCall].
      */
     fun visitDotCall(node: Node.DotCall): T
 

@@ -2,7 +2,8 @@
  * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
- *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the
+ *  LICENSE file in this project's repository's top directory.
  *
  */
 
@@ -40,9 +41,13 @@ class Subject(
      */
     val properties: Map<String, Resolvable> = emptyMap(),
 ) {
+    /**
+     * Companion object for the [Subject] class.
+     */
     companion object {
         /**
-         * Creates a Subject node from a YAML [yamlSubject] parsed data class. The [config] is used to parse the name and code.
+         * Creates a Subject node from a YAML [yamlSubject] parsed data class. The [config] is used to parse the name
+         * and code.
          */
         fun fromYamlSubject(
             yamlSubject: io.github.subjekt.compiler.yaml.Subject,

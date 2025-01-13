@@ -2,7 +2,8 @@
  * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
- *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the
+ *  LICENSE file in this project's repository's top directory.
  *
  */
 
@@ -32,6 +33,7 @@ class ExpressionResolveVisitor(
 
     override fun visitCall(node: Node.Call): String {
         val macro = context.lookupDefinedMacro(node.identifier)
+        var result = ""
         if (macro == null) {
             // if the macro is not found in the current context, we try to find it in the standard module
             val macro = context.lookupModule("std", node.identifier)
@@ -52,7 +54,7 @@ class ExpressionResolveVisitor(
         node.arguments
             .map { arg -> visit(arg) }
             .forEachIndexed { i, arg -> context.putParameter(macro.argumentsIdentifiers[i], arg) }
-        val result = macro.body.resolve(context, messageCollector)
+        result = macro.body.resolve(context, messageCollector)
         context = previousContext
         return result
     }
@@ -65,7 +67,8 @@ class ExpressionResolveVisitor(
         }
         if (customMacro.numberOfArguments != -1 && customMacro.numberOfArguments != node.arguments.size) {
             node.createError(
-                "Macro '${node.callId}' expects ${customMacro.numberOfArguments} arguments, but got ${node.arguments.size}",
+                "Macro '${node.callId}' expects ${customMacro.numberOfArguments} arguments, but got " +
+                    "${node.arguments.size}",
             )
             return ""
         }

@@ -1,9 +1,5 @@
 grammar Expression;
 
-@header {
-package io.github.subjekt;
-}
-
 expression
     : expression '+' expression #plusExpr
     | macroCall                 #call

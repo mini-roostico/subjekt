@@ -2,31 +2,30 @@
  * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
- *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the
+ *  LICENSE file in this project's repository's top directory.
  *
  */
 
 package io.github.subjekt.visitors
 
-import io.github.subjekt.nodes.Context
-import io.github.subjekt.nodes.suite.Macro
-import io.github.subjekt.nodes.suite.Template
-import io.github.subjekt.utils.Expressions.evaluate
-import io.github.subjekt.utils.MessageCollector
-import io.github.subjekt.utils.MessageCollector.Message
-import io.github.subjekt.utils.Permutations.permuteDefinitions
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
+import io.github.subjekt.compiler.nodes.Context
+import io.github.subjekt.compiler.nodes.suite.Macro
+import io.github.subjekt.compiler.nodes.suite.Template
+import io.github.subjekt.compiler.utils.Expressions.evaluate
+import io.github.subjekt.compiler.utils.MessageCollector
+import io.github.subjekt.compiler.utils.MessageCollector.Message
+import io.github.subjekt.compiler.utils.Permutations.permuteDefinitions
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.shouldBe
 
-class ExpressionEvaluationTest {
-    private var context = Context.emptyContext()
-    private val collector: MessageCollector = MessageCollector.SimpleCollector(showErrors = false)
+class ExpressionEvaluationTest : StringSpec({
+    var context = Context.emptyContext()
+    val collector: MessageCollector = MessageCollector.SimpleCollector(showErrors = false)
 
-    @BeforeEach
-    fun setUp() {
+    beforeTest {
         context = Context.of("a" to 1, "b" to 2)
         context.putMacro(Macro("foo", emptyList(), listOf(Template.parse("value1"), Template.parse("value2"))))
         // simply outputs the argument between parentheses () and {}
@@ -39,8 +38,7 @@ class ExpressionEvaluationTest {
         )
     }
 
-    @AfterEach
-    fun tearDown() {
+    afterTest {
         collector.showInConsole()
         collector.flushMessages()
     }
@@ -57,72 +55,43 @@ class ExpressionEvaluationTest {
             }.filterNot(String::isBlank)
     }
 
-    @Test
-    fun `Trivial expression evaluation`() {
+    "Trivial expression evaluation" {
         val expr = "a + b"
         val result = expr.evaluate(context, collector)
-        assertEquals("12", result)
+        result shouldBe "12"
     }
 
-    @Test
-    fun `Expression evaluation with literals`() {
+    "Expression evaluation with literals" {
         val expr = "\"a\" + \"b\""
         val result = expr.evaluate(context, collector)
-        assertEquals("ab", result)
+        result shouldBe "ab"
     }
 
-    @Test
-    fun `Expression evaluation with call`() {
+    "Expression evaluation with call" {
         val expr = "foo()"
         val result = evaluateMultiple(expr)
-        assertEquals(listOf("value1", "value2"), result)
+        result shouldBe listOf("value1", "value2")
     }
 
-    @Test
-    fun `Expression evaluation with call and argument`() {
+    "Expression evaluation with call and argument" {
         val expr = "bar(\"1\")"
         val result = evaluateMultiple(expr)
-        assertEquals(listOf("(1)", "{1}"), result)
+        result shouldBe listOf("(1)", "{1}")
     }
 
-//  @Test
-//  fun `Expression evaluation with nested calls`() {
-//    val expr = "bar(foo())"
-//    val result = evaluateMultiple(expr)
-//    assertEquals(
-//      setOf(
-//        "(value1)",
-//        "{value1}",
-//        "(value2)",
-//        "{value2}",
-//      ),
-//      result.toSet(),
-//    )
-//  }
-
-    @Test
-    fun `Expression evaluation with nested calls and literals`() {
+    "Expression evaluation with nested calls and literals" {
         val expr = "bar(\"1\" + \"2\")"
         val result = evaluateMultiple(expr)
-        assertEquals(listOf("(12)", "{12}"), result)
+        result shouldBe listOf("(12)", "{12}")
     }
 
-    @Test
-    fun `Expression evaluation with nested calls and literals and arguments`() {
+    "Expression evaluation with nested calls and literals and arguments" {
         val expr = "bar(\"1\" + \"2\" + a)"
         val result = evaluateMultiple(expr)
-        assertEquals(listOf("(121)", "{121}"), result)
+        result shouldBe listOf("(121)", "{121}")
     }
 
-//  @Test
-//  fun `Expression evaluation with nested calls and literals and arguments and multiple calls`() {
-//    val expr = "bar(\"1\" + \"2\" + a) + bar(\"3\" + \"4\" + b)"
-//    val result = evaluateMultiple(expr)
-//    assertEquals(setOf("(121)(342)", "(121){342}", "{121}(342)", "{121}{342}"), result.toSet())
-//  }
-
-    @Test
-    fun `Expression with newline`() {
+    "Expression with newline" {
         context.putMacro(
             Macro(
                 "aligned",
@@ -132,39 +101,39 @@ class ExpressionEvaluationTest {
         )
         val expr = "aligned(\"exampleCall(123)\")"
         val result = evaluateMultiple(expr)
-        assertEquals(listOf("alignedOn(0) {\n\texampleCall(123)\n}"), result)
+        result shouldBe listOf("alignedOn(0) {\n\texampleCall(123)\n}")
     }
 
-    @Test
-    fun `ID not defined`() {
+    "ID not defined" {
         val expr = "c"
         val result = expr.evaluate(context, collector)
-        assertEquals("", result)
-        assertContains(
-            collector.messages,
-            Message(MessageCollector.MessageType.ERROR, "line 1: Identifier 'c' is not defined"),
-        )
+        result shouldBe ""
+        collector.messages shouldContain
+            Message(
+                MessageCollector.MessageType.ERROR,
+                "line 1: Identifier 'c' is not defined",
+            )
     }
 
-    @Test
-    fun `Macro not defined`() {
+    "Macro not defined" {
         val expr = "baz()"
         val result = evaluateMultiple(expr)
-        assertEquals(emptyList(), result)
-        assertContains(
-            collector.messages,
-            Message(MessageCollector.MessageType.ERROR, "line 1: Macro 'baz' is not defined"),
-        )
+        result.shouldBeEmpty()
+        collector.messages shouldContain
+            Message(
+                MessageCollector.MessageType.ERROR,
+                "line 1: Macro 'baz' is not defined",
+            )
     }
 
-    @Test
-    fun `Macro with wrong number of arguments`() {
+    "Macro with wrong number of arguments" {
         val expr = "bar()"
         val result = evaluateMultiple(expr)
-        assertEquals(emptyList(), result)
-        assertContains(
-            collector.messages,
-            Message(MessageCollector.MessageType.ERROR, "line 1: Macro 'bar' expects 1 arguments, but got 0"),
-        )
+        result.shouldBeEmpty()
+        collector.messages shouldContain
+            Message(
+                MessageCollector.MessageType.ERROR,
+                "line 1: Macro 'bar' expects 1 arguments, but got 0",
+            )
     }
-}
+})

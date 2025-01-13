@@ -2,7 +2,8 @@
  * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
- *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the
+ *  LICENSE file in this project's repository's top directory.
  *
  */
 
@@ -60,10 +61,14 @@ data class Context(
      */
     fun lookupMacro(identifier: String): Macro? = macros[identifier]
 
+    /**
+     * Used to look up a defined macro by its identifier. Returns null if the macro is not defined.
+     */
     fun lookupDefinedMacro(identifier: String): DefinedCall? = definedCalls[identifier]
 
     /**
-     * Used to look up a module's custom macro by its module and macro names. Returns null if the module or macro is not defined.
+     * Used to look up a module's custom macro by its module and macro names. Returns null if the module or macro is
+     * not defined.
      */
     fun lookupModule(
         moduleName: String,
@@ -88,7 +93,8 @@ data class Context(
     }
 
     /**
-     * Creates a copy of this context with the given [parameters]. If a parameter already exists, it will be overwritten.
+     * Creates a copy of this context with the given [parameters]. If a parameter already exists, it will be
+     * overwritten.
      */
     fun withParameters(parameters: Iterable<ResolvedParameter>): Context =
         copy(
@@ -114,9 +120,9 @@ data class Context(
 //    /**
 //     * Registers a module in the context. If the module already exists, it will be overwritten.
 //     *
-//     * A [module] must be an object annotated with [SubjektModule]. The module must contain static methods annotated with
-//     * [io.github.subjekt.compiler.conversion.Macro]. The module name used to call macros is defined by the [SubjektModule.name]
-//     * annotation parameter.
+//     * A [module] must be an object annotated with [SubjektModule]. The module must contain static methods
+//     * annotated with [io.github.subjekt.compiler.conversion.Macro]. The module name used to call macros is defined
+//     * by the [SubjektModule.name] annotation parameter.
 //     *
 //     * Errors and warnings will be reported to the [messageCollector].
 //     */
@@ -157,6 +163,9 @@ data class Context(
 //            }
 //    }
 
+    /**
+     * Utility methods to create contexts.
+     */
     companion object {
         /**
          * Returns an empty context.

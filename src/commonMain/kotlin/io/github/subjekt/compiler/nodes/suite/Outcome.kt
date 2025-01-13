@@ -2,7 +2,8 @@
  * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
- *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the
+ *  LICENSE file in this project's repository's top directory.
  *
  */
 
@@ -49,6 +50,9 @@ sealed class Outcome(
             is Error -> ResolvedOutcome.Error(message.resolve(context, messageCollector))
         }
 
+    /**
+     * Companion object for the [Outcome] class.
+     */
     companion object {
         /**
          * Creates an Outcome node from a YAML [outcome] parsed data class. The [config] is used to parse the message.
@@ -56,15 +60,15 @@ sealed class Outcome(
         fun fromYamlOutcome(
             outcome: io.github.subjekt.compiler.yaml.Outcome,
             config: Configuration,
-        ): Outcome =
-            if (outcome.warning !=
-                null
-            ) {
-                Warning(Template.parse(outcome.warning, config.expressionPrefix, config.expressionSuffix))
-            } else if (outcome.error != null) {
-                Error(Template.parse(outcome.error, config.expressionPrefix, config.expressionSuffix))
-            } else {
-                throw IllegalArgumentException("Illegal outcome definition. Expected 'warning' or 'error' in $outcome")
+        ): Outcome {
+            require(outcome.warning != null || outcome.error != null) {
+                "Illegal outcome definition. Expected 'warning' or 'error' in $outcome"
             }
+            return if (outcome.warning != null) {
+                Warning(Template.parse(outcome.warning, config.expressionPrefix, config.expressionSuffix))
+            } else {
+                Error(Template.parse(outcome.error!!, config.expressionPrefix, config.expressionSuffix))
+            }
+        }
     }
 }

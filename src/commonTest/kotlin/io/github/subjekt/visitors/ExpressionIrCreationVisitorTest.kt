@@ -2,28 +2,28 @@
  * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
- *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the
+ *  LICENSE file in this project's repository's top directory.
  *
  */
 
 package io.github.subjekt.visitors
 
-import io.github.subjekt.ExpressionLexer
-import io.github.subjekt.ExpressionParser
-import io.github.subjekt.nodes.Context
-import io.github.subjekt.nodes.expression.Node
-import io.github.subjekt.utils.MessageCollector
-import io.github.subjekt.utils.MessageCollector.Message
-import org.antlr.v4.runtime.CharStreams
-import org.antlr.v4.runtime.CommonTokenStream
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
+import io.github.subjekt.compiler.nodes.Context
+import io.github.subjekt.compiler.nodes.expression.Node
+import io.github.subjekt.compiler.utils.MessageCollector
+import io.github.subjekt.compiler.utils.MessageCollector.Message
+import io.github.subjekt.compiler.visitors.ExpressionIrCreationVisitor
+import io.github.subjekt.parsers.generated.ExpressionLexer
+import io.github.subjekt.parsers.generated.ExpressionParser
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.shouldBe
+import org.antlr.v4.kotlinruntime.CharStreams
+import org.antlr.v4.kotlinruntime.CommonTokenStream
 
-class ExpressionIrCreationVisitorTest {
-    private val collector: MessageCollector = MessageCollector.SimpleCollector(showErrors = false)
+class ExpressionIrCreationVisitorTest : StringSpec({
+    val collector: MessageCollector = MessageCollector.SimpleCollector(showErrors = false)
 
     fun String.visitExpression(): Node? {
         val stream = CharStreams.fromString(this)
@@ -31,177 +31,159 @@ class ExpressionIrCreationVisitorTest {
         val tokens = CommonTokenStream(lexer)
         val parser = ExpressionParser(tokens)
         val context = Context.emptyContext()
-        collector.useParser(parser, context)
+        collector.setLexerAndParser(lexer, parser, context)
         val tree = parser.expression()
         return ExpressionIrCreationVisitor(context, collector).visit(tree)
     }
 
-    @BeforeEach
-    fun setUp() {
+    beforeTest {
         collector.flushMessages()
     }
 
-    @Test
-    fun `Simple IR creation`() {
+    "Simple IR creation" {
         val expr = "a + b"
         val node = expr.visitExpression()
-        assert(collector.messages.isEmpty())
-        assert(node is Node.Plus)
+        collector.messages.shouldBe(emptyList())
+        node shouldBe Node.Plus::class
         val plusNode = node as Node.Plus
-        assert(plusNode.left is Node.Id)
-        assert(plusNode.right is Node.Id)
+        plusNode.left shouldBe Node.Id::class
+        plusNode.right shouldBe Node.Id::class
     }
 
-    @Test
-    fun `Simple IR creation with literals - double quoted`() {
+    "Simple IR creation with literals - double quoted" {
         val expr = "\"a\" + \"b\""
         val node = expr.visitExpression()
-        assert(collector.messages.isEmpty())
-        assert(node is Node.Plus)
+        collector.messages.shouldBe(emptyList())
+        node shouldBe Node.Plus::class
         val plusNode = node as Node.Plus
-        assert(plusNode.left is Node.Literal)
-        assert(plusNode.right is Node.Literal)
+        plusNode.left shouldBe Node.Literal::class
+        plusNode.right shouldBe Node.Literal::class
     }
 
-    @Test
-    fun `Simple IR creation with literals - single quoted`() {
+    "Simple IR creation with literals - single quoted" {
         val expr = "'a' + 'b'"
         val node = expr.visitExpression()
-        assert(collector.messages.isEmpty())
-        assert(node is Node.Plus)
+        collector.messages.shouldBe(emptyList())
+        node shouldBe Node.Plus::class
         val plusNode = node as Node.Plus
-        assert(plusNode.left is Node.Literal)
-        assert(plusNode.right is Node.Literal)
+        plusNode.left shouldBe Node.Literal::class
+        plusNode.right shouldBe Node.Literal::class
     }
 
-    @Test
-    fun `Simple IR creation with literals containing escaped quotes`() {
+    "Simple IR creation with literals containing escaped quotes" {
         val expr = """"\"a\"" + '\"b\"'"""
         val node = expr.visitExpression()
-        assert(collector.messages.isEmpty())
-        assert(node is Node.Plus)
+        collector.messages.shouldBe(emptyList())
+        node shouldBe Node.Plus::class
         val plusNode = node as Node.Plus
-        assert(plusNode.left is Node.Literal)
-        assert(plusNode.right is Node.Literal)
-        assertEquals("\"a\"", (plusNode.left as Node.Literal).value)
-        assertEquals("\"b\"", (plusNode.right as Node.Literal).value)
+        plusNode.left shouldBe Node.Literal::class
+        plusNode.right shouldBe Node.Literal::class
+        (plusNode.left as Node.Literal).value shouldBe "\"a\""
+        (plusNode.right as Node.Literal).value shouldBe "\"b\""
     }
 
-    @Test
-    fun `Simple IR creation with call`() {
+    "Simple IR creation with call" {
         val expr = "foo(a, b)"
         val node = expr.visitExpression()
-        assert(collector.messages.isEmpty())
-        assert(node is Node.Call)
+        collector.messages.shouldBe(emptyList())
+        node shouldBe Node.Call::class
         val callNode = node as Node.Call
-        assert(callNode.arguments.size == 2)
-        assert(callNode.arguments[0] is Node.Id)
-        assert(callNode.arguments[1] is Node.Id)
+        callNode.arguments.size shouldBe 2
+        callNode.arguments[0] shouldBe Node.Id::class
+        callNode.arguments[1] shouldBe Node.Id::class
     }
 
-    @Test
-    fun `Simple IR creation with nested calls`() {
+    "Simple IR creation with nested calls" {
         val expr = "foo(bar(a), b)"
         val node = expr.visitExpression()
-        assert(collector.messages.isEmpty())
-        assert(node is Node.Call)
+        collector.messages.shouldBe(emptyList())
+        node shouldBe Node.Call::class
         val callNode = node as Node.Call
-        assert(callNode.arguments.size == 2)
-        assert(callNode.arguments[0] is Node.Call)
-        assert(callNode.arguments[1] is Node.Id)
+        callNode.arguments.size shouldBe 2
+        callNode.arguments[0] shouldBe Node.Call::class
+        callNode.arguments[1] shouldBe Node.Id::class
     }
 
-    @Test
-    fun `Simple IR creation with nested calls and literals`() {
+    "Simple IR creation with nested calls and literals" {
         val expr = "foo(bar(\"a\"), \"b\")"
         val node = expr.visitExpression()
-        assert(collector.messages.isEmpty())
-        assert(node is Node.Call)
+        collector.messages.shouldBe(emptyList())
+        node shouldBe Node.Call::class
         val callNode = node as Node.Call
-        assert(callNode.arguments.size == 2)
-        assert(callNode.arguments[0] is Node.Call)
-        assert(callNode.arguments[1] is Node.Literal)
+        callNode.arguments.size shouldBe 2
+        callNode.arguments[0] shouldBe Node.Call::class
+        callNode.arguments[1] shouldBe Node.Literal::class
     }
 
-    @Test
-    fun `Simple IR creation with nested calls and plus`() {
+    "Simple IR creation with nested calls and plus" {
         val expr = "foo(bar(a + b), c)"
         val node = expr.visitExpression()
-        assert(collector.messages.isEmpty())
-        assert(node is Node.Call)
+        collector.messages.shouldBe(emptyList())
+        node shouldBe Node.Call::class
         val callNode = node as Node.Call
-        assert(callNode.arguments.size == 2)
-        assert(callNode.arguments[0] is Node.Call)
-        assert(callNode.arguments[1] is Node.Id)
+        callNode.arguments.size shouldBe 2
+        callNode.arguments[0] shouldBe Node.Call::class
+        callNode.arguments[1] shouldBe Node.Id::class
     }
 
-    @Test
-    fun `Simple IR creation with nested calls and plus and literals`() {
+    "Simple IR creation with nested calls and plus and literals" {
         val expr = "foo(bar(\"a\" + \"b\"), \"c\")"
         val node = expr.visitExpression()
-        assert(collector.messages.isEmpty())
-        assert(node is Node.Call)
+        collector.messages.shouldBe(emptyList())
+        node shouldBe Node.Call::class
         val callNode = node as Node.Call
-        assert(callNode.arguments.size == 2)
-        assert(callNode.arguments[0] is Node.Call)
-        assert(callNode.arguments[1] is Node.Literal)
+        callNode.arguments.size shouldBe 2
+        callNode.arguments[0] shouldBe Node.Call::class
+        callNode.arguments[1] shouldBe Node.Literal::class
     }
 
-    @Test
-    fun `Simple IR creation with nested calls and plus and literals and call`() {
+    "Simple IR creation with nested calls and plus and literals and call" {
         val expr = "foo(bar(\"a\" + \"b\"), baz(c))"
         val node = expr.visitExpression()
-        assert(collector.messages.isEmpty())
-        assert(node is Node.Call)
+        collector.messages.shouldBe(emptyList())
+        node shouldBe Node.Call::class
         val callNode = node as Node.Call
-        assert(callNode.arguments.size == 2)
-        assert(callNode.arguments[0] is Node.Call)
-        assert(callNode.arguments[1] is Node.Call)
+        callNode.arguments.size shouldBe 2
+        callNode.arguments[0] shouldBe Node.Call::class
+        callNode.arguments[1] shouldBe Node.Call::class
     }
 
-    @Test
-    fun `Complex IR creation`() {
+    "Complex IR creation" {
         val expr = "foo(bar(a + b), baz(c + d)) + \"e\""
         val node = expr.visitExpression()
-        assert(collector.messages.isEmpty())
-        assert(node is Node.Plus)
+        collector.messages.shouldBe(emptyList())
+        node shouldBe Node.Plus::class
         val plusNode = node as Node.Plus
-        assert(plusNode.left is Node.Call)
-        assert(plusNode.right is Node.Literal)
-        assert((plusNode.left as Node.Call).arguments[0] is Node.Call)
-        assert(plusNode.left.arguments[1] is Node.Call)
-        assert((plusNode.left.arguments[0] as Node.Call).arguments[0] is Node.Plus)
-        assert((plusNode.left.arguments[1] as Node.Call).arguments[0] is Node.Plus)
+        plusNode.left shouldBe Node.Call::class
+        plusNode.right shouldBe Node.Literal::class
+        (plusNode.left as Node.Call).arguments[0] shouldBe Node.Call::class
+        plusNode.left.arguments[1] shouldBe Node.Call::class
+        (plusNode.left.arguments[0] as Node.Call).arguments[0] shouldBe Node.Plus::class
+        (plusNode.left.arguments[1] as Node.Call).arguments[0] shouldBe Node.Plus::class
     }
 
-    @Test
-    fun `Simple dot call`() {
+    "Simple dot call" {
         val expr = "foo.bar()"
         val node = expr.visitExpression()
-        assert(collector.messages.isEmpty())
-        assert(node is Node.DotCall)
+        collector.messages.shouldBe(emptyList())
+        node shouldBe Node.DotCall::class
     }
 
-    @Test
-    fun `Plus syntax error`() {
+    "Plus syntax error" {
         val expr = "a +"
         val node = expr.visitExpression()
-        assertNull(node)
-        assert(collector.messages.isNotEmpty())
-        assertContains(
-            collector.messages,
-            Message(MessageCollector.MessageType.ERROR, "line 1:3: mismatched input '<EOF>' expecting {STRING, ID}"),
-        )
+        node shouldBe null
+        collector.messages shouldContain
+            Message(
+                MessageCollector.MessageType.ERROR,
+                "line 1:3: mismatched input '<EOF>' expecting {STRING, ID}",
+            )
     }
 
-    @Test
-    fun `Call syntax error`() {
+    "Call syntax error" {
         val expr = "foo(a"
         expr.visitExpression()
-        assert(collector.messages.isNotEmpty())
-        assertContains(
-            collector.messages,
-            Message(MessageCollector.MessageType.ERROR, "line 1:5: mismatched input '<EOF>' expecting {',', ')'}"),
-        )
+        collector.messages shouldContain
+            Message(MessageCollector.MessageType.ERROR, "line 1:5: mismatched input '<EOF>' expecting {',', ')'}")
     }
-}
+})

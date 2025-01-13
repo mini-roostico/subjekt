@@ -2,7 +2,8 @@
  * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
- *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the
+ *  LICENSE file in this project's repository's top directory.
  *
  */
 
@@ -14,21 +15,18 @@ import kotlin.math.min
 /**
  * Object containing standard library functions that can be used as macros.
  */
-@SubjektModule("std")
 object Stdlib {
     /**
      * Capitalizes the first letter of a string.
      */
     @JvmStatic
-    @Macro("capitalizeFirst")
     fun capitalizeFirst(str: String): String = str.replaceFirstChar(Char::titlecase)
 
     /**
-     * Prettifies [arguments] by removing all non-alphanumeric characters and joining them together following a Pascal case
-     * notation.
+     * Prettifies [arguments] by removing all non-alphanumeric characters and joining them together following a Pascal
+     * case notation.
      */
     @JvmStatic
-    @Macro("prettify")
     fun prettify(vararg arguments: String): String = arguments.joinToString("") { idFromCode(it) }
 
     private fun String.substringStartingFromFirstValidChar(): String {

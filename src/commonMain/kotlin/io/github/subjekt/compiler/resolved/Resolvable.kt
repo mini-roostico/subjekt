@@ -2,7 +2,8 @@
  * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
- *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the
+ *  LICENSE file in this project's repository's top directory.
  *
  */
 
@@ -16,7 +17,8 @@ import io.github.subjekt.compiler.utils.MessageCollector
  */
 interface Resolvable {
     /**
-     * Resolves the resolvable value to a list of strings, each representing a possible value of the resolved expressions.
+     * Resolves the resolvable value to a list of strings, each representing a possible value of the resolved
+     * expressions.
      */
     fun resolve(
         context: Context,

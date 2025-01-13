@@ -2,19 +2,24 @@
  * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
- *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the
+ *  LICENSE file in this project's repository's top directory.
  *
  */
 
 package io.github.subjekt.yaml
 
-import org.intellij.lang.annotations.Language
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import io.github.subjekt.compiler.yaml.Macro
+import io.github.subjekt.compiler.yaml.Outcome
+import io.github.subjekt.compiler.yaml.Parameter
+import io.github.subjekt.compiler.yaml.Reader
+import io.github.subjekt.compiler.yaml.Subject
+import io.github.subjekt.compiler.yaml.Suite
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 
-class ListHandlingTest {
-    @Test
-    fun `should deserialize list of strings`() {
+class ListHandlingTest : StringSpec({
+    "should deserialize list of strings" {
         val yaml =
             """
             - one
@@ -22,13 +27,12 @@ class ListHandlingTest {
             - three
             """.trimIndent()
 
-        val result = Reader.readYaml<List<String>>(yaml)
-
-        assertEquals(listOf("one", "two", "three"), result)
+        // val result = Reader.readYaml<List<String>>(yaml)
+        val result = TODO()
+        result shouldBe listOf("one", "two", "three")
     }
 
-    @Test
-    fun `should deserialize list of integers`() {
+    "should deserialize list of integers" {
         val yaml =
             """
             - 1
@@ -36,13 +40,12 @@ class ListHandlingTest {
             - 3
             """.trimIndent()
 
-        val result = Reader.readYaml<List<Int>>(yaml)
-
-        assertEquals(listOf(1, 2, 3), result)
+        // val result = Reader.readYaml<List<Int>>(yaml)
+        val result = TODO()
+        result shouldBe listOf(1, 2, 3)
     }
 
-    @Test
-    fun `should deserialize a single element list without dash`() {
+    "should deserialize a single element list without dash" {
         val yamlSugar =
             """
             name: "suite"
@@ -61,19 +64,12 @@ class ListHandlingTest {
         val resultSugar = Reader.suiteFromYaml(yamlSugar)
         val result = Reader.suiteFromYaml(yaml)
 
-        assertEquals(
-            Suite("suite", null, null, listOf(Subject("subject", null, null, "this is code", null, null)), null),
-            resultSugar,
-        )
-        assertEquals(
-            result,
-            resultSugar,
-        )
+        resultSugar shouldBe
+            Suite("suite", null, null, listOf(Subject("subject", null, null, "this is code", null, null)), null)
+        result shouldBe resultSugar
     }
 
-    @Test
-    fun `should deserialize a full suite with syntactic sugar`() {
-        @Language("YAML")
+    "should deserialize a full suite with syntactic sugar" {
         val yaml =
             """
             name: "suite"
@@ -105,13 +101,11 @@ class ListHandlingTest {
 
         val result = Reader.suiteFromYaml(yaml)
 
-        assertEquals(
+        result shouldBe
             Suite(
                 "suite",
                 null,
-                listOf(
-                    Macro("macro(param1, param2)", listOf("value1", "value2"), null),
-                ),
+                listOf(Macro("macro(param1, param2)", listOf("value1", "value2"), null)),
                 listOf(
                     Subject(
                         "subject",
@@ -120,20 +114,13 @@ class ListHandlingTest {
                             Parameter("param2", null, "value2"),
                             Parameter("param3", listOf("value3"), null),
                         ),
-                        listOf(
-                            Macro("macro(param1)", null, "value"),
-                        ),
+                        listOf(Macro("macro(param1)", null, "value")),
                         "this is code",
-                        listOf(
-                            Outcome("warning", null),
-                            Outcome(null, "error"),
-                        ),
+                        listOf(Outcome("warning", null), Outcome(null, "error")),
                         mapOf("key" to "value"),
                     ),
                 ),
                 null,
-            ),
-            result,
-        )
+            )
     }
-}
+})

@@ -2,13 +2,14 @@
  * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
- *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the
+ *  LICENSE file in this project's repository's top directory.
  *
  */
 
 package io.github.subjekt.dsl
 
-import io.github.subjekt.Subjekt
+import io.github.subjekt.SubjektEntry
 import io.github.subjekt.compiler.SubjektCompiler
 import io.github.subjekt.compiler.resolved.ResolvedSubject
 import io.github.subjekt.compiler.resolved.ResolvedSuite
@@ -21,7 +22,7 @@ class SubjektSource(
     val code: String,
 ) {
     private val suite: ResolvedSuite? by lazy {
-        SubjektCompiler.compile(code, Subjekt.reporter)
+        SubjektCompiler.compile(code, SubjektEntry.reporter)
     }
 
     /**
@@ -40,10 +41,13 @@ class SubjektSource(
             suite?.subjects ?: emptySet()
         }
 
-    companion object {
-        /**
-         * Creates a [SubjektSource] from a YAML [file].
-         */
-        fun fromFile(filePath: String): SubjektSource = TODO()
-    }
+//    /**
+//     * Companion object for the [SubjektSource] class.
+//     */
+//    companion object {
+//        /**
+//         * Creates a [SubjektSource] from a YAML [file].
+//         */
+//        fun fromFile(filePath: String): SubjektSource = TODO()
+//    }
 }
