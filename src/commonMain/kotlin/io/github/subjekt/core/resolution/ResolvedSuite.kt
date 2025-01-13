@@ -9,5 +9,4 @@
 
 package io.github.subjekt.core.resolution
 
-interface ResolvedSuite {
-}
+interface ResolvedSuite

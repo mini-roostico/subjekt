@@ -9,5 +9,4 @@
 
 package io.github.subjekt.core.resolution
 
-class ResolvedSubject {
-}
+class ResolvedSubject
