@@ -66,6 +66,7 @@ kotlin {
             dependencies {
                 implementation(libs.antlr.runtime)
                 implementation(libs.yamlkt)
+                implementation(libs.json)
             }
         }
 
