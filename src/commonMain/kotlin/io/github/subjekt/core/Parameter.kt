@@ -9,5 +9,4 @@
 
 package io.github.subjekt.core
 
-interface Parameter {
-}
+interface Parameter

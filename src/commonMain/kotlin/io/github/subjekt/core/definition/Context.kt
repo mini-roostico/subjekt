@@ -9,5 +9,4 @@
 
 package io.github.subjekt.core.definition
 
-interface Context {
-}
+interface Context
