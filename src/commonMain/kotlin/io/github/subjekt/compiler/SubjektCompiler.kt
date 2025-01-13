@@ -2,7 +2,8 @@
  * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
- *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the
+ *  LICENSE file in this project's repository's top directory.
  *
  */
 
@@ -22,8 +23,8 @@ import io.github.subjekt.compiler.yaml.Suite
  */
 object SubjektCompiler {
     /**
-     * Resolves a nullable [io.github.subjekt.compiler.nodes.suite.Suite] into a [ResolvedSuite] using the Subjekt compiler. It returns null if the suite is null
-     * or if an error occurred during the resolution.
+     * Resolves a nullable [io.github.subjekt.compiler.nodes.suite.Suite] into a [ResolvedSuite] using the Subjekt
+     * compiler. It returns null if the suite is null or if an error occurred during the resolution.
      */
     private fun Suite?.resolve(messageCollector: MessageCollector): ResolvedSuite? {
         if (this == null) {
@@ -42,7 +43,8 @@ object SubjektCompiler {
     }
 
     /**
-     * Compiles a YAML [code] string into a [ResolvedSuite]. It returns null if an error occurred during the compilation.
+     * Compiles a YAML [code] string into a [ResolvedSuite]. It returns null if an error occurred during the
+     * compilation.
      */
     fun compile(
         code: String,

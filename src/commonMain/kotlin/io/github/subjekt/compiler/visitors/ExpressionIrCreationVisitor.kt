@@ -2,7 +2,8 @@
  * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
- *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the
+ *  LICENSE file in this project's repository's top directory.
  *
  */
 
@@ -11,6 +12,7 @@ package io.github.subjekt.compiler.visitors
 import io.github.subjekt.compiler.nodes.Context
 import io.github.subjekt.compiler.nodes.expression.Node
 import io.github.subjekt.compiler.utils.MessageCollector
+import io.github.subjekt.compiler.utils.MessageCollector.Position
 import io.github.subjekt.parsers.generated.ExpressionBaseVisitor
 import io.github.subjekt.parsers.generated.ExpressionParser
 import org.antlr.v4.kotlinruntime.ParserRuleContext
@@ -29,7 +31,7 @@ class ExpressionIrCreationVisitor(
     val messageCollector: MessageCollector,
 ) : ExpressionBaseVisitor<Node?>() {
     private fun ParserRuleContext.createError(message: String) {
-        messageCollector.error(message, context, this.start!!.line to this.start!!.charPositionInLine)
+        messageCollector.error(message, context, Position(this.start!!.line, this.start!!.charPositionInLine))
     }
 
     override fun visitCall(ctx: ExpressionParser.CallContext): Node? = visit(ctx.macroCall())
@@ -71,7 +73,7 @@ class ExpressionIrCreationVisitor(
 
     override fun visitMacroCall(ctx: ExpressionParser.MacroCallContext): Node? {
         val id = ctx.ID().text
-        if (id == null) {
+        if (id.isBlank()) {
             ctx.createError("macro call has no identifier")
             return null
         }

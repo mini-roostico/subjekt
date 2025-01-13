@@ -2,7 +2,8 @@
  * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
- *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the
+ *  LICENSE file in this project's repository's top directory.
  *
  */
 
@@ -10,6 +11,7 @@ package io.github.subjekt.compiler.nodes.suite
 
 import io.github.subjekt.compiler.resolved.Resolvable
 import io.github.subjekt.compiler.yaml.Configuration
+import kotlin.require
 
 /**
  * Represents a macro definition node.
@@ -34,6 +36,9 @@ class Macro(
     val argumentsNumber: Int
         get() = argumentsIdentifiers.size
 
+    /**
+     * Utility object to create a macro from a YAML macro.
+     */
     companion object {
         /**
          * Creates a Macro node from a YAML [macro] parsed data class. The [config] is used to parse the bodies.
@@ -42,9 +47,8 @@ class Macro(
             macro: io.github.subjekt.compiler.yaml.Macro,
             config: Configuration,
         ): Macro {
-            if (!macro.def.contains("(")) {
-                throw IllegalArgumentException("Illegal macro definition. Expected '(' in ${macro.def}")
-            }
+            require(!macro.def.contains("(")) { "Illegal macro definition. Expected '(' in ${macro.def}" }
+
             val clean = macro.def.replace(" ", "")
             val identifier = clean.substringBefore("(")
             val arguments =
@@ -53,8 +57,8 @@ class Macro(
                     .substringBefore(")")
                     .split(",")
                     .filter(String::isNotBlank)
-            if (macro.values == null && macro.value == null) {
-                throw IllegalArgumentException("Illegal macro definition. Expected 'values' or 'value' in $macro")
+            require(macro.values == null && macro.value == null) {
+                "Illegal macro definition. Expected 'values' or 'value' in $macro"
             }
             val bodies =
                 macro.values?.map {

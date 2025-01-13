@@ -2,7 +2,8 @@
  * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
- *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the
+ *  LICENSE file in this project's repository's top directory.
  *
  */
 
@@ -35,7 +36,8 @@ interface CustomMacro {
     // TODO: switch to a Kotlin multiplatform way of creating custom macros
 //    companion object {
 //        /**
-//         * Creates a [CustomMacro] from a Kotlin static method. Returns `null` if the method does not meet the requirements.
+//         * Creates a [CustomMacro] from a Kotlin static method. Returns `null` if the method does not meet the
+//         * requirements.
 //         */
 //        fun fromKotlinStatic(
 //            method: Method,

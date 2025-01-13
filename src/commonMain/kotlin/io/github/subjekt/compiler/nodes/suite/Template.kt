@@ -2,7 +2,8 @@
  * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
- *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the
+ *  LICENSE file in this project's repository's top directory.
  *
  */
 
@@ -20,7 +21,13 @@ import io.github.subjekt.compiler.visitors.ExpressionCallsVisitor
  * multiple possible values.
  */
 data class Template(
+    /**
+     * The template string with expressions to be substituted.
+     */
     val toFormat: String,
+    /**
+     * The list of expressions to be resolved and substituted in the template.
+     */
     val expressions: List<String>,
     override val source: String,
 ) : Resolvable {
@@ -53,11 +60,14 @@ data class Template(
             }
         }
 
+    /**
+     * Companion object with utility functions to handle templates.
+     */
     companion object {
         /**
-         * Parses a template from a string [input] with a given [prefix] and [suffix]. It returns a [io.github.subjekt.nodes.suite.Template]
-         * object with [toFormat] equal to a Kotlin format string and [expressions] equal to the list of expressions found in the template,
-         * that can be used to format [toFormat].
+         * Parses a template from a string [input] with a given [prefix] and [suffix]. It returns a
+         * [io.github.subjekt.nodes.suite.Template] object with [toFormat] equal to a Kotlin format string and
+         * [expressions] equal to the list of expressions found in the template, that can be used to format [toFormat].
          */
         private fun processTemplate(
             input: String,

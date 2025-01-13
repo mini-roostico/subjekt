@@ -2,347 +2,327 @@
  * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
- *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the
+ *  LICENSE file in this project's repository's top directory.
  *
  */
 
 package io.github.subjekt
 
-import io.github.subjekt.SubjektCompiler.compile
-import io.github.subjekt.resolved.ResolvedSubject
-import io.github.subjekt.resolved.ResolvedSuite
-import io.github.subjekt.utils.MessageCollector
-import org.junit.jupiter.api.BeforeEach
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
+import io.github.subjekt.compiler.SubjektCompiler.compile
+import io.github.subjekt.compiler.resolved.ResolvedSubject
+import io.github.subjekt.compiler.resolved.ResolvedSuite
+import io.github.subjekt.compiler.utils.MessageCollector
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.shouldBe
 
-class CompilerTests {
-    private val collector: MessageCollector = MessageCollector.SimpleCollector()
+class CompilerTests : StringSpec({
+    val collector: MessageCollector = MessageCollector.SimpleCollector()
 
-    @BeforeEach
-    fun setUp() {
+    beforeTest {
         collector.flushMessages()
     }
 
-    private fun ResolvedSuite.toCode(): Set<String> = this.subjects.map(ResolvedSubject::code).toSet()
+    fun ResolvedSuite.toCode(): Set<String> = this.subjects.map(ResolvedSubject::code).toSet()
 
-    @Test
-    fun `Simple YAML`() {
+    "Simple YAML" {
         val generated =
             compile(
                 """
-      |---
-      |name: Test suite
-      |subjects:
-      |  - name: Test subject
-      |    code: |-
-      |      Subject code here!
-      |    outcomes: []
+            |---
+            |name: Test suite
+            |subjects:
+            |  - name: Test subject
+            |    code: |-
+            |      Subject code here!
+            |    outcomes: []
                 """.trimMargin(),
                 collector,
             )!!.toCode()
-        assert(!collector.hasErrors())
-        assertEquals(setOf("Subject code here!"), generated)
+        collector.hasErrors() shouldBe false
+        generated shouldBe setOf("Subject code here!")
     }
 
-    @Test
-    fun `Incomplete YAML - missing code`() {
+    "Incomplete YAML - missing code" {
         val generated =
             compile(
                 """
-      |---
-      |name: Test suite
-      |subjects:
-      |- name: Test subject
-      |  outcomes: []
+            |---
+            |name: Test suite
+            |subjects:
+            |- name: Test subject
+            |  outcomes: []
                 """.trimMargin(),
                 collector,
             )
-        assert(collector.hasErrors())
-        assertNull(generated)
+        collector.hasErrors() shouldBe true
+        generated shouldBe null
     }
 
-    @Test
-    fun `Incomplete YAML - missing name`() {
+    "Incomplete YAML - missing name" {
         val generated =
             compile(
                 """
-      |---
-      |name: Test suite
-      |subjects:
-      |- code: Test code
-      |  outcomes: []
+            |---
+            |name: Test suite
+            |subjects:
+            |- code: Test code
+            |  outcomes: []
                 """.trimMargin(),
                 collector,
             )
-        assert(collector.hasErrors())
-        assertNull(generated)
+        collector.hasErrors() shouldBe true
+        generated shouldBe null
     }
 
-    @Test
-    fun `Suite with macros`() {
+    "Suite with macros" {
         val generated =
             compile(
                 """
-      |---
-      |name: Test suite
-      |macros:
-      |- def: macro(a)
-      |  values:
-      |  - "(${"\${{a}}"})"
-      |  - "{${"\${{a}}"}}"
-      |subjects:
-      |- name: Test subject
-      |  code: ${"\${{macro(\"test\")}}"}
-      |  outcomes: []
+            |---
+            |name: Test suite
+            |macros:
+            |- def: macro(a)
+            |  values:
+            |  - "(${"\${{a}}"})"
+            |  - "{${"\${{a}}"}}"
+            |subjects:
+            |- name: Test subject
+            |  code: ${"\${{macro(\"test\")}}"}
+            |  outcomes: []
                 """.trimMargin(),
                 collector,
             )!!.toCode()
-        assert(!collector.hasErrors())
-        assertEquals(setOf("(test)", "{test}"), generated)
+        collector.hasErrors() shouldBe false
+        generated shouldBe setOf("(test)", "{test}")
     }
 
-    @Test
-    fun `Suite with nested macros`() {
+    "Suite with nested macros" {
         val generated =
             compile(
                 """
-      |---
-      |name: Test suite
-      |macros:
-      |- def: macro(a)
-      |  values:
-      |  - "(${"\${{ a }}"})"
-      |  - "{${"\${{ a }}"}}"
-      |- def: nested(a)
-      |  values:
-      |  - "1${"\${{ a }}"}1"
-      |  - "2${"\${{ a }}"}2"
-      |subjects:
-      |- name: Test subject
-      |  code: ${"\${{ macro(nested(\"test\")) }}"}
-      |  outcomes: []
+            |---
+            |name: Test suite
+            |macros:
+            |- def: macro(a)
+            |  values:
+            |  - "(${"\${{ a }}"})"
+            |  - "{${"\${{ a }}"}}"
+            |- def: nested(a)
+            |  values:
+            |  - "1${"\${{ a }}"}1"
+            |  - "2${"\${{ a }}"}2"
+            |subjects:
+            |- name: Test subject
+            |  code: ${"\${{ macro(nested(\"test\")) }}"}
+            |  outcomes: []
                 """.trimMargin(),
                 collector,
             )!!.toCode()
-        assert(!collector.hasErrors())
-        assertEquals(setOf("(1test1)", "(2test2)", "{1test1}", "{2test2}"), generated)
+        collector.hasErrors() shouldBe false
+        generated shouldBe setOf("(1test1)", "(2test2)", "{1test1}", "{2test2}")
     }
 
-    @Test
-    fun `Suite with parameters and macros`() {
+    "Suite with parameters and macros" {
         val generated =
             compile(
                 """
-      |---
-      |name: Test suite
-      |parameters:
-      |- name: test
-      |  values:
-      |  - "a"
-      |  - "b"
-      |macros:
-      |- def: macro(a)
-      |  values:
-      |  - "(${"\${{a}}"})"
-      |  - "{${"\${{a}}"}}"
-      |subjects:
-      |- name: Test subject
-      |  code: ${"\${{macro(test)}}"}
-      |  outcomes: []
+            |---
+            |name: Test suite
+            |parameters:
+            |- name: test
+            |  values:
+            |  - "a"
+            |  - "b"
+            |macros:
+            |- def: macro(a)
+            |  values:
+            |  - "(${"\${{a}}"})"
+            |  - "{${"\${{a}}"}}"
+            |subjects:
+            |- name: Test subject
+            |  code: ${"\${{macro(test)}}"}
+            |  outcomes: []
                 """.trimMargin(),
                 collector,
             )!!.toCode()
-        assert(!collector.hasErrors())
-        assertEquals(setOf("(a)", "{a}", "(b)", "{b}"), generated)
+        collector.hasErrors() shouldBe false
+        generated shouldBe setOf("(a)", "{a}", "(b)", "{b}")
     }
 
-    @Test
-    fun `Suite with custom expression delimiters`() {
+    "Suite with custom expression delimiters" {
         val generated =
             compile(
                 """
-      |---
-      |name: Test suite
-      |config:
-      |  expressionPrefix: "%%"
-      |  expressionSuffix: "%%"
-      |macros:
-      |  - def: macro(a)
-      |    values:
-      |    - "(%%a%%)"
-      |    - "{%%a%%}"
-      |subjects:
-      |- name: Test subject
-      |  code: "%%macro('\"test\"')%%"
-      |  outcomes: []
+            |---
+            |name: Test suite
+            |config:
+            |  expressionPrefix: "%%"
+            |  expressionSuffix: "%%"
+            |macros:
+            |  - def: macro(a)
+            |    values:
+            |    - "(%%a%%)"
+            |    - "{%%a%%}"
+            |subjects:
+            |- name: Test subject
+            |  code: "%%macro('\"test\"')%%"
+            |  outcomes: []
                 """.trimMargin(),
                 collector,
             )!!.toCode()
-        assert(!collector.hasErrors())
-        assertEquals(setOf("(\"test\")", "{\"test\"}"), generated)
+        collector.hasErrors() shouldBe false
+        generated shouldBe setOf("(\"test\")", "{\"test\"}")
     }
 
-    @Test
-    fun `Suite with wrong dot calls`() {
+    "Suite with wrong dot calls" {
         val generated =
             compile(
                 """
-      |---
-      |name: Test suite
-      |subjects:
-      |- name: Test subject
-      |  code: "${"\${{a.b.c}}"}"
-      |  outcomes: []
+            |---
+            |name: Test suite
+            |subjects:
+            |- name: Test subject
+            |  code: "${"\${{a.b.c}}"}"
+            |  outcomes: []
                 """.trimMargin(),
                 collector,
             )
-        assert(collector.hasErrors())
-        assert(generated?.subjects?.isEmpty() == true)
+        collector.hasErrors() shouldBe true
+        generated?.subjects?.shouldBeEmpty()
     }
 
-    @Test
-    fun `Missing module`() {
+    "Missing module" {
         val generated =
             compile(
                 """
-      |---
-      |name: Test suite
-      |subjects:
-      |- name: Test subject
-      |  code: "${"\${{a.b()}}"}"
-      |  outcomes: []
+            |---
+            |name: Test suite
+            |subjects:
+            |- name: Test subject
+            |  code: "${"\${{a.b()}}"}"
+            |  outcomes: []
                 """.trimMargin(),
                 collector,
             )
-        assert(collector.hasErrors())
-        assert(
-            collector.messages
-                .first { message -> message.type == MessageCollector.MessageType.ERROR }
-                .message
-                .contains("Macro 'b' is not defined in module 'a'"),
+        collector.hasErrors() shouldBe true
+        collector.messages.shouldContain(
+            MessageCollector.Message(
+                MessageCollector.MessageType.ERROR,
+                "Macro 'b' is not defined in module 'a'",
+            ),
         )
-        assert(generated?.subjects?.isEmpty() == true)
+        generated?.subjects?.shouldBeEmpty()
     }
 
-    @Test
-    fun `Missing macro in module`() {
+    "Missing macro in module" {
         val generated =
             compile(
                 """
-      |---
-      |name: Test suite
-      |subjects:
-      |- name: Test subject
-      |  code: "${"\${{std.b()}}"}"
-      |  outcomes: []
+            |---
+            |name: Test suite
+            |subjects:
+            |- name: Test subject
+            |  code: "${"\${{std.b()}}"}"
+            |  outcomes: []
                 """.trimMargin(),
                 collector,
             )
-        assert(collector.hasErrors())
-        assert(
-            collector.messages
-                .first { message -> message.type == MessageCollector.MessageType.ERROR }
-                .message
-                .contains("Macro 'b' is not defined in module 'std'"),
+        collector.hasErrors() shouldBe true
+        collector.messages.shouldContain(
+            MessageCollector.Message(
+                MessageCollector.MessageType.ERROR,
+                "Macro 'b' is not defined in module 'std'",
+            ),
         )
-        assert(generated?.subjects?.isEmpty() == true)
+        generated?.subjects?.shouldBeEmpty()
     }
 
-    @Test
-    fun `Inferred call to the standard library`() {
+    "Inferred call to the standard library" {
         val generated =
             compile(
                 """
-      |---
-      |name: Test suite
-      |subjects:
-      |- name: Test subject
-      |  code: ${"\${{capitalizeFirst(\"test\"))}}"}
-      |  outcomes: []
+            |---
+            |name: Test suite
+            |subjects:
+            |- name: Test subject
+            |  code: ${"\${{capitalizeFirst(\"test\"))}}"}
+            |  outcomes: []
                 """.trimMargin(),
                 collector,
             )!!.toCode()
-        assert(!collector.hasErrors())
-        assertEquals(setOf("Test"), generated)
+        collector.hasErrors() shouldBe false
+        generated shouldBe setOf("Test")
     }
 
-    @Test
-    fun `Nested call with dot call`() {
+    "Nested call with dot call" {
         val generated =
             compile(
                 """
-      |---
-      |name: Test suite
-      |macros:
-      |- def: macro(a)
-      |  values:
-      |  - "(${"\${{a}}"})"
-      |  - "{${"\${{a}}"}}"
-      |subjects:
-      |- name: Test subject
-      |  code: ${"\${{macro(std.capitalizeFirst(\"test\"))}}"}
-      |  outcomes: []
+            |---
+            |name: Test suite
+            |macros:
+            |- def: macro(a)
+            |  values:
+            |  - "(${"\${{a}}"})"
+            |  - "{${"\${{a}}"}}"
+            |subjects:
+            |- name: Test subject
+            |  code: ${"\${{macro(std.capitalizeFirst(\"test\"))}}"}
+            |  outcomes: []
                 """.trimMargin(),
                 collector,
             )!!.toCode()
-        assert(!collector.hasErrors())
-        assertEquals(setOf("(Test)", "{Test}"), generated)
+        collector.hasErrors() shouldBe false
+        generated shouldBe setOf("(Test)", "{Test}")
     }
 
-    @Test
-    fun `Custom macro vararg argument`() {
+    "Custom macro vararg argument" {
         val generated =
             compile(
                 """
-      |---
-      |name: Test suite
-      |subjects:
-      |- name: Test subject
-      |  code: ${"\${{std.prettify('hello', 'World', 'how', 'Are', 'you')}}"}
-      |  outcomes: []
+            |---
+            |name: Test suite
+            |subjects:
+            |- name: Test subject
+            |  code: ${"\${{std.prettify('hello', 'World', 'how', 'Are', 'you')}}"}
+            |  outcomes: []
                 """.trimMargin(),
                 collector,
             )!!.toCode()
-        assert(!collector.hasErrors())
-        assertEquals(setOf("HelloWorldHowAreYou"), generated)
+        collector.hasErrors() shouldBe false
+        generated shouldBe setOf("HelloWorldHowAreYou")
     }
 
-    @Test
-    fun `Multiple same names resolution`() {
+    "Multiple same names resolution" {
         val generatedSubjects =
             compile(
                 """
-      |---
-      |name: Test suite
-      |parameters:
-      |- name: test
-      |  values: [1, 2]
-      |macros:
-      |  - def: macro(a)
-      |    values: ["(${"\${{a}}"})", "{${"\${{a}}"}}"]
-      |subjects:
-      |  - name: "Test subject${"\${{test}}"}"
-      |    macros: 
-      |      - def: inner(b)
-      |        values: ["[${"\${{b + test}}"}]", "#${"\${{b + test}}"}#"]
-      |    code: "${"\${{macro(test)}}"}${"\${{inner(test)}}"}"  
+            |---
+            |name: Test suite
+            |parameters:
+            |- name: test
+            |  values: [1, 2]
+            |macros:
+            |  - def: macro(a)
+            |    values: ["(${"\${{a}}"})", "{${"\${{a}}"}}"]
+            |subjects:
+            |  - name: "Test subject${"\${{test}}"}"
+            |    macros:
+            |      - def: inner(b)
+            |        values: ["[${"\${{b + test}}"}]", "#${"\${{b + test}}"}#"]
+            |    code: "${"\${{macro(test)}}"}${"\${{inner(test)}}"}"
                 """.trimMargin(),
                 collector,
             )
-        assert(!collector.hasErrors())
-        assertEquals(8, generatedSubjects?.subjects?.size)
+        collector.hasErrors() shouldBe false
+        generatedSubjects?.subjects?.size shouldBe 8
         val names = generatedSubjects!!.subjects.map(ResolvedSubject::name).toSet()
-        assertEquals(
-            setOf(
-                "Test subject1",
-                "Test subject2",
-            ),
-            names.toSet(),
-        )
-        val generated = generatedSubjects!!.toCode()
-        assertEquals(
+        names shouldBe setOf("Test subject1", "Test subject2")
+        val generated = generatedSubjects.toCode()
+        generated shouldBe
             setOf(
                 "(1)[11]",
                 "(1)#11#",
@@ -352,46 +332,41 @@ class CompilerTests {
                 "(2)#22#",
                 "{2}[22]",
                 "{2}#22#",
-            ),
-            generated,
-        )
+            )
     }
 
-    @Test
-    fun `Subject properties resolution`() {
+    "Subject properties resolution" {
         val generatedSubjects =
             compile(
                 """
-      |---
-      |name: Test suite
-      |parameters:
-      |- name: test
-      |  values: [1, 2]
-      |macros:
-      |  - def: macro(a)
-      |    value: "(${"\${{a}}"})"
-      |subjects:
-      |  - name: "Test subject${"\${{test}}"}"
-      |    macros: 
-      |      - def: inner(b)
-      |        values: ["[${"\${{b + test}}"}]", "#${"\${{b + test}}"}#"]
-      |    code: "${"\${{macro(test)}}"}${"\${{inner(test)}}"}"  
-      |    properties:
-      |      prop1: "${"\${{macro(test)}}"}${"\${{inner(test)}}"}"  
-      |      prop2: "${"\${{inner(test)}}"}${"\${{macro(test)}}"}"
+            |---
+            |name: Test suite
+            |parameters:
+            |- name: test
+            |  values: [1, 2]
+            |macros:
+            |  - def: macro(a)
+            |    value: "(${"\${{a}}"})"
+            |subjects:
+            |  - name: "Test subject${"\${{test}}"}"
+            |    macros:
+            |      - def: inner(b)
+            |        values: ["[${"\${{b + test}}"}]", "#${"\${{b + test}}"}#"]
+            |    code: "${"\${{macro(test)}}"}${"\${{inner(test)}}"}"
+            |    properties:
+            |      prop1: "${"\${{macro(test)}}"}${"\${{inner(test)}}"}"
+            |      prop2: "${"\${{inner(test)}}"}${"\${{macro(test)}}"}"
                 """.trimMargin(),
                 collector,
             )
-        assert(!collector.hasErrors())
+        collector.hasErrors() shouldBe false
         val properties = generatedSubjects!!.subjects.map { subject -> subject.properties }
-        assertEquals(
+        properties shouldBe
             setOf(
                 mapOf("prop1" to "(1)[11]", "prop2" to "[11](1)"),
                 mapOf("prop1" to "(2)[22]", "prop2" to "[22](2)"),
                 mapOf("prop1" to "(1)#11#", "prop2" to "#11#(1)"),
                 mapOf("prop1" to "(2)#22#", "prop2" to "#22#(2)"),
-            ),
-            properties.toSet(),
-        )
+            )
     }
-}
+})

@@ -2,7 +2,8 @@
  * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
- *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the
+ *  LICENSE file in this project's repository's top directory.
  *
  */
 
@@ -25,7 +26,7 @@ object Reader {
     ): Suite? =
         try {
             TODO()
-        } catch (e: Exception) {
+        } catch (e: IllegalArgumentException) {
             messageCollector.error(
                 "Failed to parse YAML file: $filePath. Error: ${e.message}",
                 Context.Companion.emptyContext(),
@@ -44,7 +45,7 @@ object Reader {
     ): Suite? =
         try {
             TODO()
-        } catch (e: Exception) {
+        } catch (e: IllegalArgumentException) {
             messageCollector.error(
                 "Failed to parse YAML suite: \n$yaml\n\nError: ${e.message}",
                 Context.Companion.emptyContext(),

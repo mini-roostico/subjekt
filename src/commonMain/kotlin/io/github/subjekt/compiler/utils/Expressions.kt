@@ -2,7 +2,8 @@
  * Copyright (c) 2024, Francesco Magnani, Luca Rubboli,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
- *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the LICENSE file in this project's repository's top directory.
+ *  This file is part of Subjekt, and is distributed under the terms of the Apache License 2.0, as described in the
+ *  LICENSE file in this project's repository's top directory.
  *
  */
 
@@ -42,7 +43,8 @@ object Expressions {
 
     /**
      * Accepts the receiver [String] as a Subjekt expression and visits it with the provided [visitor]. The [context] is
-     * the one used to resolve parameters and macros' calls. The [messageCollector] is used to report any error that occurs.
+     * the one used to resolve parameters and macros' calls. The [messageCollector] is used to report any error that
+     * occurs.
      * The [defaultValueIfError] is the value that will be returned if an error occurs during the evaluation.
      *
      * Returns the result of the given [visitor].
@@ -55,10 +57,9 @@ object Expressions {
     ): T {
         val stream = CharStreams.fromString(this)
         val lexer = ExpressionLexer(stream)
-        messageCollector.useLexer(lexer, context)
         val tokens = CommonTokenStream(lexer)
         val parser = ExpressionParser(tokens)
-        messageCollector.useParser(parser, context)
+        messageCollector.setLexerAndParser(lexer, parser, context)
         val tree = parser.expression()
         if (parser.numberOfSyntaxErrors > 0) {
             return defaultValueIfError
@@ -67,6 +68,9 @@ object Expressions {
         return visitor.visit(ast)
     }
 
+    /**
+     * Resolves the calls in the receiver [Subject] using the provided [context] and [messageCollector].
+     */
     fun Subject.resolveCalls(
         context: Context,
         messageCollector: MessageCollector,
