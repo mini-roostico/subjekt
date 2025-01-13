@@ -11,8 +11,7 @@ package io.github.subjekt.files
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import kotlinx.io.files.Path
-import kotlinx.io.files.SystemFileSystem
+import java.io.File
 
 class IOSpec : StringSpec({
     "Reading a file should return its content" {
@@ -21,23 +20,23 @@ class IOSpec : StringSpec({
             Lorem Impsum Dolor Sit Amet
             Consectetur Adipiscing Elit
             """.trimIndent()
-        val path = "src/commonTest/resources/plain/TestFile.txt"
+        val path = "src/jvmTest/resources/plain/TestFile.txt"
         val content = readText(path)
         content shouldBe expectedContent
     }
 
     "Writing to a file should create it and write the content" {
-        val path = "src/commonTest/resources/plain/Temp.txt"
+        val path = "src/jvmTest/resources/plain/Temp.txt"
         val content = "Lorem Impsum Dolor Sit Amet"
         val result = content.writeTo(path, append = false)
         result.isSuccess shouldBe true
         val newContent = readText(path)
         newContent shouldBe content
-        SystemFileSystem.delete(Path(path))
+        File(path).delete()
     }
 
     "Writing to an existing file should append to its content" {
-        val path = "src/commonTest/resources/plain/TestFile.txt"
+        val path = "src/jvmTest/resources/plain/TestFile.txt"
         val content = "Consectetur Adipiscing Elit"
         val previousContent = readText(path)!!
         val result = content.writeTo(path)
