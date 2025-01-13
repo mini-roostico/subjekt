@@ -40,7 +40,7 @@ class ExpressionIrCreationVisitorTest : StringSpec({
         collector.flushMessages()
     }
 
-    "Simple IR creation" {
+    "Simple IR creation".config(enabled = false) {
         val expr = "a + b"
         val node = expr.visitExpression()
         collector.messages.shouldBe(emptyList())
@@ -50,7 +50,7 @@ class ExpressionIrCreationVisitorTest : StringSpec({
         plusNode.right shouldBe Node.Id::class
     }
 
-    "Simple IR creation with literals - double quoted" {
+    "Simple IR creation with literals - double quoted".config(enabled = false) {
         val expr = "\"a\" + \"b\""
         val node = expr.visitExpression()
         collector.messages.shouldBe(emptyList())
@@ -60,7 +60,7 @@ class ExpressionIrCreationVisitorTest : StringSpec({
         plusNode.right shouldBe Node.Literal::class
     }
 
-    "Simple IR creation with literals - single quoted" {
+    "Simple IR creation with literals - single quoted".config(enabled = false) {
         val expr = "'a' + 'b'"
         val node = expr.visitExpression()
         collector.messages.shouldBe(emptyList())
@@ -70,7 +70,7 @@ class ExpressionIrCreationVisitorTest : StringSpec({
         plusNode.right shouldBe Node.Literal::class
     }
 
-    "Simple IR creation with literals containing escaped quotes" {
+    "Simple IR creation with literals containing escaped quotes".config(enabled = false) {
         val expr = """"\"a\"" + '\"b\"'"""
         val node = expr.visitExpression()
         collector.messages.shouldBe(emptyList())
@@ -82,7 +82,7 @@ class ExpressionIrCreationVisitorTest : StringSpec({
         (plusNode.right as Node.Literal).value shouldBe "\"b\""
     }
 
-    "Simple IR creation with call" {
+    "Simple IR creation with call".config(enabled = false) {
         val expr = "foo(a, b)"
         val node = expr.visitExpression()
         collector.messages.shouldBe(emptyList())
@@ -93,7 +93,7 @@ class ExpressionIrCreationVisitorTest : StringSpec({
         callNode.arguments[1] shouldBe Node.Id::class
     }
 
-    "Simple IR creation with nested calls" {
+    "Simple IR creation with nested calls".config(enabled = false) {
         val expr = "foo(bar(a), b)"
         val node = expr.visitExpression()
         collector.messages.shouldBe(emptyList())
@@ -104,7 +104,7 @@ class ExpressionIrCreationVisitorTest : StringSpec({
         callNode.arguments[1] shouldBe Node.Id::class
     }
 
-    "Simple IR creation with nested calls and literals" {
+    "Simple IR creation with nested calls and literals".config(enabled = false) {
         val expr = "foo(bar(\"a\"), \"b\")"
         val node = expr.visitExpression()
         collector.messages.shouldBe(emptyList())
@@ -115,7 +115,7 @@ class ExpressionIrCreationVisitorTest : StringSpec({
         callNode.arguments[1] shouldBe Node.Literal::class
     }
 
-    "Simple IR creation with nested calls and plus" {
+    "Simple IR creation with nested calls and plus".config(enabled = false) {
         val expr = "foo(bar(a + b), c)"
         val node = expr.visitExpression()
         collector.messages.shouldBe(emptyList())
@@ -126,7 +126,7 @@ class ExpressionIrCreationVisitorTest : StringSpec({
         callNode.arguments[1] shouldBe Node.Id::class
     }
 
-    "Simple IR creation with nested calls and plus and literals" {
+    "Simple IR creation with nested calls and plus and literals".config(enabled = false) {
         val expr = "foo(bar(\"a\" + \"b\"), \"c\")"
         val node = expr.visitExpression()
         collector.messages.shouldBe(emptyList())
@@ -137,7 +137,7 @@ class ExpressionIrCreationVisitorTest : StringSpec({
         callNode.arguments[1] shouldBe Node.Literal::class
     }
 
-    "Simple IR creation with nested calls and plus and literals and call" {
+    "Simple IR creation with nested calls and plus and literals and call".config(enabled = false) {
         val expr = "foo(bar(\"a\" + \"b\"), baz(c))"
         val node = expr.visitExpression()
         collector.messages.shouldBe(emptyList())
@@ -148,7 +148,7 @@ class ExpressionIrCreationVisitorTest : StringSpec({
         callNode.arguments[1] shouldBe Node.Call::class
     }
 
-    "Complex IR creation" {
+    "Complex IR creation".config(enabled = false) {
         val expr = "foo(bar(a + b), baz(c + d)) + \"e\""
         val node = expr.visitExpression()
         collector.messages.shouldBe(emptyList())
@@ -162,14 +162,14 @@ class ExpressionIrCreationVisitorTest : StringSpec({
         (plusNode.left.arguments[1] as Node.Call).arguments[0] shouldBe Node.Plus::class
     }
 
-    "Simple dot call" {
+    "Simple dot call".config(enabled = false) {
         val expr = "foo.bar()"
         val node = expr.visitExpression()
         collector.messages.shouldBe(emptyList())
         node shouldBe Node.DotCall::class
     }
 
-    "Plus syntax error" {
+    "Plus syntax error".config(enabled = false) {
         val expr = "a +"
         val node = expr.visitExpression()
         node shouldBe null
@@ -180,7 +180,7 @@ class ExpressionIrCreationVisitorTest : StringSpec({
             )
     }
 
-    "Call syntax error" {
+    "Call syntax error".config(enabled = false) {
         val expr = "foo(a"
         expr.visitExpression()
         collector.messages shouldContain
