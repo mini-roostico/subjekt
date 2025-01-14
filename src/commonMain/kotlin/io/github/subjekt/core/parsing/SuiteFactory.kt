@@ -26,43 +26,48 @@ object SuiteFactory {
     class SuiteBuilder {
         private var id: String? = null
         private var subjects: List<Subject> = emptyList()
-        private var configuration: Configuration? = null
+        private var configuration: Configuration? = null // todo change to default configuration
         private var symbolTable: SymbolTable? = null
 
         /**
          * Sets the ID of the [Suite].
          */
-        fun id(id: String) {
-            this.id = id
-        }
+        fun id(id: String): SuiteBuilder =
+            apply {
+                this.id = id
+            }
 
         /**
          * Adds a [Subject] to the [Suite].
          */
-        fun subject(subject: Subject) {
-            subjects += subject
-        }
+        fun subject(subject: Subject): SuiteBuilder =
+            apply {
+                subjects += subject
+            }
 
         /**
          * Adds multiple [Subject]s to the [Suite].
          */
-        fun subjects(vararg subject: Subject) {
-            subjects += subject
-        }
+        fun subjects(vararg subject: Subject): SuiteBuilder =
+            apply {
+                subjects += subject
+            }
 
         /**
          * Sets the [Configuration] of the [Suite].
          */
-        fun configuration(configuration: Configuration) {
-            this.configuration = configuration
-        }
+        fun configuration(configuration: Configuration): SuiteBuilder =
+            apply {
+                this.configuration = configuration
+            }
 
         /**
          * Sets the [SymbolTable] of the [Suite].
          */
-        fun symbolTable(symbolTable: SymbolTable) {
-            this.symbolTable = symbolTable
-        }
+        fun symbolTable(symbolTable: SymbolTable): SuiteBuilder =
+            apply {
+                this.symbolTable = symbolTable
+            }
 
         /**
          * Builds the [Suite] instance. This method is unsafe and should be encapsulated in a try-catch block or

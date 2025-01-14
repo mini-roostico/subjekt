@@ -30,15 +30,30 @@ class MapVisitor {
      */
     private fun parsingFail(message: () -> String): Nothing = throw ParsingException(message())
 
+    private fun parsingCheck(
+        condition: Boolean,
+        message: () -> String,
+    ) {
+        if (!condition) {
+            parsingFail(message)
+        }
+    }
+
     /**
      * Visits a map and creates a [Suite] instance. This method is unsafe and should be encapsulated in a try-catch
      * block or `runCatching` block to handle parsing exceptions.
      */
     @Throws(IllegalArgumentException::class)
     fun visit(map: Map<String, Any>): Suite {
-        map.entries.forEach { (key, value) ->
-            visitGlobalLevel(key, value)
-        }
+        map.entries
+            .sortedWith(
+                // the configuration block gets parsed first before anything else
+                compareBy { entry ->
+                    if (entry.key in SUITE_CONFIG_KEYS) 0 else 1
+                },
+            ).forEach { (key, value) ->
+                visitGlobalLevel(key, value)
+            }
         return runCatching {
             suiteBuilder.build()
         }.fold({
@@ -53,14 +68,37 @@ class MapVisitor {
         value: Any,
     ) {
         when (key) {
-            "name", "id" -> visitSuiteName(value)
-            "configuration", "config" -> visitConfiguration(value)
-            "parameters", "params" -> visitParameters(value)
-            "macros" -> visitMacros(value)
-            "imports", "include", "import" -> visitImports(value)
-            "subjects" -> visitSubjects(value)
+            in SUITE_ID_KEYS -> visitSuiteId(value)
+            in SUITE_CONFIG_KEYS -> visitConfiguration(value)
+            in SUITE_PARAMS_KEYS -> visitParameters(value)
+            in SUITE_MACROS_KEYS -> visitMacros(value)
+            in SUITE_IMPORTS_KEYS -> visitImports(value)
+            in SUITE_SUBJECTS_KEYS -> visitSubjects(value)
             else -> parsingFail { "Unknown Suite configuration key: $key" }
         }
+    }
+
+    private fun visitSuiteId(value: Any) {
+        parsingCheck(value is String) { "Suite ID must be a string" }
+        suiteBuilder = suiteBuilder.id(value.toString())
+    }
+
+    private fun visitConfiguration(config: Any) {
+        parsingCheck(config is Map<*, *>) { "Configuration must be a map" }
+        val configMap = config as Map<*, *>
+        configMap.forEach { (key, value) ->
+            parsingCheck(key is String) { "Configuration keys cannot be null" }
+            parsingCheck(value != null) { "Configuration value for key '$key' cannot be null" }
+            visitConfigurationLevel(key.toString(), value!!)
+        }
+    }
+
+    private fun visitConfigurationLevel(
+        key: String,
+        value: Any,
+    ) {
+        TODO()
+        println(key + value)
     }
 
     private fun visitSubjects(subjects: Any) {
@@ -83,13 +121,38 @@ class MapVisitor {
         println(parameters)
     }
 
-    private fun visitConfiguration(config: Any) {
-        TODO()
-        println(config)
-    }
+    /**
+     * Collection of known keys for the [Suite] configuration.
+     */
+    companion object {
+        /**
+         * Keys used to identify the suite's name.
+         */
+        internal val SUITE_ID_KEYS = setOf("name", "id")
 
-    private fun visitSuiteName(value: Any) {
-        // suiteBuilder.name = value.toString()
-        println(value)
+        /**
+         * Keys used to identify the suite's configuration.
+         */
+        internal val SUITE_CONFIG_KEYS = setOf("configuration", "config")
+
+        /**
+         * Keys used to identify the suite's parameters.
+         */
+        internal val SUITE_PARAMS_KEYS = setOf("parameters", "params")
+
+        /**
+         * Keys used to identify the suite's macros.
+         */
+        internal val SUITE_MACROS_KEYS = setOf("macros")
+
+        /**
+         * Keys used to identify the suite's imports.
+         */
+        internal val SUITE_IMPORTS_KEYS = setOf("imports", "import", "include")
+
+        /**
+         * Keys used to identify the suite's subjects.
+         */
+        internal val SUITE_SUBJECTS_KEYS = setOf("subjects", "subject")
     }
 }
