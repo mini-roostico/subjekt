@@ -9,7 +9,7 @@
 
 package io.github.subjekt.core
 
-import io.kotest.assertions.fail
+import io.github.subjekt.TestingUtility.getOrFail
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.data.blocking.forAll
 import io.kotest.data.row
@@ -17,16 +17,6 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldStartWith
 
 class SourceSpec : StringSpec({
-
-    /**
-     * Utility function to get the value of a Result, printing the exception if the result is a failure.
-     */
-    fun Result<Map<String, Any>>.getOrFail(): Map<String, Any> {
-        if (this.isFailure) {
-            fail("This exception originated the failure:\n\n${this.exceptionOrNull()}")
-        }
-        return this.getOrNull()!!
-    }
 
     forAll(
         row(
