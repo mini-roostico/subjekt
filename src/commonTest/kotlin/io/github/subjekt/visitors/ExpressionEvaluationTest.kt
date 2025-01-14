@@ -14,8 +14,9 @@ import io.github.subjekt.compiler.nodes.suite.Macro
 import io.github.subjekt.compiler.nodes.suite.Template
 import io.github.subjekt.compiler.utils.Expressions.evaluate
 import io.github.subjekt.compiler.utils.MessageCollector
-import io.github.subjekt.compiler.utils.MessageCollector.Message
 import io.github.subjekt.compiler.utils.Permutations.permuteDefinitions
+import io.github.subjekt.utils.MessageCollector.Message
+import io.github.subjekt.utils.MessageCollector.MessageType
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
@@ -39,7 +40,7 @@ class ExpressionEvaluationTest : StringSpec({
     }
 
     afterTest {
-        collector.showInConsole()
+        // collector.showInConsole()
         collector.flushMessages()
     }
 
@@ -110,7 +111,7 @@ class ExpressionEvaluationTest : StringSpec({
         result shouldBe ""
         collector.messages shouldContain
             Message(
-                MessageCollector.MessageType.ERROR,
+                MessageType.ERROR,
                 "line 1: Identifier 'c' is not defined",
             )
     }
@@ -121,7 +122,7 @@ class ExpressionEvaluationTest : StringSpec({
         result.shouldBeEmpty()
         collector.messages shouldContain
             Message(
-                MessageCollector.MessageType.ERROR,
+                MessageType.ERROR,
                 "line 1: Macro 'baz' is not defined",
             )
     }
@@ -132,7 +133,7 @@ class ExpressionEvaluationTest : StringSpec({
         result.shouldBeEmpty()
         collector.messages shouldContain
             Message(
-                MessageCollector.MessageType.ERROR,
+                MessageType.ERROR,
                 "line 1: Macro 'bar' expects 1 arguments, but got 0",
             )
     }

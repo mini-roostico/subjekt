@@ -13,6 +13,8 @@ import io.github.subjekt.compiler.SubjektCompiler.compile
 import io.github.subjekt.compiler.resolved.ResolvedSubject
 import io.github.subjekt.compiler.resolved.ResolvedSuite
 import io.github.subjekt.compiler.utils.MessageCollector
+import io.github.subjekt.utils.MessageCollector.Message
+import io.github.subjekt.utils.MessageCollector.MessageType
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
@@ -209,8 +211,8 @@ class CompilerTests : StringSpec({
             )
         collector.hasErrors() shouldBe true
         collector.messages.shouldContain(
-            MessageCollector.Message(
-                MessageCollector.MessageType.ERROR,
+            Message(
+                MessageType.ERROR,
                 "Macro 'b' is not defined in module 'a'",
             ),
         )
@@ -232,8 +234,8 @@ class CompilerTests : StringSpec({
             )
         collector.hasErrors() shouldBe true
         collector.messages.shouldContain(
-            MessageCollector.Message(
-                MessageCollector.MessageType.ERROR,
+            Message(
+                MessageType.ERROR,
                 "Macro 'b' is not defined in module 'std'",
             ),
         )

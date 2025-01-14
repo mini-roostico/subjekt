@@ -12,10 +12,11 @@ package io.github.subjekt.visitors
 import io.github.subjekt.compiler.nodes.Context
 import io.github.subjekt.compiler.nodes.expression.Node
 import io.github.subjekt.compiler.utils.MessageCollector
-import io.github.subjekt.compiler.utils.MessageCollector.Message
 import io.github.subjekt.compiler.visitors.ExpressionIrCreationVisitor
 import io.github.subjekt.parsers.generated.ExpressionLexer
 import io.github.subjekt.parsers.generated.ExpressionParser
+import io.github.subjekt.utils.MessageCollector.Message
+import io.github.subjekt.utils.MessageCollector.MessageType
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
@@ -175,7 +176,7 @@ class ExpressionIrCreationVisitorTest : StringSpec({
         node shouldBe null
         collector.messages shouldContain
             Message(
-                MessageCollector.MessageType.ERROR,
+                MessageType.ERROR,
                 "line 1:3: mismatched input '<EOF>' expecting {STRING, ID}",
             )
     }
@@ -184,6 +185,6 @@ class ExpressionIrCreationVisitorTest : StringSpec({
         val expr = "foo(a"
         expr.visitExpression()
         collector.messages shouldContain
-            Message(MessageCollector.MessageType.ERROR, "line 1:5: mismatched input '<EOF>' expecting {',', ')'}")
+            Message(MessageType.ERROR, "line 1:5: mismatched input '<EOF>' expecting {',', ')'}")
     }
 })

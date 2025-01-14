@@ -12,9 +12,9 @@ package io.github.subjekt.compiler.visitors
 import io.github.subjekt.compiler.nodes.Context
 import io.github.subjekt.compiler.nodes.expression.Node
 import io.github.subjekt.compiler.utils.MessageCollector
-import io.github.subjekt.compiler.utils.MessageCollector.Position
 import io.github.subjekt.parsers.generated.ExpressionBaseVisitor
 import io.github.subjekt.parsers.generated.ExpressionParser
+import io.github.subjekt.utils.MessageCollector.Position
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 /**

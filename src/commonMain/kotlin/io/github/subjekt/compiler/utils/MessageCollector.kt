@@ -10,6 +10,9 @@
 package io.github.subjekt.compiler.utils
 
 import io.github.subjekt.compiler.nodes.Context
+import io.github.subjekt.utils.MessageCollector.Message
+import io.github.subjekt.utils.MessageCollector.MessageType
+import io.github.subjekt.utils.MessageCollector.Position
 import org.antlr.v4.kotlinruntime.BaseErrorListener
 import org.antlr.v4.kotlinruntime.ConsoleErrorListener
 import org.antlr.v4.kotlinruntime.Lexer
@@ -21,46 +24,6 @@ import org.antlr.v4.kotlinruntime.Recognizer
  * Utility class used for reporting and collecting compilation messages.
  */
 sealed class MessageCollector {
-    /**
-     * Represents a message type.
-     */
-    enum class MessageType {
-        /**
-         * Info message.
-         */
-        INFO,
-
-        /**
-         * Warning message.
-         */
-        WARNING,
-
-        /**
-         * Error message.
-         */
-        ERROR,
-    }
-
-    /**
-     * Utility class used to represent a reported position in the source code.
-     */
-    data class Position(
-        /**
-         * The line number.
-         */
-        val line: Int = -1,
-        /**
-         * The character position in the line.
-         */
-        val charPositionInLine: Int = -1,
-    ) {
-        override fun toString(): String {
-            val line = if (line == -1) "" else "line $line"
-            val char = if (charPositionInLine == -1) "" else ":$charPositionInLine"
-            return "$line$char"
-        }
-    }
-
     /**
      * The list of messages collected.
      */
@@ -116,14 +79,6 @@ sealed class MessageCollector {
     abstract fun flushMessages()
 
     /**
-     * Represents a collected message. It has a [type] and a string [message].
-     */
-    data class Message(
-        val type: MessageType,
-        val message: String,
-    )
-
-    /**
      * Main method to report a [message] in the given [context] at the given [line].
      */
     fun report(
@@ -144,21 +99,11 @@ sealed class MessageCollector {
     )
 
     /**
-     * Shows one [message] in the console.
-     */
-    fun showInConsole(message: Message) {
-        when (message.type) {
-            MessageType.INFO -> println("i: ${message.message}")
-            MessageType.WARNING -> println("w: ${message.message}")
-            MessageType.ERROR -> println("e: ${message.message}")
-        }
-    }
-
-    /**
      * Shows the collected messages in the console.
      */
-    fun showInConsole() {
-        messages.forEach(::showInConsole)
+    fun showInConsole(message: Message) {
+        // do nothing
+        println(message)
     }
 
     /**
@@ -234,25 +179,6 @@ sealed class MessageCollector {
 
         override fun flushMessages() {
             messages = emptyList()
-        }
-    }
-
-    /**
-     * Null message collector that does not store or show any message.
-     */
-    class NullCollector : MessageCollector() {
-        override val messages = emptyList<Message>()
-
-        override fun report(
-            message: Message,
-            context: Context,
-            position: Position,
-        ) {
-            // do nothing
-        }
-
-        override fun flushMessages() {
-            // do nothing
         }
     }
 }

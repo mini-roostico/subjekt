@@ -16,7 +16,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 
 class TemplateTest : StringSpec({
-    val messageCollector = MessageCollector.NullCollector()
+    val messageCollector = MessageCollector.SimpleCollector()
 
     "Simple template parsing".config(enabled = false) {
         val templateString = "Hello, \${{ name }}!"
