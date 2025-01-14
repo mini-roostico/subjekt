@@ -9,4 +9,28 @@
 
 package io.github.subjekt.core
 
-class Configuration
+class Configuration : MutableMap<String, Any> by mutableMapOf<String, Any>() {
+    /**
+     * The code preamble of the suite.
+     */
+    val codePreamble: String
+        get() = this["codePreamble"] as? String ?: ""
+
+    /**
+     * Prefix used to identify the start of an expression.
+     */
+    val expressionPrefix: String
+        get() = this["expressionPrefix"] as? String ?: "\${{"
+
+    /**
+     * Suffix used to identify the end of an expression.
+     */
+    val expressionSuffix: String
+        get() = this["expressionSuffix"] as? String ?: "}}"
+
+    /**
+     * Whether to lint the suite or not.
+     */
+    val lint: Boolean
+        get() = (this["lint"] as? String)?.toBooleanStrictOrNull() != false // Default to true
+}
