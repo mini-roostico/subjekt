@@ -15,6 +15,7 @@ import io.github.subjekt.core.Subject
 import io.github.subjekt.core.Suite
 import io.github.subjekt.core.SymbolTable
 import io.github.subjekt.core.impl.SuiteImpl
+import io.github.subjekt.utils.Logger.warning
 
 /**
  * Factory class used to create [Suite] instances.
@@ -26,7 +27,7 @@ object SuiteFactory {
     class SuiteBuilder {
         private var id: String? = null
         private var subjects: List<Subject> = emptyList()
-        private var configuration: Configuration? = null // todo change to default configuration
+        private var configuration: Configuration = Configuration()
         private var symbolTable: SymbolTable? = null
 
         /**
@@ -59,6 +60,22 @@ object SuiteFactory {
         fun configuration(configuration: Configuration): SuiteBuilder =
             apply {
                 this.configuration = configuration
+            }
+
+        /**
+         * Adds a configuration key-value pair to the [Suite].
+         */
+        fun addConfig(
+            key: String,
+            value: Any,
+        ): SuiteBuilder =
+            apply {
+                val default = configuration.set(key, value)
+                if (!default) {
+                    warning {
+                        "Adding a non-default configuration key '$key' to the suite."
+                    }
+                }
             }
 
         /**

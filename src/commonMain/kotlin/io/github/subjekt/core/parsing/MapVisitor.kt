@@ -11,6 +11,7 @@ package io.github.subjekt.core.parsing
 
 import io.github.subjekt.core.Suite
 import io.github.subjekt.core.parsing.SuiteFactory.SuiteBuilder
+import io.github.subjekt.utils.Utils.checkNulls
 
 /**
  * Visitor class used to parse a map into a [Suite] instance.
@@ -73,7 +74,7 @@ class MapVisitor {
             in SUITE_PARAMS_KEYS -> visitParameters(value)
             in SUITE_MACROS_KEYS -> visitMacros(value)
             in SUITE_IMPORTS_KEYS -> visitImports(value)
-            in SUITE_SUBJECTS_KEYS -> visitSubjects(value)
+            in SUITE_SUBJECTS_KEYS -> visitSubjects(key, value)
             else -> parsingFail { "Unknown Suite configuration key: $key" }
         }
     }
@@ -97,13 +98,29 @@ class MapVisitor {
         key: String,
         value: Any,
     ) {
-        TODO()
-        println(key + value)
+        suiteBuilder = suiteBuilder.addConfig(key, value)
     }
 
-    private fun visitSubjects(subjects: Any) {
-        TODO("Not yet implemented")
-        println(subjects)
+    private fun visitSubjects(
+        key: String,
+        subjects: Any,
+    ) {
+        parsingCheck(subjects is List<*> || subjects is Map<*, *> || subjects is String) {
+            "'$key' value must either be a map, a list, or a string"
+        }
+        if (subjects is List<*>) {
+            subjects.checkNulls().map { visitSubject(it) }
+        } else {
+            visitSubject(subjects)
+        }
+    }
+
+    private fun visitSubject(subject: Any) {
+        parsingCheck(subject is Map<*, *> || subject is String) { "Subject must be a map or a string" }
+        when (subject) {
+            is Map<*, *> -> TODO()
+            is String -> TODO()
+        }
     }
 
     private fun visitImports(imports: Any) {

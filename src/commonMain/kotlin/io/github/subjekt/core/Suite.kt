@@ -27,7 +27,7 @@ interface Suite {
     /**
      * The list of Subjects in the Suite.
      */
-    val subjects: Iterable<Subject>
+    val subjects: List<Subject>
 
     /**
      * The configuration of the Suite.

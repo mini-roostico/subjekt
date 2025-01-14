@@ -20,6 +20,6 @@ import io.github.subjekt.core.SymbolTable
 internal class SuiteImpl(
     override val id: String,
     override val symbolTable: SymbolTable,
-    override val subjects: Iterable<Subject>,
+    override val subjects: List<Subject>,
     override val configuration: Configuration,
 ) : Suite
