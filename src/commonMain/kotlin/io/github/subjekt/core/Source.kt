@@ -9,6 +9,7 @@
 
 package io.github.subjekt.core
 
+import io.github.subjekt.utils.Utils.checkNulls
 import io.github.subjekt.utils.toAnyMap
 import io.github.subjekt.utils.toJsonMap
 import net.mamoe.yamlkt.Yaml
@@ -42,12 +43,6 @@ sealed class Source {
         fun fromJson(text: String): Source = JsonSource(text)
     }
 }
-
-private fun <K, V> Map<K?, V?>.checkNulls(): Map<K, V> =
-    map { (key, value) ->
-        require(key != null && value != null) { "Cannot use null values in Subjekt: $key -> $value" }
-        key to value
-    }.toMap()
 
 /**
  * Represents a Source created by parsing a YAML string. Can be created using [Source.fromYaml].
