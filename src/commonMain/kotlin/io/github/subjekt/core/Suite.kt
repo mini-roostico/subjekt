@@ -9,7 +9,28 @@
 
 package io.github.subjekt.core
 
+/**
+ * Entry point of the whole Subjekt configuration. A global entity containing Parameters, Macros, Subjects and a
+ * Configuration.
+ */
 interface Suite {
+    /**
+     * The unique identifier of the Suite. This is used to reference the Suite in other Suites.
+     */
     val id: String
+
+    /**
+     * The symbol table used to resolve references in the Suite.
+     */
+    val symbolTable: SymbolTable
+
+    /**
+     * The list of Subjects in the Suite.
+     */
     val subjects: Iterable<Subject>
+
+    /**
+     * The configuration of the Suite.
+     */
+    val configuration: Configuration
 }
