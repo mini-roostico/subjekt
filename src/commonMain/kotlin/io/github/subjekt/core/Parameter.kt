@@ -37,6 +37,16 @@ data class Parameter(
         const val DEFAULT_ID_KEY = "id"
 
         /**
+         * Keys that can be used as synonyms for [DEFAULT_VALUES_KEY].
+         */
+        val PARAMETER_VALUES_KEYS = setOf("values", "value", "val", "v", "bodies")
+
+        /**
+         * The default key used to indicate the values of the parameter.
+         */
+        const val DEFAULT_VALUES_KEY = "values"
+
+        /**
          * Utility function to create a [Parameter] from a pair of ID and value.
          */
         fun Pair<String, *>.toParameter(): Parameter {
