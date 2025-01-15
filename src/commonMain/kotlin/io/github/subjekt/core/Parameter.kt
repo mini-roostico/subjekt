@@ -49,9 +49,9 @@ data class Parameter(
         /**
          * Utility function to create a [Parameter] from a pair of ID and value.
          */
-        fun Pair<String, *>.toParameter(): Parameter {
+        fun Pair<String, String>.toSingleValueParameter(): Parameter {
             val (id, value) = this
-            return Parameter(id, listOf(value.toString()))
+            return Parameter(id, listOf(value))
         }
 
         /**
