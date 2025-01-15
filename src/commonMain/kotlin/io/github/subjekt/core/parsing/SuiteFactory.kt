@@ -160,7 +160,7 @@ object SuiteFactory {
             require(fields.isNotEmpty()) { "At least one field is required" }
             return Subject(
                 id = id!!,
-                fields = fields,
+                resolvables = fields,
                 symbolTable = symbolTable,
             )
         }

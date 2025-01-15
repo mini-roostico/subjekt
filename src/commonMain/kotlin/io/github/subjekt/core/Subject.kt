@@ -12,7 +12,8 @@ package io.github.subjekt.core
 import io.github.subjekt.core.parsing.SuiteFactory
 
 /**
- * Represents a Subject in a Suite.
+ * Represents a Subject in a Suite. Subjects are the core entities in Subjekt, and are used to define the structure of
+ * the generation.
  */
 data class Subject(
     /**
@@ -25,9 +26,9 @@ data class Subject(
      */
     val id: Int,
     /**
-     * Fields of the Subject. Each field is a [Resolvable] object that can be resolved to a value.
+     * Fields of the Subject. Each resolvable is a [Resolvable] object that can be resolved to a value.
      */
-    val fields: Map<String, Resolvable>,
+    val resolvables: Map<String, Resolvable>,
     /**
      * Optional local symbol table available only to this Subject. Empty by default.
      */
@@ -59,7 +60,7 @@ data class Subject(
             content: String,
             fieldName: String = DEFAULT_FIELD_NAME,
         ): SuiteFactory.SuiteBuilder {
-            val subject = Subject(getFreshSubjectId(), mapOf(fieldName to TODO()))
+            val subject = Subject(getFreshSubjectId(), mapOf(fieldName to TODO("Parse resolvable")))
             return subject(subject)
         }
     }
