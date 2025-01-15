@@ -9,4 +9,47 @@
 
 package io.github.subjekt.core
 
-interface Parameter
+/**
+ * Represents a parameter in a Suite or Subject. Parameters are used to define the values that can be used in a Suite or
+ * Subject.
+ *
+ * Note: differently from the macros, parameters values are not [Resolvable]s, so their value is always a constant.
+ */
+data class Parameter(
+    /**
+     * The unique identifier of the Parameter. This is used to reference the Parameter in the symbol table.
+     */
+    val id: String,
+    /**
+     * The values that the parameter can assume. These are the possible values that can be used in the [Resolvable]s.
+     */
+    val values: List<String>,
+) {
+    companion object {
+        /**
+         * Keys that can be used as synonyms for [DEFAULT_ID_KEY].
+         */
+        val PARAMETER_NAME_KEYS = setOf("name", "id", "identifier", "title")
+
+        /**
+         * The default key used to indicate the ID of the parameter.
+         */
+        const val DEFAULT_ID_KEY = "id"
+
+        /**
+         * Utility function to create a [Parameter] from a pair of ID and value.
+         */
+        fun Pair<String, *>.toParameter(): Parameter {
+            val (id, value) = this
+            return Parameter(id, listOf(value.toString()))
+        }
+
+        /**
+         * Utility function to create a [Parameter] from a pair of ID and list of values.
+         */
+        fun Pair<String, List<*>>.toParameter(): Parameter {
+            val (id, values) = this
+            return Parameter(id, values.map { it.toString() })
+        }
+    }
+}
