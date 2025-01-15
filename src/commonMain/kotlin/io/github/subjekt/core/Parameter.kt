@@ -62,4 +62,14 @@ data class Parameter(
             return Parameter(id, values.map { it.toString() })
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Parameter) return false
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int = id.hashCode()
 }

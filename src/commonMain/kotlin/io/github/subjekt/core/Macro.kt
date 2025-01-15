@@ -21,6 +21,9 @@ internal typealias MacroDefinition = Pair<String, List<String>>
  * Represents a macro in a Suite or Subject. Macros can accept arguments and returns [Resolvable]s that internally use
  * their arguments to resolve to multiple [resolvables]. Each of these [resolvables] can therefore resolve to multiple
  * outputs, leading to a combinatorial explosion of possible outputs.
+ *
+ * *Note*: macro are unique by [id] and number of arguments (i.e. size of [argumentsIdentifiers]), so two macros with
+ * the same [id] and different number of arguments are considered different.
  */
 data class Macro(
     /**
@@ -105,5 +108,21 @@ data class Macro(
          * [asMacroDefinition].
          */
         fun String.toMacro(resolvable: List<Resolvable>): Macro = Macro(this, emptyList(), resolvable)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Macro) return false
+
+        if (id != other.id) return false
+        if (argumentsIdentifiers.size != other.argumentsIdentifiers.size) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + argumentsIdentifiers.size.hashCode()
+        return result
     }
 }
