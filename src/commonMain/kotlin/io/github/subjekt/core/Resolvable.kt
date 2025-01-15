@@ -9,4 +9,13 @@
 
 package io.github.subjekt.core
 
-interface Resolvable
+/**
+ * Core entity used to represent a resolvable value. This is used to represent the values that can be resolved inside
+ * a Suite with a proper [io.github.subjekt.core.definition.Context].
+ */
+data class Resolvable(
+    /**
+     * Source from which the resolvable is parsed.
+     */
+    val source: String,
+)
