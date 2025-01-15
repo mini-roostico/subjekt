@@ -30,4 +30,15 @@ data class Suite(
      * The configuration of the Suite.
      */
     val configuration: Configuration,
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Suite) return false
+
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int = id.hashCode()
+}
