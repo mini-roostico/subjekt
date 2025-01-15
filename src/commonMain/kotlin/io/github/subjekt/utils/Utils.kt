@@ -29,4 +29,14 @@ object Utils {
             require(value != null) { "Cannot use null values in Subjekt: $value" }
             value
         }
+
+    /**
+     * Checks if a string is a legal identifier. A legal identifier must start with a letter and can contain letters,
+     * digits and [legalSymbols]. By default, '_' is the only legal symbol.
+     */
+    internal fun String.isLegalIdentifier(vararg legalSymbols: Char = charArrayOf('_')): Boolean =
+        get(0).isLetter() &&
+            all {
+                it.isLetterOrDigit() || it in legalSymbols
+            }
 }
