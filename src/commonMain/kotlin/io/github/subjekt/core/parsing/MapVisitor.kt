@@ -9,14 +9,17 @@
 
 package io.github.subjekt.core.parsing
 
+import io.github.subjekt.core.Subject
+import io.github.subjekt.core.Subject.Companion.createAndAddSubjectFromString
 import io.github.subjekt.core.Suite
+import io.github.subjekt.core.parsing.SuiteFactory.SubjectBuilder
 import io.github.subjekt.core.parsing.SuiteFactory.SuiteBuilder
 import io.github.subjekt.utils.Utils.checkNulls
 
 /**
  * Visitor class used to parse a map into a [Suite] instance.
  */
-class MapVisitor {
+internal class MapVisitor {
     /**
      * Exception thrown when an error occurs during parsing.
      */
@@ -25,6 +28,7 @@ class MapVisitor {
     ) : Exception()
 
     private var suiteBuilder: SuiteBuilder = SuiteBuilder()
+    private var subjectBuilder: SubjectBuilder = SubjectBuilder()
 
     /**
      * Throws a [ParsingException] with the given message.
@@ -44,7 +48,7 @@ class MapVisitor {
      * Visits a map and creates a [Suite] instance. This method is unsafe and should be encapsulated in a try-catch
      * block or `runCatching` block to handle parsing exceptions.
      */
-    @Throws(IllegalArgumentException::class)
+    @Throws(IllegalArgumentException::class, ParsingException::class)
     fun visit(map: Map<String, Any>): Suite {
         map.entries
             .sortedWith(
@@ -118,8 +122,31 @@ class MapVisitor {
     private fun visitSubject(subject: Any) {
         parsingCheck(subject is Map<*, *> || subject is String) { "Subject must be a map or a string" }
         when (subject) {
-            is Map<*, *> -> TODO()
-            is String -> TODO()
+            is Map<*, *> -> {
+                subjectBuilder = SubjectBuilder()
+                subject.entries.forEach { (key, value) ->
+                    parsingCheck(value != null) { "Subject values must not be null" }
+                    visitSubjectLevel(key.toString(), value!!)
+                }
+                suiteBuilder = suiteBuilder.subject(subjectBuilder.build())
+            }
+            is String -> suiteBuilder.createAndAddSubjectFromString(subject)
+        }
+    }
+
+    fun visitSubjectLevel(
+        key: String,
+        value: Any,
+    ) {
+        when (key) {
+            in Subject.SUBJECT_NAME_KEYS -> {
+                subjectBuilder = subjectBuilder.name(TODO("Parse resolvable"))
+            }
+            in SUITE_MACROS_KEYS -> visitMacros(value, insideSubject = true)
+            in SUITE_PARAMS_KEYS -> visitParameters(value, insideSubject = true)
+            else -> {
+                TODO("Parse resolvable")
+            }
         }
     }
 
@@ -128,12 +155,18 @@ class MapVisitor {
         println(imports)
     }
 
-    private fun visitMacros(macros: Any) {
+    private fun visitMacros(
+        macros: Any,
+        insideSubject: Boolean = false,
+    ) {
         TODO("Not yet implemented")
         println(macros)
     }
 
-    private fun visitParameters(parameters: Any) {
+    private fun visitParameters(
+        parameters: Any,
+        insideSubject: Boolean = false,
+    ) {
         TODO("Not yet implemented")
         println(parameters)
     }
