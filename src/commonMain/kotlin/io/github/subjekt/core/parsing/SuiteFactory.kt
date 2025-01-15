@@ -10,11 +10,11 @@
 package io.github.subjekt.core.parsing
 
 import io.github.subjekt.core.Configuration
+import io.github.subjekt.core.Resolvable
 import io.github.subjekt.core.Source
 import io.github.subjekt.core.Subject
 import io.github.subjekt.core.Suite
 import io.github.subjekt.core.SymbolTable
-import io.github.subjekt.core.impl.SuiteImpl
 import io.github.subjekt.utils.Logger.warning
 
 /**
@@ -24,7 +24,7 @@ object SuiteFactory {
     /**
      * Builder class used to create a [Suite] instance.
      */
-    class SuiteBuilder {
+    internal class SuiteBuilder {
         private var id: String? = null
         private var subjects: List<Subject> = emptyList()
         private var configuration: Configuration = Configuration()
@@ -45,6 +45,11 @@ object SuiteFactory {
             apply {
                 subjects += subject
             }
+
+        /**
+         * Generates a fresh [Subject] ID simply by returning the size of the [subjects] list.
+         */
+        fun getFreshSubjectId(): Int = subjects.size
 
         /**
          * Adds multiple [Subject]s to the [Suite].
@@ -93,11 +98,70 @@ object SuiteFactory {
         fun build(): Suite {
             require(id != null) { "Suite ID is required" }
             require(subjects.isNotEmpty()) { "At least one subject is required" }
-            return SuiteImpl(
+            return Suite(
                 id = id!!,
                 subjects = subjects,
                 configuration = TODO(),
                 symbolTable = TODO(),
+            )
+        }
+    }
+
+    /**
+     * Builder class used to create a [Subject] instance.
+     */
+    internal class SubjectBuilder {
+        private var id: Int? = null
+        private var fields: Map<String, Resolvable> = emptyMap()
+        private var symbolTable: SymbolTable = SymbolTable()
+
+        /**
+         * Sets the ID of the [Subject].
+         */
+        fun id(id: Int): SubjectBuilder =
+            apply {
+                this.id = id
+            }
+
+        /**
+         * Adds a field to the [Subject].
+         */
+        fun field(
+            name: String,
+            value: Resolvable,
+        ): SubjectBuilder =
+            apply {
+                fields += name to value
+            }
+
+        /**
+         * Sets the name of the [Subject]. Name is just a field like any other, but it's a common field that can be
+         * used.
+         */
+        fun name(value: Resolvable): SubjectBuilder =
+            apply {
+                fields += Subject.DEFAULT_NAME_KEY to value
+            }
+
+        /**
+         * Sets the symbol table of the [Subject].
+         */
+        fun symbolTable(symbolTable: SymbolTable): SubjectBuilder =
+            apply {
+                this.symbolTable = symbolTable
+            }
+
+        /**
+         * Builds the [Subject] instance. This method is unsafe and should be encapsulated in a try-catch block or
+         * `runCatching` block to handle [IllegalArgumentException].
+         */
+        fun build(): Subject {
+            require(id != null) { "Subject ID is required" }
+            require(fields.isNotEmpty()) { "At least one field is required" }
+            return Subject(
+                id = id!!,
+                fields = fields,
+                symbolTable = symbolTable,
             )
         }
     }
