@@ -31,6 +31,11 @@ object SuiteFactory {
         private var symbolTable: SymbolTable? = null
 
         /**
+         * Gets a copy of the [Configuration] of the [Suite] that is being built.
+         */
+        val configurationSnapshot: Configuration = configuration.clone()
+
+        /**
          * Sets the ID of the [Suite].
          */
         fun id(id: String): SuiteBuilder =
