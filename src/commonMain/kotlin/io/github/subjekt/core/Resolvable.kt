@@ -33,10 +33,17 @@ class Resolvable
 
         /**
          * Expressions contained in this Resolvable.
+         *
+         * **Note**: these are **unique** expressions, i.e., if the same expression is used multiple times in the
+         * source, it will be counted only once.
          */
-        val expressions: List<RawExpression> by lazy {
-            resolvableString.expressions
-        }
+        val expressions: List<RawExpression>
+            get() = resolvableString.expressions
+
+        /**
+         * Returns a string representation of this [Resolvable] as a formattable string (i.e., containing blocks `{0}`).
+         */
+        internal fun asFormattableString(): String = resolvableString.toFormat
 
         /**
          * Internal class to handle string substitution with expressions.
@@ -48,6 +55,9 @@ class Resolvable
             val toFormat: String,
             /**
              * The list of [RawExpression]s that can be resolved inside this string.
+             *
+             * **Note**: these are **unique** expressions, i.e., if the same expression is used multiple times in the
+             * source, it will be counted only once.
              */
             val expressions: List<RawExpression>,
         ) {
@@ -67,7 +77,7 @@ class Resolvable
         /**
          * Simple utility class to represent an expression that has not been parsed yet.
          */
-        class RawExpression(
+        data class RawExpression(
             val source: String,
         )
 
@@ -82,14 +92,14 @@ class Resolvable
                 expressionSuffix: String = "}}",
             ): ResolvableString {
                 // Match prefix ... suffix blocks
-                val regex = Regex("""\Q$expressionPrefix\E(.*?)\Q$expressionSuffix\E""")
+                val regex = Regex("""\Q$expressionPrefix\E([\s\S]*?)\Q$expressionSuffix\E""")
                 val foundBlocks = mutableListOf<String>()
                 val replaced =
                     regex.replace(this) {
                         val block = it.groupValues[1].trim()
                         // Note: collapse identical expressions to the same index
                         val index =
-                            foundBlocks.indexOf(block).takeIf { it != -1 }.run {
+                            foundBlocks.indexOf(block).takeIf { it != -1 } ?: run {
                                 foundBlocks.add(block)
                                 foundBlocks.size - 1
                             }
