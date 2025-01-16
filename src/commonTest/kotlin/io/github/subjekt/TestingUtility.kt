@@ -17,7 +17,8 @@ object TestingUtility {
      */
     fun <T> Result<T>.getOrFail(): T {
         if (this.isFailure) {
-            fail("This exception originated the failure:\n\n${this.exceptionOrNull()}")
+            this.exceptionOrNull()?.printStackTrace()
+            fail("This exception originated the failure:\n\n${this.exceptionOrNull()?.message}")
         }
         return this.getOrNull()!!
     }
