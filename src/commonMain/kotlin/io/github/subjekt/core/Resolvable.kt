@@ -45,6 +45,8 @@ class Resolvable
          */
         internal fun asFormattableString(): String = resolvableString.toFormat
 
+        override fun toString(): String = "Resolvable(source='$source', expressions=$expressions)"
+
         /**
          * Internal class to handle string substitution with expressions.
          */
