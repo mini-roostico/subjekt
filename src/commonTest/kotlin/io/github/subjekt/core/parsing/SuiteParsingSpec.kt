@@ -13,24 +13,73 @@ import io.github.subjekt.TestingUtility.getOrFail
 import io.github.subjekt.core.Source
 import io.github.subjekt.core.Suite
 import io.github.subjekt.core.parsing.SuiteFactory.parseIntoSuite
-import io.kotest.core.spec.style.StringSpec
+import io.kotest.core.spec.style.FreeSpec
+import io.kotest.data.forAll
+import io.kotest.data.headers
+import io.kotest.data.row
+import io.kotest.data.table
 import io.kotest.matchers.shouldBe
 
-class SuiteParsingSpec : StringSpec({
+class SuiteParsingSpec : FreeSpec({
 
     fun parse(yaml: String): Result<Suite> = Source.fromYaml(yaml).parseIntoSuite()
 
-    "Simple suite parsing with name and one subject" {
+    "Simple suite parsing with name and one subject" - {
+        val synonyms =
+            table(
+                headers("yaml"),
+                row(
+                    """
+                    |name: "Simple suite"
+                    |subjects:
+                    |- name: "Simple subject"
+                    """.trimMargin(),
+                ),
+                row(
+                    """
+                    |name: "Simple suite"
+                    |subject:
+                    |  name: "Simple subject"
+                    """.trimMargin(),
+                ),
+                row(
+                    """
+                    |name: "Simple suite"
+                    |subjects:
+                    |- "Simple subject"
+                    """.trimMargin(),
+                ),
+                row(
+                    """
+                    |name: "Simple suite"
+                    |subject:
+                    |  "Simple subject"
+                    """.trimMargin(),
+                ),
+            )
+        forAll(synonyms) { yaml ->
+            "should work with yaml: $yaml" {
+                val result = parse(yaml).getOrFail()
+                result.id shouldBe "Simple suite"
+                result.subjects.size shouldBe 1
+                result.subjects[0].id shouldBe 0
+                result.subjects[0].name?.source shouldBe "Simple subject"
+            }
+        }
+    }
+
+    "Simple suite parsing with name and multiple subjects" - {
         val result =
             parse(
                 """
             |name: "Simple suite"
             |subjects:
-            |- name: "Simple subject"
+            |- name: "Simple subject 1"
+            |- name: "Simple subject 2"
                 """.trimMargin(),
             ).getOrFail()
 
         result.id shouldBe "Simple suite"
-        result.subjects.size shouldBe 1
+        result.subjects.size shouldBe 2
     }
 })
