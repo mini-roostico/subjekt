@@ -9,6 +9,7 @@
 
 package io.github.subjekt.core.parsing
 
+import io.github.subjekt.core.Resolvable
 import io.github.subjekt.core.Subject
 import io.github.subjekt.core.Subject.Companion.createAndAddSubjectFromString
 import io.github.subjekt.core.Suite
@@ -130,23 +131,36 @@ internal class MapVisitor {
                 }
                 suiteBuilder = suiteBuilder.subject(subjectBuilder.build())
             }
-            is String -> suiteBuilder.createAndAddSubjectFromString(subject)
+            is String ->
+                with(suiteBuilder.configurationSnapshot) {
+                    suiteBuilder.createAndAddSubjectFromString(
+                        subject,
+                        expressionPrefix,
+                        expressionSuffix,
+                    )
+                }
         }
     }
 
-    fun visitSubjectLevel(
+    private fun visitSubjectLevel(
         key: String,
         value: Any,
     ) {
         when (key) {
-            in Subject.SUBJECT_NAME_KEYS -> {
-                subjectBuilder = subjectBuilder.name(TODO("Parse resolvable"))
-            }
+            in Subject.SUBJECT_NAME_KEYS ->
+                with(suiteBuilder.configurationSnapshot) {
+                    subjectBuilder =
+                        subjectBuilder.name(Resolvable(value.toString(), expressionPrefix, expressionSuffix))
+                }
             in SUITE_MACROS_KEYS -> visitMacros(value, insideSubject = true)
             in SUITE_PARAMS_KEYS -> visitParameters(value, insideSubject = true)
-            else -> {
-                TODO("Parse resolvable")
-            }
+            else ->
+                with(suiteBuilder.configurationSnapshot) {
+                    subjectBuilder.field(
+                        key,
+                        Resolvable(value.toString(), expressionPrefix, expressionSuffix),
+                    )
+                }
         }
     }
 

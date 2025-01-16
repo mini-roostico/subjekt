@@ -59,8 +59,16 @@ data class Subject(
         internal fun SuiteFactory.SuiteBuilder.createAndAddSubjectFromString(
             content: String,
             fieldName: String = DEFAULT_FIELD_NAME,
+            expressionPrefix: String = "\${{",
+            expressionSuffix: String = "}}",
         ): SuiteFactory.SuiteBuilder {
-            val subject = Subject(getFreshSubjectId(), mapOf(fieldName to TODO("Parse resolvable")))
+            val subject =
+                Subject(
+                    getFreshSubjectId(),
+                    mapOf(
+                        fieldName to Resolvable(content, expressionPrefix, expressionSuffix),
+                    ),
+                )
             return subject(subject)
         }
     }
