@@ -20,7 +20,7 @@ class SuiteParsingSpec : StringSpec({
 
     fun parse(yaml: String): Result<Suite> = Source.fromYaml(yaml).parseIntoSuite()
 
-    "Simple suite parsing with name and one subject".config(enabled = false) {
+    "Simple suite parsing with name and one subject" {
         val result =
             parse(
                 """
