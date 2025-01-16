@@ -136,8 +136,8 @@ internal class MapVisitor {
                 with(suiteBuilder.configurationSnapshot) {
                     suiteBuilder.createAndAddSubjectFromString(
                         subject,
-                        expressionPrefix,
-                        expressionSuffix,
+                        expressionPrefix = expressionPrefix,
+                        expressionSuffix = expressionSuffix,
                     )
                 }
         }
