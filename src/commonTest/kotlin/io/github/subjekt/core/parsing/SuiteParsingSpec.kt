@@ -69,17 +69,92 @@ class SuiteParsingSpec : FreeSpec({
     }
 
     "Simple suite parsing with name and multiple subjects" - {
+        val synonyms =
+            table(
+                headers("yaml"),
+                row(
+                    """
+                    |name: "Simple suite"
+                    |subjects:
+                    |- name: "Simple subject 1"
+                    |- name: "Simple subject 2"
+                    """.trimMargin(),
+                ),
+                row(
+                    """
+                    |name: "Simple suite"
+                    |subjects:
+                    |- "Simple subject 1"
+                    |- "Simple subject 2"
+                    """.trimMargin(),
+                ),
+                row(
+                    """
+                    |name: "Simple suite"
+                    |subject:
+                    |- name: "Simple subject 1"
+                    |- name: "Simple subject 2"
+                    """.trimMargin(),
+                ),
+                row(
+                    """
+                    |name: "Simple suite"
+                    |subject:
+                    |- "Simple subject 1"
+                    |- "Simple subject 2"
+                    """.trimMargin(),
+                ),
+            )
+        forAll(synonyms) { yaml ->
+            "should work with yaml: $yaml" {
+                val result = parse(yaml).getOrFail()
+                result.id shouldBe "Simple suite"
+                result.subjects.size shouldBe 2
+                result.subjects[0].id shouldBe 0
+                result.subjects[0].name?.source shouldBe "Simple subject 1"
+                result.subjects[1].id shouldBe 1
+                result.subjects[1].name?.source shouldBe "Simple subject 2"
+            }
+        }
+    }
+
+    "Suite parsing with subjects and simple configuration" {
         val result =
             parse(
                 """
-            |name: "Simple suite"
-            |subjects:
-            |- name: "Simple subject 1"
-            |- name: "Simple subject 2"
+               |name: "Simple suite"
+               |config:
+               |  expressionPrefix: "{"
+               |  expressionSuffix: "}"
+               |subjects:
+               |- name: "Simple subject {test} and {test2}"
+               |- id: "Simple subject {test} 2"
+               |  code: "code {test}"
                 """.trimMargin(),
             ).getOrFail()
 
         result.id shouldBe "Simple suite"
+        result.configuration.expressionPrefix shouldBe "{"
+        result.configuration.expressionSuffix shouldBe "}"
         result.subjects.size shouldBe 2
+        result.subjects[0].id shouldBe 0
+        result.subjects[0].name?.source shouldBe "Simple subject {test} and {test2}"
+        result.subjects[0].name?.asFormattableString() shouldBe "Simple subject {{0}} and {{1}}"
+        result.subjects[0]
+            .name
+            ?.expressions
+            ?.map { it.source } shouldBe listOf("test", "test2")
+        result.subjects[1].id shouldBe 1
+        result.subjects[1].name?.source shouldBe "Simple subject {test} 2"
+        result.subjects[1].name?.asFormattableString() shouldBe "Simple subject {{0}} 2"
+        result.subjects[1]
+            .name
+            ?.expressions
+            ?.map { it.source } shouldBe listOf("test")
+        result.subjects[1].resolvables["code"]?.source shouldBe "code {test}"
+        result.subjects[1]
+            .resolvables["code"]
+            ?.expressions
+            ?.map { it.source } shouldBe listOf("test")
     }
 })
