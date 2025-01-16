@@ -72,4 +72,13 @@ class ResolvableSpec : StringSpec({
         resolvable.expressions[0].source shouldBe "name"
         resolvable.asFormattableString() shouldBe "Hello {{0}}! My name is {{0}}."
     }
+
+    "A Resolvable should be built correctly when using custom expression delimiters" {
+        val resolvable = Resolvable("Hello #name#! My name is #myName#.", "#", "#")
+        resolvable.source shouldBe "Hello #name#! My name is #myName#."
+        resolvable.expressions.size shouldBe 2
+        resolvable.expressions[0].source shouldBe "name"
+        resolvable.expressions[1].source shouldBe "myName"
+        resolvable.asFormattableString() shouldBe "Hello {{0}}! My name is {{1}}."
+    }
 })
