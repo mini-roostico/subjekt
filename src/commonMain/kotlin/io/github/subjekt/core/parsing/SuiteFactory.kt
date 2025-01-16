@@ -87,7 +87,6 @@ object SuiteFactory {
                         "Adding a non-default configuration key '$key' to the suite."
                     }
                 }
-                println("Inside builder $configuration")
             }
 
         /**
