@@ -13,6 +13,8 @@ import io.github.subjekt.TestingUtility.getOrFail
 import io.github.subjekt.core.Source
 import io.github.subjekt.core.Suite
 import io.github.subjekt.core.parsing.SuiteFactory.parseIntoSuite
+import io.github.subjekt.utils.Logger
+import io.github.subjekt.utils.MessageCollector
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.data.forAll
 import io.kotest.data.headers
@@ -59,11 +61,11 @@ class SuiteParsingSpec : FreeSpec({
             )
         forAll(synonyms) { yaml ->
             "should work with yaml: $yaml" {
-                val result = parse(yaml).getOrFail()
-                result.id shouldBe "Simple suite"
-                result.subjects.size shouldBe 1
-                result.subjects[0].id shouldBe 0
-                result.subjects[0].name?.source shouldBe "Simple subject"
+                val suite = parse(yaml).getOrFail()
+                suite.id shouldBe "Simple suite"
+                suite.subjects.size shouldBe 1
+                suite.subjects[0].id shouldBe 0
+                suite.subjects[0].name?.source shouldBe "Simple subject"
             }
         }
     }
@@ -107,19 +109,19 @@ class SuiteParsingSpec : FreeSpec({
             )
         forAll(synonyms) { yaml ->
             "should work with yaml: $yaml" {
-                val result = parse(yaml).getOrFail()
-                result.id shouldBe "Simple suite"
-                result.subjects.size shouldBe 2
-                result.subjects[0].id shouldBe 0
-                result.subjects[0].name?.source shouldBe "Simple subject 1"
-                result.subjects[1].id shouldBe 1
-                result.subjects[1].name?.source shouldBe "Simple subject 2"
+                val suite = parse(yaml).getOrFail()
+                suite.id shouldBe "Simple suite"
+                suite.subjects.size shouldBe 2
+                suite.subjects[0].id shouldBe 0
+                suite.subjects[0].name?.source shouldBe "Simple subject 1"
+                suite.subjects[1].id shouldBe 1
+                suite.subjects[1].name?.source shouldBe "Simple subject 2"
             }
         }
     }
 
     "Suite parsing with subjects and simple configuration" {
-        val result =
+        val suite =
             parse(
                 """
                |name: "Simple suite"
@@ -133,28 +135,55 @@ class SuiteParsingSpec : FreeSpec({
                 """.trimMargin(),
             ).getOrFail()
 
-        result.id shouldBe "Simple suite"
-        result.configuration.expressionPrefix shouldBe "{"
-        result.configuration.expressionSuffix shouldBe "}"
-        result.subjects.size shouldBe 2
-        result.subjects[0].id shouldBe 0
-        result.subjects[0].name?.source shouldBe "Simple subject {test} and {test2}"
-        result.subjects[0].name?.asFormattableString() shouldBe "Simple subject {{0}} and {{1}}"
-        result.subjects[0]
+        suite.id shouldBe "Simple suite"
+        suite.configuration.expressionPrefix shouldBe "{"
+        suite.configuration.expressionSuffix shouldBe "}"
+        suite.subjects.size shouldBe 2
+        suite.subjects[0].id shouldBe 0
+        suite.subjects[0].name?.source shouldBe "Simple subject {test} and {test2}"
+        suite.subjects[0].name?.asFormattableString() shouldBe "Simple subject {{0}} and {{1}}"
+        suite.subjects[0]
             .name
             ?.expressions
             ?.map { it.source } shouldBe listOf("test", "test2")
-        result.subjects[1].id shouldBe 1
-        result.subjects[1].name?.source shouldBe "Simple subject {test} 2"
-        result.subjects[1].name?.asFormattableString() shouldBe "Simple subject {{0}} 2"
-        result.subjects[1]
+        suite.subjects[1].id shouldBe 1
+        suite.subjects[1].name?.source shouldBe "Simple subject {test} 2"
+        suite.subjects[1].name?.asFormattableString() shouldBe "Simple subject {{0}} 2"
+        suite.subjects[1]
             .name
             ?.expressions
             ?.map { it.source } shouldBe listOf("test")
-        result.subjects[1].resolvables["code"]?.source shouldBe "code {test}"
-        result.subjects[1]
+        suite.subjects[1].resolvables["code"]?.source shouldBe "code {test}"
+        suite.subjects[1]
             .resolvables["code"]
             ?.expressions
             ?.map { it.source } shouldBe listOf("test")
+    }
+
+    "Suite parsing with custom and nested configuration fields" {
+        val suite =
+            parse(
+                """
+                |name: "Simple suite"
+                |configuration:
+                |   custom:
+                |       myField: 1
+                |       myField2: "2"
+                |   linting: "true"
+                |subject:
+                |  "Dummy subject"
+                """.trimMargin(),
+            ).getOrFail()
+        suite.id shouldBe "Simple suite"
+        Logger.messageCollector.messages
+            .filter { it.type == MessageCollector.MessageType.WARNING }
+            .size shouldBe 1
+        Logger.messageCollector.messages
+            .first()
+            .message shouldBe
+            "Adding a non-default configuration key 'custom' to the suite."
+        suite.configuration["custom"] shouldBe mapOf("myField" to 1, "myField2" to 2)
+        suite.configuration.lint shouldBe true
+        suite.subjects.size shouldBe 1
     }
 })
