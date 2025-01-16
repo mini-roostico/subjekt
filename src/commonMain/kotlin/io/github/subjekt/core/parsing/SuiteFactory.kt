@@ -106,8 +106,8 @@ object SuiteFactory {
             return Suite(
                 id = id!!,
                 subjects = subjects,
-                configuration = TODO(),
-                symbolTable = TODO(),
+                configuration = configuration,
+                symbolTable = SymbolTable(), // todo implement
             )
         }
     }
