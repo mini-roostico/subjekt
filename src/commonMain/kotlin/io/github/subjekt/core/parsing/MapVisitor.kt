@@ -129,6 +129,7 @@ internal class MapVisitor {
                     parsingCheck(value != null) { "Subject values must not be null" }
                     visitSubjectLevel(key.toString(), value!!)
                 }
+                subjectBuilder.id(suiteBuilder.getFreshSubjectId())
                 suiteBuilder = suiteBuilder.subject(subjectBuilder.build())
             }
             is String ->
