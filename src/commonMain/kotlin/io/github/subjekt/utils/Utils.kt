@@ -39,4 +39,21 @@ object Utils {
             all {
                 it.isLetterOrDigit() || it in legalSymbols
             }
+
+    /**
+     * Simple implementation of the `format` method available on the JVM. It replaces all occurrences of `{{n}}` with
+     * the `n`-th element of the `args` array.
+     */
+    internal fun String.format(vararg args: Any?): String {
+        var result = this
+        val regex = Regex("""\{\{(\d+)}}""")
+        regex.findAll(this).forEach { matchResult ->
+            val index = matchResult.groupValues[1].toIntOrNull()
+            if (index != null && index in args.indices) {
+                val replacement = args[index]?.toString() ?: ""
+                result = result.replace(matchResult.value, replacement)
+            }
+        }
+        return result
+    }
 }
