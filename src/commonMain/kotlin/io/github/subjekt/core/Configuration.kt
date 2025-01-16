@@ -32,7 +32,12 @@ class Configuration : MutableMap<String, Any> by mutableMapOf<String, Any>() {
      * Whether to lint the suite or not.
      */
     val lint: Boolean
-        get() = (this[DEFAULT_LINT_KEY] as? String)?.toBooleanStrictOrNull() == !DEFAULT_LINT
+        get() =
+            if (this[DEFAULT_LINT_KEY] is String) {
+                (this[DEFAULT_LINT_KEY] as? String)?.toBooleanStrictOrNull() ?: DEFAULT_LINT
+            } else {
+                this[DEFAULT_LINT_KEY] as? Boolean ?: DEFAULT_LINT
+            }
 
     /**
      * Sets the value of the given key. Returns `true` if the key is among the default ones, `false` if it's a custom
@@ -46,8 +51,14 @@ class Configuration : MutableMap<String, Any> by mutableMapOf<String, Any>() {
             in CODE_PREAMBLE_KEYS -> this[DEFAULT_CODE_PREAMBLE_KEY] = value
             in EXPRESSION_PREFIX_KEYS -> this[DEFAULT_EXPRESSION_PREFIX_KEY] = value
             in EXPRESSION_SUFFIX_KEYS -> this[DEFAULT_EXPRESSION_SUFFIX_KEY] = value
-            in LINT_KEYS -> this[DEFAULT_LINT_KEY] = value
-            else -> return false
+            in LINT_KEYS -> {
+                this[DEFAULT_LINT_KEY] = value
+                println((this[DEFAULT_LINT_KEY] as? String)?.toBooleanStrictOrNull())
+            }
+            else -> {
+                this[key] = value
+                return false
+            }
         }
         return true
     }
