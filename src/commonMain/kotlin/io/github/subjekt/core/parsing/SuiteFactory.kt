@@ -33,7 +33,8 @@ object SuiteFactory {
         /**
          * Gets a copy of the [Configuration] of the [Suite] that is being built.
          */
-        val configurationSnapshot: Configuration = configuration.clone()
+        val configurationSnapshot: Configuration
+            get() = configuration.clone()
 
         /**
          * Sets the ID of the [Suite].
@@ -86,6 +87,7 @@ object SuiteFactory {
                         "Adding a non-default configuration key '$key' to the suite."
                     }
                 }
+                println("Inside builder $configuration")
             }
 
         /**
