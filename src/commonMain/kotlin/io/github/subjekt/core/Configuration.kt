@@ -61,6 +61,8 @@ class Configuration : MutableMap<String, Any> by mutableMapOf<String, Any>() {
         return clone
     }
 
+    override fun toString(): String = "Configuration(${entries.joinToString(", ") { (key, value) -> "$key=$value" }})"
+
     /**
      * Companion object used to define default values.
      */
