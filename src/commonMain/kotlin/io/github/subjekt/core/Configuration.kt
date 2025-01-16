@@ -53,6 +53,15 @@ class Configuration : MutableMap<String, Any> by mutableMapOf<String, Any>() {
     }
 
     /**
+     * Clones the configuration.
+     */
+    fun clone(): Configuration {
+        val clone = Configuration()
+        clone.putAll(this)
+        return clone
+    }
+
+    /**
      * Companion object used to define default values.
      */
     companion object {
