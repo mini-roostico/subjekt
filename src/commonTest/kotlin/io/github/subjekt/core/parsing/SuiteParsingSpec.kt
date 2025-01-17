@@ -20,6 +20,7 @@ import io.kotest.data.forAll
 import io.kotest.data.headers
 import io.kotest.data.row
 import io.kotest.data.table
+import io.kotest.matchers.maps.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 
 class SuiteParsingSpec : FreeSpec({
@@ -60,13 +61,11 @@ class SuiteParsingSpec : FreeSpec({
                 ),
             )
         forAll(synonyms) { yaml ->
-            "should work with yaml: $yaml" {
-                val suite = parse(yaml).getOrFail()
-                suite.id shouldBe "Simple suite"
-                suite.subjects.size shouldBe 1
-                suite.subjects[0].id shouldBe 0
-                suite.subjects[0].name?.source shouldBe "Simple subject"
-            }
+            val suite = parse(yaml).getOrFail()
+            suite.id shouldBe "Simple suite"
+            suite.subjects.size shouldBe 1
+            suite.subjects[0].id shouldBe 0
+            suite.subjects[0].name?.source shouldBe "Simple subject"
         }
     }
 
@@ -108,19 +107,17 @@ class SuiteParsingSpec : FreeSpec({
                 ),
             )
         forAll(synonyms) { yaml ->
-            "should work with yaml: $yaml" {
-                val suite = parse(yaml).getOrFail()
-                suite.id shouldBe "Simple suite"
-                suite.subjects.size shouldBe 2
-                suite.subjects[0].id shouldBe 0
-                suite.subjects[0].name?.source shouldBe "Simple subject 1"
-                suite.subjects[1].id shouldBe 1
-                suite.subjects[1].name?.source shouldBe "Simple subject 2"
-            }
+            val suite = parse(yaml).getOrFail()
+            suite.id shouldBe "Simple suite"
+            suite.subjects.size shouldBe 2
+            suite.subjects[0].id shouldBe 0
+            suite.subjects[0].name?.source shouldBe "Simple subject 1"
+            suite.subjects[1].id shouldBe 1
+            suite.subjects[1].name?.source shouldBe "Simple subject 2"
         }
     }
 
-    "Suite parsing with subjects and simple configuration" {
+    "Suite parsing with subjects and simple configuration" - {
         val suite =
             parse(
                 """
@@ -160,7 +157,7 @@ class SuiteParsingSpec : FreeSpec({
             ?.map { it.source } shouldBe listOf("test")
     }
 
-    "Suite parsing with custom and nested configuration fields" {
+    "Suite parsing with custom and nested configuration fields" - {
         val suite =
             parse(
                 """
@@ -185,5 +182,57 @@ class SuiteParsingSpec : FreeSpec({
         suite.configuration["custom"] shouldBe mapOf("myField" to 1, "myField2" to 2)
         suite.configuration.lint shouldBe true
         suite.subjects.size shouldBe 1
+    }
+
+    "Suite parsing with global parameters" - {
+        val suite =
+            parse(
+                """
+                |name: "Simple suite"
+                |parameters:
+                |  - id: "param1"
+                |    values:
+                |    - "value1"
+                |    - "value2"
+                |  - name: "param2"
+                |    values:
+                |    - "value3"
+                |    - "value4"
+                |subject: "Test"
+                """.trimMargin(),
+            ).getOrFail()
+        suite.id shouldBe "Simple suite"
+        suite.symbolTable.parameters.size shouldBe 2
+        suite.symbolTable.resolveParameter("param1")?.values shouldBe listOf("value1", "value2")
+        suite.symbolTable.resolveParameter("param2")?.values shouldBe listOf("value3", "value4")
+    }
+
+    "Suite parsing with local parameters" - {
+        val suite =
+            parse(
+                """
+                |name: "Simple suite"
+                |subjects:
+                |  - name: "Simple subject"
+                |    parameters:
+                |      - id: "param1"
+                |        values:
+                |        - "value1"
+                |        - "value2"
+                |      - name: "param2"
+                |        values:
+                |        - "value3"
+                |        - "value4"
+                """.trimMargin(),
+            ).getOrFail()
+        suite.id shouldBe "Simple suite"
+        val subject = suite.subjects[0]
+        subject.id shouldBe 0
+        subject.name?.source shouldBe "Simple subject"
+        subject.symbolTable.parameters.size shouldBe 2
+        subject.symbolTable.resolveParameter("param1")?.values shouldBe listOf("value1", "value2")
+        subject.symbolTable.resolveParameter("param2")?.values shouldBe listOf("value3", "value4")
+        suite.symbolTable.parameters.shouldBeEmpty()
+        suite.symbolTable.macros.shouldBeEmpty()
     }
 })
