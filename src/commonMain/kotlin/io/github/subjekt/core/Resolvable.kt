@@ -48,10 +48,28 @@ class Resolvable
 
         override fun toString(): String = "Resolvable(source='$source', expressions=$expressions)"
 
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is Resolvable) return false
+
+            if (source != other.source) return false
+            if (resolvableString != other.resolvableString) return false
+            if (expressions != other.expressions) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = source.hashCode()
+            result = 31 * result + resolvableString.hashCode()
+            result = 31 * result + expressions.hashCode()
+            return result
+        }
+
         /**
          * Internal class to handle string substitution with expressions.
          */
-        internal class ResolvableString(
+        internal data class ResolvableString(
             /**
              * The string that can be formatted with the resolved expressions.
              */
