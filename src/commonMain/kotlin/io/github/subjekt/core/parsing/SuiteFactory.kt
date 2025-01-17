@@ -28,7 +28,7 @@ object SuiteFactory {
         private var id: String? = null
         private var subjects: List<Subject> = emptyList()
         private var configuration: Configuration = Configuration()
-        private var symbolTable: SymbolTable? = null
+        private var symbolTable: SymbolTable = SymbolTable()
 
         /**
          * Gets a copy of the [Configuration] of the [Suite] that is being built.
@@ -108,7 +108,7 @@ object SuiteFactory {
                 id = id!!,
                 subjects = subjects,
                 configuration = configuration,
-                symbolTable = SymbolTable(), // todo implement
+                symbolTable = symbolTable,
             )
         }
     }
