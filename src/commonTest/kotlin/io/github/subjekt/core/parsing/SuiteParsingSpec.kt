@@ -10,24 +10,27 @@
 package io.github.subjekt.core.parsing
 
 import io.github.subjekt.TestingUtility.getOrFail
+import io.github.subjekt.core.Macro
+import io.github.subjekt.core.Resolvable
 import io.github.subjekt.core.Source
 import io.github.subjekt.core.Suite
 import io.github.subjekt.core.parsing.SuiteFactory.parseIntoSuite
 import io.github.subjekt.utils.Logger
 import io.github.subjekt.utils.MessageCollector
-import io.kotest.core.spec.style.FreeSpec
+import io.kotest.core.spec.style.StringSpec
 import io.kotest.data.forAll
 import io.kotest.data.headers
 import io.kotest.data.row
 import io.kotest.data.table
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.maps.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 
-class SuiteParsingSpec : FreeSpec({
+class SuiteParsingSpec : StringSpec({
 
     fun parse(yaml: String): Result<Suite> = Source.fromYaml(yaml).parseIntoSuite()
 
-    "Simple suite parsing with name and one subject" - {
+    "Simple suite parsing with name and one subject" {
         val synonyms =
             table(
                 headers("yaml"),
@@ -69,7 +72,7 @@ class SuiteParsingSpec : FreeSpec({
         }
     }
 
-    "Simple suite parsing with name and multiple subjects" - {
+    "Simple suite parsing with name and multiple subjects" {
         val synonyms =
             table(
                 headers("yaml"),
@@ -117,7 +120,7 @@ class SuiteParsingSpec : FreeSpec({
         }
     }
 
-    "Suite parsing with subjects and simple configuration" - {
+    "Suite parsing with subjects and simple configuration" {
         val suite =
             parse(
                 """
@@ -157,7 +160,7 @@ class SuiteParsingSpec : FreeSpec({
             ?.map { it.source } shouldBe listOf("test")
     }
 
-    "Suite parsing with custom and nested configuration fields" - {
+    "Suite parsing with custom and nested configuration fields" {
         val suite =
             parse(
                 """
@@ -184,7 +187,7 @@ class SuiteParsingSpec : FreeSpec({
         suite.subjects.size shouldBe 1
     }
 
-    "Suite parsing with global parameters" - {
+    "Suite parsing with global parameters" {
         val suite =
             parse(
                 """
@@ -207,7 +210,7 @@ class SuiteParsingSpec : FreeSpec({
         suite.symbolTable.resolveParameter("param2")?.values shouldBe listOf("value3", "value4")
     }
 
-    "Suite parsing with local parameters" - {
+    "Suite parsing with local parameters" {
         val suite =
             parse(
                 """
@@ -234,5 +237,54 @@ class SuiteParsingSpec : FreeSpec({
         subject.symbolTable.resolveParameter("param2")?.values shouldBe listOf("value3", "value4")
         suite.symbolTable.parameters.shouldBeEmpty()
         suite.symbolTable.macros.shouldBeEmpty()
+    }
+
+    "Suite parsing with global macros" {
+        val suite =
+            parse(
+                """
+                |name: "Simple suite"
+                |macros:
+                |  - id: "macro1()"
+                |    value: "code1"
+                |  - name: "macro2(arg1)"
+                |    values: 
+                |    - "${"\${{ arg1 }}"}"
+                |    - "code2"
+                |subject: "Test"
+                """.trimMargin(),
+            ).getOrFail()
+        suite.id shouldBe "Simple suite"
+        suite.symbolTable.macros.size shouldBe 2
+        val macro1 = suite.symbolTable.resolveMacro("macro1")!!
+        macro1 shouldBe Macro("macro1", emptyList(), listOf(Resolvable("code1")))
+        val macro2 = suite.symbolTable.resolveMacro("macro2")!!
+        macro2 shouldBe Macro("macro2", listOf("arg1"), listOf(Resolvable("\${{ arg1 }}"), Resolvable("code2")))
+    }
+
+    "Suite parsing with local macros" {
+        val suite =
+            parse(
+                """
+                |name: "Simple suite"
+                |subject:
+                |  name: "Test"
+                |  macros:
+                |    - id: "macro1()"
+                |      value: "code1"
+                |    - name: "macro2(arg1)"
+                |      values: 
+                |      - "${"\${{ arg1 }}"}"
+                |      - "code2"
+                """.trimMargin(),
+            ).getOrFail()
+        suite.id shouldBe "Simple suite"
+        suite.symbolTable.macros.shouldBeEmpty()
+        suite.symbolTable.parameters.shouldBeEmpty()
+        val subject = suite.subjects[0]
+        val macro1 = subject.symbolTable.resolveMacro("macro1")!!
+        macro1 shouldBe Macro("macro1", emptyList(), listOf(Resolvable("code1")))
+        val macro2 = subject.symbolTable.resolveMacro("macro2")!!
+        macro2 shouldBe Macro("macro2", listOf("arg1"), listOf(Resolvable("\${{ arg1 }}"), Resolvable("code2")))
     }
 })
