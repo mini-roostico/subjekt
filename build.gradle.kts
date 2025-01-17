@@ -82,7 +82,7 @@ kotlin {
     }
 
     js(IR) {
-        moduleName = "subjekt"
+        moduleName = "@mini-roostico/subjekt"
         browser()
         nodejs()
         binaries.library()
@@ -236,7 +236,7 @@ detekt {
 npmPublish {
     packages {
         named("js") {
-            packageName = "subjekt"
+            packageName = "@mini-roostico/subjekt"
         }
     }
 
