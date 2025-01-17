@@ -16,17 +16,17 @@ data class SymbolTable(
     /**
      * The parameters that can be used to resolve values in a Suite.
      */
-    private val parameters: Map<String, Parameter> = emptyMap(),
+    val parameters: Map<String, Parameter> = emptyMap(),
     /**
      * The macros that can be used to resolve values in a Suite.
      */
-    private val macros: Map<String, Macro> = emptyMap(),
+    val macros: Map<String, Macro> = emptyMap(),
     /**
      * The functions that can be used to resolve values in a Suite.
      *
      * **Important**: Functions can be defined only programmatically, and are not part of the Suite definition.
      */
-    private val functions: Map<String, Function1<List<*>, List<*>>> = emptyMap(),
+    val functions: Map<String, Function1<List<*>, List<*>>> = emptyMap(),
 ) {
     /**
      * Returns a new [SymbolTable] with both the symbols from this SymbolTable and the symbols from [symbolTable].
@@ -44,9 +44,23 @@ data class SymbolTable(
     fun defineParameter(parameter: Parameter): SymbolTable = copy(parameters = parameters + (parameter.id to parameter))
 
     /**
+     * Returns a new [SymbolTable] with the [Parameter]s [parameters] defined.
+     */
+    fun defineParameters(parameters: Iterable<Parameter>): SymbolTable =
+        copy(
+            parameters =
+                this.parameters + parameters.map { (it.id to it) },
+        )
+
+    /**
      * Returns a new [SymbolTable] with the [Macro] [macro] defined.
      */
     fun defineMacro(macro: Macro): SymbolTable = copy(macros = macros + (macro.id to macro))
+
+    /**
+     * Returns a new [SymbolTable] with the [Macro]s [macros] defined.
+     */
+    fun defineMacros(macros: Iterable<Macro>): SymbolTable = copy(macros = this.macros + macros.map { (it.id to it) })
 
     /**
      * Returns a new [SymbolTable] with the [Function1] [function] defined.
