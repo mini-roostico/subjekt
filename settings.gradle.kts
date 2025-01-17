@@ -33,7 +33,7 @@ develocity {
 gitHooks {
     commitMsg { conventionalCommits() }
     preCommit {
-        tasks("detekt", "ktlintCheck")
+        tasks("check --parallel")
     }
     createHooks(overwriteExisting = true)
 }
