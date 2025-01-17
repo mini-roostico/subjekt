@@ -51,10 +51,8 @@ class Configuration : MutableMap<String, Any> by mutableMapOf<String, Any>() {
             in CODE_PREAMBLE_KEYS -> this[DEFAULT_CODE_PREAMBLE_KEY] = value
             in EXPRESSION_PREFIX_KEYS -> this[DEFAULT_EXPRESSION_PREFIX_KEY] = value
             in EXPRESSION_SUFFIX_KEYS -> this[DEFAULT_EXPRESSION_SUFFIX_KEY] = value
-            in LINT_KEYS -> {
-                this[DEFAULT_LINT_KEY] = value
-                println((this[DEFAULT_LINT_KEY] as? String)?.toBooleanStrictOrNull())
-            }
+            in LINT_KEYS -> this[DEFAULT_LINT_KEY] = value
+
             else -> {
                 this[key] = value
                 return false
