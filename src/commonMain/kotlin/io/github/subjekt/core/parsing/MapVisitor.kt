@@ -212,9 +212,13 @@ internal class MapVisitor {
                     macroDefinition = (value as String).asMacroDefinition()
                 }
                 in Macro.MACRO_RESOLVABLES_KEYS -> {
-                    parsingCheck(value is List<*>) { "Macro resolvables must be a list" }
+                    parsingCheck(value is List<*> || value is String) { "Macro resolvables must be a list" }
                     macroResolvables =
-                        (value as List<*>).map { Resolvable(it.toString(), expressionPrefix, expressionSuffix) }
+                        if (value is List<*>) {
+                            value.map { Resolvable(it.toString(), expressionPrefix, expressionSuffix) }
+                        } else {
+                            listOf(Resolvable(value.toString(), expressionPrefix, expressionSuffix))
+                        }
                 }
                 else -> parsingFail { "Unknown macro key: $key" }
             }
