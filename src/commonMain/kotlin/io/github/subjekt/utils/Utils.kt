@@ -46,7 +46,7 @@ object Utils {
      */
     internal fun String.format(vararg args: Any?): String {
         var result = this
-        val regex = Regex("""\{\{(\d+)}}""")
+        val regex = Regex("""\{\{(\d+)\}\}""")
         regex.findAll(this).forEach { matchResult ->
             val index = matchResult.groupValues[1].toIntOrNull()
             if (index != null && index in args.indices) {
@@ -55,5 +55,17 @@ object Utils {
             }
         }
         return result
+    }
+
+    /**
+     * Builds a regex pattern that matches the given expression within prefix and suffix.
+     */
+    fun buildRegex(
+        expressionPrefix: String,
+        expressionSuffix: String,
+    ): Regex {
+        val escapedPrefix = Regex.escape(expressionPrefix)
+        val escapedSuffix = Regex.escape(expressionSuffix)
+        return Regex("$escapedPrefix([\\s\\S]*?)$escapedSuffix", RegexOption.MULTILINE)
     }
 }

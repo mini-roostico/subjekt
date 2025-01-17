@@ -9,6 +9,7 @@
 
 package io.github.subjekt.core
 
+import io.github.subjekt.utils.Utils.buildRegex
 import io.github.subjekt.utils.Utils.format
 
 /**
@@ -94,7 +95,7 @@ class Resolvable
                 expressionSuffix: String = "}}",
             ): ResolvableString {
                 // Match prefix ... suffix blocks
-                val regex = Regex("""\Q$expressionPrefix\E([\s\S]*?)\Q$expressionSuffix\E""")
+                val regex = buildRegex(expressionPrefix, expressionSuffix)
                 val foundBlocks = mutableListOf<String>()
                 val replaced =
                     regex.replace(this) {
