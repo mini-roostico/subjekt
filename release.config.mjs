@@ -1,7 +1,7 @@
 
-const publishCmd = `
-./gradlew publish || exit 4
-`
+const publishCmd = "" //`
+//./gradlew publish || exit 4
+//`
 
 import config from 'semantic-release-preconfigured-conventional-commits' with { type: "json" };
 
