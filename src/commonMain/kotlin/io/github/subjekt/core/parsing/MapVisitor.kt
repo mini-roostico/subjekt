@@ -22,6 +22,7 @@ import io.github.subjekt.core.Suite
 import io.github.subjekt.core.SymbolTable
 import io.github.subjekt.core.parsing.SuiteFactory.SubjectBuilder
 import io.github.subjekt.core.parsing.SuiteFactory.SuiteBuilder
+import io.github.subjekt.utils.Logger
 import io.github.subjekt.utils.Utils.checkNulls
 
 /**
@@ -59,7 +60,7 @@ internal class MapVisitor {
      * block or `runCatching` block to handle parsing exceptions.
      */
     @Throws(IllegalArgumentException::class, ParsingException::class)
-    fun visit(map: Map<String, Any>): Suite {
+    internal fun visit(map: Map<String, Any>): Suite {
         map.entries
             .sortedWith(
                 // the configuration block gets parsed first before anything else
@@ -175,8 +176,12 @@ internal class MapVisitor {
     }
 
     private fun visitImports(imports: Any) {
-        TODO("Not yet implemented")
-        println(imports)
+        parsingCheck(imports is List<*>) { "Imports must be a list of strings" }
+        (imports as? List<*>)?.checkNulls()?.forEach {
+            parsingCheck(it is String) { "Imports must be strings" }
+            Logger.warning { "Importing modules is not yet supported and will be added in future versions." }
+            // suiteBuilder = suiteBuilder.import(it.toString())
+        }
     }
 
     private fun visitMacros(

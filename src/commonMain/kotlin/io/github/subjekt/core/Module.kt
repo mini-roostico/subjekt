@@ -9,4 +9,21 @@
 
 package io.github.subjekt.core
 
-interface Module
+/**
+ * A module is a collection of symbols (parameters, macros and functions) that can be imported and used in other
+ * modules.
+ */
+data class Module(
+    /**
+     * The unique identifier of the module.
+     */
+    val id: String,
+    /**
+     * Symbol table of the module, containing all the symbols defined in the module.
+     */
+    val symbolTable: SymbolTable,
+    /**
+     * Optional string path to where the module is located. This is used to resolve relative imports.
+     */
+    val path: String?,
+)
