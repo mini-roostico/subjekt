@@ -9,10 +9,17 @@
 
 package io.github.subjekt.core.parsing
 
+import io.github.subjekt.core.Macro
+import io.github.subjekt.core.Macro.Companion.asMacroDefinition
+import io.github.subjekt.core.Macro.Companion.toMacro
+import io.github.subjekt.core.MacroDefinition
+import io.github.subjekt.core.Parameter
+import io.github.subjekt.core.Parameter.Companion.toParameter
 import io.github.subjekt.core.Resolvable
 import io.github.subjekt.core.Subject
 import io.github.subjekt.core.Subject.Companion.createAndAddSubjectFromString
 import io.github.subjekt.core.Suite
+import io.github.subjekt.core.SymbolTable
 import io.github.subjekt.core.parsing.SuiteFactory.SubjectBuilder
 import io.github.subjekt.core.parsing.SuiteFactory.SuiteBuilder
 import io.github.subjekt.utils.Utils.checkNulls
@@ -30,6 +37,8 @@ internal class MapVisitor {
 
     private var suiteBuilder: SuiteBuilder = SuiteBuilder()
     private var subjectBuilder: SubjectBuilder = SubjectBuilder()
+    private var suiteSymbolTable: SymbolTable = SymbolTable()
+    private var subjectSymbolTable: SymbolTable = SymbolTable()
 
     /**
      * Throws a [ParsingException] with the given message.
@@ -61,7 +70,7 @@ internal class MapVisitor {
                 visitGlobalLevel(key, value)
             }
         return runCatching {
-            suiteBuilder.build()
+            suiteBuilder.symbolTable(suiteSymbolTable).build()
         }.fold({
             it
         }) {
@@ -129,7 +138,7 @@ internal class MapVisitor {
                     parsingCheck(value != null) { "Subject values must not be null" }
                     visitSubjectLevel(key.toString(), value!!)
                 }
-                subjectBuilder.id(suiteBuilder.getFreshSubjectId())
+                subjectBuilder = subjectBuilder.id(suiteBuilder.getFreshSubjectId()).symbolTable(subjectSymbolTable)
                 suiteBuilder = suiteBuilder.subject(subjectBuilder.build())
             }
             is String ->
@@ -174,16 +183,89 @@ internal class MapVisitor {
         macros: Any,
         insideSubject: Boolean = false,
     ) {
-        TODO("Not yet implemented")
-        println(macros)
+        parsingCheck(macros is Map<*, *> || macros is List<*>) { "Macros must be a map or a list" }
+        val parsedMacros =
+            if (macros is List<*>) {
+                macros.checkNulls().map { visitMacro(it) }
+            } else {
+                listOf(visitMacro(macros))
+            }
+        if (insideSubject) {
+            subjectSymbolTable = subjectSymbolTable.defineMacros(parsedMacros)
+        } else {
+            suiteSymbolTable = suiteSymbolTable.defineMacros(parsedMacros)
+        }
+    }
+
+    private fun visitMacro(macro: Any): Macro {
+        parsingCheck(macro is Map<*, *>) { "Macro must be a map" }
+        val macroMap = macro as Map<*, *>
+        var macroDefinition: MacroDefinition? = null
+        var macroResolvables: List<Resolvable>? = null
+        val expressionPrefix = suiteBuilder.configurationSnapshot.expressionPrefix
+        val expressionSuffix = suiteBuilder.configurationSnapshot.expressionSuffix
+        macroMap.entries.forEach { (key, value) ->
+            parsingCheck(value != null) { "Macro values must not be null" }
+            when (key) {
+                in Macro.MACRO_NAME_KEYS -> {
+                    parsingCheck(value is String) { "Macro ID must be a string" }
+                    macroDefinition = (value as String).asMacroDefinition()
+                }
+                in Macro.MACRO_RESOLVABLES_KEYS -> {
+                    parsingCheck(value is List<*>) { "Macro resolvables must be a list" }
+                    macroResolvables =
+                        (value as List<*>).map { Resolvable(it.toString(), expressionPrefix, expressionSuffix) }
+                }
+                else -> parsingFail { "Unknown macro key: $key" }
+            }
+        }
+        return macroDefinition?.toMacro(
+            macroResolvables ?: parsingFail { "Macros must have at least one resolvable value" },
+        )
+            ?: parsingFail { "Macro definition failed" }
     }
 
     private fun visitParameters(
         parameters: Any,
         insideSubject: Boolean = false,
     ) {
-        TODO("Not yet implemented")
-        println(parameters)
+        parsingCheck(parameters is Map<*, *> || parameters is List<*>) { "Parameters must be a map or a list" }
+        val parsedParameters =
+            if (parameters is List<*>) {
+                parameters.checkNulls().map { visitParameter(it) }
+            } else {
+                listOf(visitParameter(parameters))
+            }
+        if (insideSubject) {
+            subjectSymbolTable = subjectSymbolTable.defineParameters(parsedParameters)
+        } else {
+            suiteSymbolTable = suiteSymbolTable.defineParameters(parsedParameters)
+        }
+    }
+
+    private fun visitParameter(parameter: Any): Parameter {
+        parsingCheck(parameter is Map<*, *>) { "Parameter must be a map" }
+        val parameterMap = parameter as Map<*, *>
+        var parameterId: String? = null
+        var parameterValues: List<String>? = null
+        parameterMap.entries.forEach { (key, value) ->
+            parsingCheck(value != null) { "Parameter values must not be null" }
+            when (key) {
+                in Parameter.PARAMETER_NAME_KEYS -> {
+                    parsingCheck(value is String) { "Parameter's $key (i.e. ID) must be a string" }
+                    parameterId = value as String
+                }
+                in Parameter.PARAMETER_VALUES_KEYS -> {
+                    parsingCheck(value is List<*>) { "Parameter's $key (i.e. values) must be a list" }
+                    parameterValues = (value as List<*>).map { it.toString() }
+                }
+                else -> parsingFail { "Unknown parameter key: $key" }
+            }
+        }
+        return Pair(
+            parameterId ?: parsingFail { "Parameter's ID is required" },
+            parameterValues ?: parsingFail { "Parameters must have at least one value" },
+        ).toParameter()
     }
 
     /**
