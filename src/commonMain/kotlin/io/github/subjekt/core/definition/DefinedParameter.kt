@@ -9,4 +9,18 @@
 
 package io.github.subjekt.core.definition
 
-class DefinedParameter
+/**
+ * Represents a parameter fixed to a value. Contrary to the original Parameter, a [parameterId] is not unique to
+ * [DefinedParameter]s and can be repeated as many times as the number of the possible values of the original Parameter.
+ */
+data class DefinedParameter(
+    /**
+     * Identifier of the [io.github.subjekt.core.Parameter] from which this [DefinedParameter] it has been derived.
+     */
+    val parameterId: String,
+    /**
+     * Value of this [DefinedParameter]. It derives from one of the possible values of the original
+     * [io.github.subjekt.core.Parameter].
+     */
+    val value: Any,
+)

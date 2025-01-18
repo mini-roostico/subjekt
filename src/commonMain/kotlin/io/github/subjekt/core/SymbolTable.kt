@@ -126,6 +126,6 @@ data class SymbolTable
             /**
              * The separator used to separate the arguments of a macro during the ID resolution.
              */
-            private const val ARGS_SEPARATOR = ""
+            internal const val ARGS_SEPARATOR = "/"
         }
     }
