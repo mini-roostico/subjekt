@@ -65,7 +65,11 @@ internal class MapVisitor {
             .sortedWith(
                 // the configuration block gets parsed first before anything else
                 compareBy { entry ->
-                    if (entry.key in SUITE_CONFIG_KEYS) 0 else 1
+                    when (entry.key) {
+                        in SUITE_CONFIG_KEYS -> 0
+                        in SUITE_SUBJECTS_KEYS -> 2 // subjects are parsed last
+                        else -> 1
+                    }
                 },
             ).forEach { (key, value) ->
                 visitGlobalLevel(key, value)
@@ -86,7 +90,7 @@ internal class MapVisitor {
         when (key) {
             in SUITE_ID_KEYS -> visitSuiteId(value)
             in SUITE_CONFIG_KEYS -> visitConfiguration(value)
-            in SUITE_PARAMS_KEYS -> visitParameters(value)
+            in SUITE_PARAMS_KEYS -> visitParameters(value, false)
             in SUITE_MACROS_KEYS -> visitMacros(value)
             in SUITE_IMPORTS_KEYS -> visitImports(value)
             in SUITE_SUBJECTS_KEYS -> visitSubjects(key, value)
@@ -132,6 +136,7 @@ internal class MapVisitor {
 
     private fun visitSubject(subject: Any) {
         parsingCheck(subject is Map<*, *> || subject is String) { "Subject must be a map or a string" }
+        subjectSymbolTable = SymbolTable()
         when (subject) {
             is Map<*, *> -> {
                 subjectBuilder = SubjectBuilder()
@@ -139,13 +144,17 @@ internal class MapVisitor {
                     parsingCheck(value != null) { "Subject values must not be null" }
                     visitSubjectLevel(key.toString(), value!!)
                 }
-                subjectBuilder = subjectBuilder.id(suiteBuilder.getFreshSubjectId()).symbolTable(subjectSymbolTable)
+                subjectBuilder =
+                    subjectBuilder.id(suiteBuilder.getFreshSubjectId()).symbolTable(
+                        suiteSymbolTable + subjectSymbolTable,
+                    )
                 suiteBuilder = suiteBuilder.subject(subjectBuilder.build())
             }
             is String ->
                 with(suiteBuilder.configurationSnapshot) {
                     suiteBuilder.createAndAddSubjectFromString(
                         subject,
+                        suiteSymbolTable,
                         expressionPrefix = expressionPrefix,
                         expressionSuffix = expressionSuffix,
                     )
@@ -246,7 +255,11 @@ internal class MapVisitor {
                 listOf(visitParameter(parameters))
             }
         if (insideSubject) {
+            println("Defining parameters in subject")
+            println(parsedParameters)
+            println("Previous : $subjectSymbolTable")
             subjectSymbolTable = subjectSymbolTable.defineParameters(parsedParameters)
+            println("After : $subjectSymbolTable")
         } else {
             suiteSymbolTable = suiteSymbolTable.defineParameters(parsedParameters)
         }
@@ -265,8 +278,15 @@ internal class MapVisitor {
                     parameterId = value as String
                 }
                 in Parameter.PARAMETER_VALUES_KEYS -> {
-                    parsingCheck(value is List<*>) { "Parameter's $key (i.e. values) must be a list" }
-                    parameterValues = (value as List<*>).map { it.toString() }
+                    parsingCheck(
+                        value is List<*> || value is String,
+                    ) { "Parameter's $key (i.e. values) must be a string or list" }
+                    parameterValues =
+                        when (value) {
+                            is String -> listOf(value)
+                            is List<*> -> value.map { it.toString() }
+                            else -> parsingFail { "Parameter values must be a string or list" }
+                        }
                 }
                 else -> parsingFail { "Unknown parameter key: $key" }
             }
