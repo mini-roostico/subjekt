@@ -29,13 +29,12 @@ class SymbolTableSpec : StringSpec({
     "SymbolTable should combine macros correctly" {
         val macro1 = Macro("macro1", listOf("arg1"), listOf(Resolvable("body1")))
         val macro2 = Macro("macro2", listOf("arg2"), listOf(Resolvable("body2")))
-        val table1 = SymbolTable(macros = mapOf(macro1.id to macro1))
-        val table2 = SymbolTable(macros = mapOf(macro2.id to macro2))
+        val table1 = SymbolTable().defineMacro(macro1)
+        val table2 = SymbolTable().defineMacro(macro2)
 
         val combinedTable = table1 + table2
-
-        combinedTable.resolveMacro("macro1") shouldBe macro1
-        combinedTable.resolveMacro("macro2") shouldBe macro2
+        combinedTable.resolveMacro("macro1", 1) shouldBe macro1
+        combinedTable.resolveMacro("macro2", 1) shouldBe macro2
     }
 
     "SymbolTable should combine functions correctly" {
@@ -61,7 +60,7 @@ class SymbolTableSpec : StringSpec({
         val macro = Macro("macro", listOf("arg"), listOf(Resolvable("body")))
         val table = SymbolTable().defineMacro(macro)
 
-        table.resolveMacro("macro") shouldBe macro
+        table.resolveMacro("macro", 1) shouldBe macro
     }
 
     "SymbolTable should define and resolve functions correctly" {
