@@ -9,4 +9,13 @@
 
 package io.github.subjekt.core.resolution
 
-interface Exporter
+/**
+ * An exporter is a function that can be applied to a resolved suite to export it to a specific formatted
+ * [SubjektResult].
+ */
+interface Exporter<T> {
+    /**
+     * Exports a [resolvedSuite] into a specific formatted [SubjektResult].
+     */
+    fun export(resolvedSuite: ResolvedSuite): SubjektResult<T>
+}
