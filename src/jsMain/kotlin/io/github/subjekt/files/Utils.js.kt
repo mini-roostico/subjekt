@@ -7,6 +7,9 @@
  *
  */
 
-package io.github.subjekt.core.resolution
+package io.github.subjekt.files
 
-class Result
+actual fun String.writeTo(
+    path: String,
+    append: Boolean,
+): Result<Unit> = Result.failure(NotImplementedError("Writing to file is not yet supported in Subjekt for Javascript!"))

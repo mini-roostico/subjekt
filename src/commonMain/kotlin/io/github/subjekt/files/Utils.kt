@@ -13,3 +13,8 @@ package io.github.subjekt.files
  * Cleans a name by removing all non-alphanumeric characters.
  */
 fun cleanName(name: String): String = name.replace(Regex("[^A-Za-z0-9 ]"), "")
+
+expect fun String.writeTo(
+    path: String,
+    append: Boolean = true,
+): Result<Unit>

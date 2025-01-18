@@ -10,6 +10,8 @@
 package io.github.subjekt.files
 
 import java.io.File
+import java.nio.file.Files
+import kotlin.io.path.Path
 
 /**
  * Reads the text from a file at [path]. Returns `null` if the file does not exist.
@@ -22,11 +24,14 @@ fun readText(path: String): String? =
 /**
  * Writes the [String] to a file at [path]. Returns a [Result] with the result of the operation.
  */
-fun String.writeTo(
+actual fun String.writeTo(
     path: String,
-    append: Boolean = true,
+    append: Boolean,
 ): Result<Unit> =
     runCatching {
+        runCatching {
+            Files.createDirectories(Path(path).parent)
+        }
         File(path).also {
             if (append) {
                 it.appendText(this)
