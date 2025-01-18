@@ -9,6 +9,9 @@
 
 package io.github.subjekt
 
+import io.github.subjekt.core.Resolvable
+import io.github.subjekt.core.resolution.Instance
+import io.github.subjekt.core.resolution.ResolvedSubject
 import io.kotest.assertions.fail
 
 object TestingUtility {
@@ -22,4 +25,7 @@ object TestingUtility {
         }
         return this.getOrNull()!!
     }
+
+    fun getSimpleResolvedSubject(name: String): ResolvedSubject =
+        ResolvedSubject(0, mapOf("name" to Instance(name, Resolvable(name))))
 }
