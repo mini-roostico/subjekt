@@ -9,4 +9,26 @@
 
 package io.github.subjekt.core.resolution
 
-class ResolvedSubject
+import io.github.subjekt.core.Subject.Companion.DEFAULT_NAME_KEY
+
+/**
+ * Represents a resolved Subject in a Suite. Resolved Subjects are the core results in Subjekt, containing all the
+ * resolved instances of the Subject.
+ */
+data class ResolvedSubject(
+    /**
+     * The identifier of the Subject from which this [io.github.subjekt.core.resolution.ResolvedSubject] was resolved.
+     */
+    val subjectId: Int,
+    /**
+     * The resolved instances of the Subject. Each instance is a [Instance] object that contains the resolved value and
+     * corresponds to exactly one [io.github.subjekt.core.Resolvable] in the original [io.github.subjekt.core.Subject].
+     */
+    val instances: Map<String, Instance>,
+) {
+    /**
+     * Special getter for the name [Instance] of the Subject. Equal to doing `instances[DEFAULT_NAME_KEY]`.
+     */
+    val name: Instance?
+        get() = instances[DEFAULT_NAME_KEY]
+}
