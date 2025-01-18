@@ -30,7 +30,7 @@ data class Subject(
      */
     val resolvables: Map<String, Resolvable>,
     /**
-     * Optional local symbol table available only to this Subject. Empty by default.
+     * Symbol table containing all the symbols, both global and local to this Subject.
      */
     val symbolTable: SymbolTable = SymbolTable(),
 ) {
@@ -64,6 +64,7 @@ data class Subject(
          */
         internal fun SuiteFactory.SuiteBuilder.createAndAddSubjectFromString(
             content: String,
+            symbolTable: SymbolTable,
             fieldName: String = DEFAULT_FIELD_NAME,
             expressionPrefix: String = "\${{",
             expressionSuffix: String = "}}",
@@ -74,6 +75,7 @@ data class Subject(
                     mapOf(
                         fieldName to Resolvable(content, expressionPrefix, expressionSuffix),
                     ),
+                    symbolTable,
                 )
             return subject(subject)
         }
