@@ -255,11 +255,7 @@ internal class MapVisitor {
                 listOf(visitParameter(parameters))
             }
         if (insideSubject) {
-            println("Defining parameters in subject")
-            println(parsedParameters)
-            println("Previous : $subjectSymbolTable")
             subjectSymbolTable = subjectSymbolTable.defineParameters(parsedParameters)
-            println("After : $subjectSymbolTable")
         } else {
             suiteSymbolTable = suiteSymbolTable.defineParameters(parsedParameters)
         }
