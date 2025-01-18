@@ -338,4 +338,71 @@ class SuiteParsingSpec : StringSpec({
         val macro1Global = subject.symbolTable.resolveMacro("macro1")!!
         macro1Global shouldBe Macro("macro1", emptyList(), listOf(Resolvable("code1")))
     }
+
+    "Suite parsing with parameter overriding" {
+        val suite =
+            parse(
+                """
+                |name: "Simple suite"
+                |parameters:
+                |  - id: "param1"
+                |    values:
+                |    - "value1"
+                |    - "value2"
+                |subjects:
+                |  - name: "Test"
+                |    parameters:
+                |    - id: "param1"
+                |      values:
+                |      - "value3"
+                |      - "value4"
+                """.trimMargin(),
+            ).getOrFail()
+        println("\n\nTEST\n\n\n")
+        suite.id shouldBe "Simple suite"
+        suite.symbolTable.parameters.size shouldBe 1
+        println("INSIDE TEST: ${suite.symbolTable.parameters}")
+        suite.symbolTable.resolveParameter("param1")?.values shouldBe listOf("value1", "value2")
+        println("INSIDE TEST, SUBJECT: ${suite.subjects[0].symbolTable.parameters}")
+        suite.subjects[0]
+            .symbolTable
+            .resolveParameter("param1")
+            ?.values shouldBe listOf("value3", "value4")
+    }
+
+    "Suite parsing with macro overloading" {
+        val suite =
+            parse(
+                """
+                |name: "Simple suite"
+                |macros:
+                |  - id: "macroTest1()"
+                |    value: "code1"
+                |  - name: "macro2(arg1)"
+                |    values:
+                |    - "${"\${{ arg1 }}"}"
+                |subjects:
+                |  - name: "Test"
+                |    macros:
+                |    - id: "macroTest1()"
+                |      value: "code2"
+                |    - name: "macro2()"
+                |      value: "code3"
+                """.trimMargin(),
+            ).getOrFail()
+        suite.id shouldBe "Simple suite"
+        suite.symbolTable.macros.size shouldBe 2
+        val macro1 = suite.symbolTable.resolveMacro("macroTest1")!!
+        macro1 shouldBe Macro("macroTest1", emptyList(), listOf(Resolvable("code1")))
+        val macro2 = suite.symbolTable.resolveMacro("macro2", 1)!!
+        macro2 shouldBe Macro("macro2", listOf("arg1"), listOf(Resolvable("\${{ arg1 }}")))
+        val subject = suite.subjects[0]
+        subject.symbolTable.macros.size shouldBe 3
+        val macro1Subject = subject.symbolTable.resolveMacro("macroTest1")!!
+        macro1Subject shouldBe Macro("macroTest1", emptyList(), listOf(Resolvable("code2")))
+        val macro2Subject = subject.symbolTable.resolveMacro("macro2")!!
+        macro2Subject shouldBe Macro("macro2", emptyList(), listOf(Resolvable("code3")))
+        val macro2SubjectOverloaded = subject.symbolTable.resolveMacro("macro2", 1)!!
+        macro2SubjectOverloaded shouldBe Macro("macro2", listOf("arg1"), listOf(Resolvable("\${{ arg1 }}")))
+    }
 })

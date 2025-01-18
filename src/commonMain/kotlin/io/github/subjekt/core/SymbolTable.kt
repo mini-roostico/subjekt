@@ -35,7 +35,11 @@ data class SymbolTable
          */
         operator fun plus(symbolTable: SymbolTable): SymbolTable =
             SymbolTable(
-                parameters + symbolTable.parameters,
+                parameters.toMutableMap().also {
+                    symbolTable.parameters.forEach { (k, v) ->
+                        it.put(k, v)
+                    }
+                },
                 macros + symbolTable.macros,
                 functions + symbolTable.functions,
             )
