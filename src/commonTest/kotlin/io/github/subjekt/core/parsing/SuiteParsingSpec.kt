@@ -257,7 +257,7 @@ class SuiteParsingSpec : StringSpec({
         suite.symbolTable.macros.size shouldBe 2
         val macro1 = suite.symbolTable.resolveMacro("macro1")!!
         macro1 shouldBe Macro("macro1", emptyList(), listOf(Resolvable("code1")))
-        val macro2 = suite.symbolTable.resolveMacro("macro2")!!
+        val macro2 = suite.symbolTable.resolveMacro("macro2", 1)!!
         macro2 shouldBe Macro("macro2", listOf("arg1"), listOf(Resolvable("\${{ arg1 }}"), Resolvable("code2")))
     }
 
@@ -283,7 +283,59 @@ class SuiteParsingSpec : StringSpec({
         val subject = suite.subjects[0]
         val macro1 = subject.symbolTable.resolveMacro("macro1")!!
         macro1 shouldBe Macro("macro1", emptyList(), listOf(Resolvable("code1")))
-        val macro2 = subject.symbolTable.resolveMacro("macro2")!!
+        val macro2 = subject.symbolTable.resolveMacro("macro2", 1)!!
         macro2 shouldBe Macro("macro2", listOf("arg1"), listOf(Resolvable("\${{ arg1 }}"), Resolvable("code2")))
+    }
+
+    "Suite parsing with both global and local parameters and macros" {
+        val suite =
+            parse(
+                """
+                    |name: "Simple suite"
+                    |parameters:
+                    |  - id: "param1"
+                    |    value: "value1"
+                    |  - name: "param2"
+                    |    value: 
+                    |     - "value2"
+                    |     - "value3"
+                    |macros:
+                    |  - def: "macro1()"
+                    |    value: "code1"
+                    |  - def: "macro2()"
+                    |    value: 
+                    |      - "code2"
+                    |      - "code3"
+                    |subjects:
+                    |  name: "Test"
+                    |  parameters:
+                    |  - id: "param3"
+                    |    value: "value4"
+                    |  macros:
+                    |  - def: "macro3()"
+                    |    value: "code4"
+                """.trimMargin(),
+            ).getOrFail()
+        suite.id shouldBe "Simple suite"
+        suite.symbolTable.parameters.size shouldBe 2
+        suite.symbolTable.resolveParameter("param1")?.values shouldBe listOf("value1")
+        suite.symbolTable.resolveParameter("param2")?.values shouldBe listOf("value2", "value3")
+        suite.symbolTable.macros.size shouldBe 2
+        val macro1 = suite.symbolTable.resolveMacro("macro1")!!
+        macro1 shouldBe Macro("macro1", emptyList(), listOf(Resolvable("code1")))
+        val macro2 = suite.symbolTable.resolveMacro("macro2")!!
+        macro2 shouldBe Macro("macro2", emptyList(), listOf(Resolvable("code2"), Resolvable("code3")))
+        val subject = suite.subjects[0]
+        subject.symbolTable.parameters.size shouldBe 3
+        subject.symbolTable.resolveParameter("param1")?.values shouldBe listOf("value1")
+        subject.symbolTable.resolveParameter("param2")?.values shouldBe listOf("value2", "value3")
+        subject.symbolTable.resolveParameter("param3")?.values shouldBe listOf("value4")
+        subject.symbolTable.macros.size shouldBe 3
+        val macro3 = subject.symbolTable.resolveMacro("macro3")!!
+        macro3 shouldBe Macro("macro3", emptyList(), listOf(Resolvable("code4")))
+        val macro2Subject = subject.symbolTable.resolveMacro("macro2")!!
+        macro2Subject shouldBe Macro("macro2", emptyList(), listOf(Resolvable("code2"), Resolvable("code3")))
+        val macro1Global = subject.symbolTable.resolveMacro("macro1")!!
+        macro1Global shouldBe Macro("macro1", emptyList(), listOf(Resolvable("code1")))
     }
 })
