@@ -358,12 +358,9 @@ class SuiteParsingSpec : StringSpec({
                 |      - "value4"
                 """.trimMargin(),
             ).getOrFail()
-        println("\n\nTEST\n\n\n")
         suite.id shouldBe "Simple suite"
         suite.symbolTable.parameters.size shouldBe 1
-        println("INSIDE TEST: ${suite.symbolTable.parameters}")
         suite.symbolTable.resolveParameter("param1")?.values shouldBe listOf("value1", "value2")
-        println("INSIDE TEST, SUBJECT: ${suite.subjects[0].symbolTable.parameters}")
         suite.subjects[0]
             .symbolTable
             .resolveParameter("param1")
