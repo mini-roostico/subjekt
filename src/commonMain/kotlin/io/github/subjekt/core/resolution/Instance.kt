@@ -9,4 +9,19 @@
 
 package io.github.subjekt.core.resolution
 
-class Instance
+import io.github.subjekt.core.Resolvable
+
+/**
+ * Represents a [Resolvable] that has been resolved to a single value by fixing the
+ * [io.github.subjekt.core.definition.Context].
+ */
+class Instance(
+    /**
+     * The resolved value of the [Resolvable].
+     */
+    val value: String,
+    /**
+     * The original [Resolvable] from which this [Instance] was resolved.
+     */
+    val origin: Resolvable,
+)
