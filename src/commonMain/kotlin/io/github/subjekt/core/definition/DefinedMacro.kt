@@ -9,4 +9,27 @@
 
 package io.github.subjekt.core.definition
 
-class DefinedMacro
+import io.github.subjekt.core.Resolvable
+
+/**
+ * Represents a [io.github.subjekt.core.Macro] fixed to one of its possible values. Contrary to the original Macro, a
+ * [macroId] is not unique to [io.github.subjekt.core.definition.DefinedMacro]s and can be repeated as many times as
+ * the number of possible values that the original Macro can return.
+ */
+data class DefinedMacro(
+    /**
+     * Identifier of the [io.github.subjekt.core.Macro] from which this [io.github.subjekt.core.definition.DefinedMacro]
+     * it has been derived.
+     */
+    val macroId: String,
+    /**
+     * The list of identifiers of the arguments that the Macro accepts. These are used to reference the arguments in the
+     * Macro's resolvables.
+     */
+    val argumentsIdentifiers: List<String>,
+    /**
+     * The single [Resolvable] that the [io.github.subjekt.core.definition.DefinedMacro] can resolve. It derives from
+     * one of the [Resolvable]s of the original [io.github.subjekt.core.Macro].
+     */
+    val value: Resolvable,
+)
