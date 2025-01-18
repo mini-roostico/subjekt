@@ -9,4 +9,27 @@
 
 package io.github.subjekt.core.resolution
 
-interface ResolvedSuite
+import io.github.subjekt.core.Suite
+
+/**
+ * Represents a resolved Suite. A [ResolvedSuite] contains the whole result of a Subjekt elaboration, working as a
+ * container of the main result objects, the [ResolvedSubject]s.
+ */
+data class ResolvedSuite(
+    /**
+     * The original [Suite] from which this [ResolvedSuite] was resolved.
+     */
+    val originalSuite: Suite,
+    /**
+     * The resolved Subjects in the Suite. Each [ResolvedSubject] corresponds to a [io.github.subjekt.core.Subject] in
+     * the original Suite.
+     */
+    val resolvedSubjects: List<ResolvedSubject>,
+) {
+    /**
+     * The unique identifier for this [io.github.subjekt.core.resolution.ResolvedSuite] as it was for the original
+     * [Suite].
+     */
+    val suiteId: String
+        get() = originalSuite.id
+}
