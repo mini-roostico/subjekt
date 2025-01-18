@@ -9,4 +9,12 @@
 
 package io.github.subjekt.core.resolution
 
-interface Mapper
+/**
+ * A mapper is a function that can be applied to a resolved suite to transform it into another resolved suite.
+ */
+interface Mapper {
+    /**
+     * Maps a [resolvedSuite] into another resolved suite.
+     */
+    fun map(resolvedSuite: ResolvedSuite): ResolvedSuite
+}
