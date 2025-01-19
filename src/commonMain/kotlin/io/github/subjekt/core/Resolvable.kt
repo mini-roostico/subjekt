@@ -9,6 +9,8 @@
 
 package io.github.subjekt.core
 
+import io.github.subjekt.compiler.expressions.Expression.Companion.toExpression
+import io.github.subjekt.core.definition.Context
 import io.github.subjekt.utils.Utils.buildRegex
 import io.github.subjekt.utils.Utils.format
 
@@ -70,12 +72,18 @@ class Resolvable
          * Resolves the resolvable with the given [values]. Throws an [IllegalArgumentException] if the [values] number
          * is not equal to the number of [expressions].
          */
-        fun resolve(values: List<String>): String = resolvableString.format(values)
+        internal fun resolveFormatting(values: List<String>): String = resolvableString.format(values)
 
         /**
-         * Equal to [resolve] but with a vararg parameter.
+         * Equal to [resolveFormatting] but with a vararg parameter.
          */
-        fun resolve(vararg values: String): String = resolve(values.toList())
+        internal fun resolveFormatting(vararg values: String): String = resolveFormatting(values.toList())
+
+        /**
+         * Resolves the resolvable with the given [context].
+         */
+        fun resolve(context: Context): String =
+            resolveFormatting(expressions.map { it.toExpression().resolve(context) })
 
         /**
          * Internal class to handle string substitution with expressions.
