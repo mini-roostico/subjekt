@@ -10,6 +10,7 @@
 package io.github.subjekt.compiler.expressions
 
 import io.github.subjekt.compiler.expressions.ir.IrNode.IrTree
+import io.github.subjekt.compiler.expressions.visitors.ExpressionResolveVisitor
 import io.github.subjekt.compiler.expressions.visitors.parseToIr
 import io.github.subjekt.compiler.expressions.visitors.resolveSymbols
 import io.github.subjekt.core.Resolvable.RawExpression
@@ -39,11 +40,8 @@ class Expression(
     /**
      * Resolves the expression to a string result using the given [Context].
      */
-    fun resolve(context: Context): String {
-        // nothing
-        context
-        TODO()
-    }
+    @Throws(SymbolNotFoundException::class)
+    fun resolve(context: Context): String = ExpressionResolveVisitor(context).visit(ir)
 
     companion object {
         /**
