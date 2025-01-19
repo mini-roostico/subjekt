@@ -9,6 +9,8 @@
 
 package io.github.subjekt.utils
 
+import io.github.subjekt.core.parsing.MapVisitor.ParsingException
+
 object Utils {
     /**
      * Checks that the map does not contain null keys or values, and throws an [IllegalArgumentException] if it does.
@@ -60,12 +62,26 @@ object Utils {
     /**
      * Builds a regex pattern that matches the given expression within prefix and suffix.
      */
-    fun buildRegex(
+    internal fun buildRegex(
         expressionPrefix: String,
         expressionSuffix: String,
     ): Regex {
         val escapedPrefix = Regex.escape(expressionPrefix)
         val escapedSuffix = Regex.escape(expressionSuffix)
         return Regex("$escapedPrefix([\\s\\S]*?)$escapedSuffix", RegexOption.MULTILINE)
+    }
+
+    /**
+     * Throws a [ParsingException] with the given message.
+     */
+    internal fun parsingFail(message: () -> String): Nothing = throw ParsingException(message())
+
+    internal fun parsingCheck(
+        condition: Boolean,
+        message: () -> String,
+    ) {
+        if (!condition) {
+            parsingFail(message)
+        }
     }
 }
