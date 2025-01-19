@@ -115,7 +115,7 @@ internal class ExpressionIrCreationVisitor(
 /**
  * Parses the expression into an IR tree.
  */
-fun Expression.parseToIr(): IrNode {
+internal fun Expression.parseToIr(): IrNode {
     val charStream = CharStreams.fromString(source)
     val lexer = ExpressionLexer(charStream)
     val tokens = CommonTokenStream(lexer)
