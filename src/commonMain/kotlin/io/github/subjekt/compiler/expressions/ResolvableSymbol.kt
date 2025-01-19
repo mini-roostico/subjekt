@@ -25,9 +25,9 @@ data class ParameterSymbol(
 ) : ResolvableSymbol()
 
 /**
- * Represents a [io.github.subjekt.core.Macro] symbol.
+ * Represents a [io.github.subjekt.core.Macro] or [Function1] symbol.
  */
-data class MacroSymbol(
+data class CallSymbol(
     /**
      * Identifier of the macro.
      */
@@ -39,9 +39,9 @@ data class MacroSymbol(
 ) : ResolvableSymbol()
 
 /**
- * Represents a [io.github.subjekt.core.Macro] symbol qualified with a [io.github.subjekt.core.Module].
+ * Represents a [io.github.subjekt.core.Macro] or [Function1] symbol qualified with a [io.github.subjekt.core.Module].
  */
-data class QualifiedMacroSymbol(
+data class QualifiedCallSymbol(
     /**
      * Identifier of the module.
      */
