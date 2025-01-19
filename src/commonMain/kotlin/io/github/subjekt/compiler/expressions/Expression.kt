@@ -9,8 +9,9 @@
 
 package io.github.subjekt.compiler.expressions
 
-import io.github.subjekt.compiler.expressions.ir.IrNode
+import io.github.subjekt.compiler.expressions.ir.IrNode.IrTree
 import io.github.subjekt.compiler.expressions.visitors.parseToIr
+import io.github.subjekt.compiler.expressions.visitors.resolveSymbols
 import io.github.subjekt.core.Resolvable.RawExpression
 import io.github.subjekt.core.definition.Context
 
@@ -24,18 +25,16 @@ class Expression(
      */
     val source: String,
 ) {
-    private val ir: IrNode by lazy {
+    private val ir: IrTree by lazy {
         parseToIr()
     }
 
     /**
      * List of symbols used in the expression.
      */
-    val symbolsIds: Set<String>
-        get() {
-            ir.line
-            return emptySet()
-        }
+    val symbols: Set<ResolvableSymbol> by lazy {
+        ir.resolveSymbols()
+    }
 
     /**
      * Resolves the expression to a string result using the given [Context].
