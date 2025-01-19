@@ -20,6 +20,7 @@ class ResolvableSpec : StringSpec({
         resolvable.source shouldBe "Hello World!"
         resolvable.expressions.shouldBeEmpty()
         resolvable.asFormattableString() shouldBe "Hello World!"
+        resolvable.resolve() shouldBe "Hello World!"
     }
 
     "A Resolvable should be built correctly from a string with an expression" {
@@ -28,6 +29,7 @@ class ResolvableSpec : StringSpec({
         resolvable.expressions.size shouldBe 1
         resolvable.expressions[0].source shouldBe "name"
         resolvable.asFormattableString() shouldBe "Hello {{0}}!"
+        resolvable.resolve("Subjekt") shouldBe "Hello Subjekt!"
     }
 
     "A Resolvable should be built correctly from a string with multiple expressions" {
@@ -37,6 +39,7 @@ class ResolvableSpec : StringSpec({
         resolvable.expressions[0].source shouldBe "name"
         resolvable.expressions[1].source shouldBe "myName"
         resolvable.asFormattableString() shouldBe "Hello {{0}}! My name is {{1}}."
+        resolvable.resolve("Subjekt", "Francesco") shouldBe "Hello Subjekt! My name is Francesco."
     }
 
     "A Resolvable should be built correctly from a string with expressions containing newlines" {
@@ -45,6 +48,7 @@ class ResolvableSpec : StringSpec({
         resolvable.expressions.size shouldBe 1
         resolvable.expressions[0].source shouldBe "name"
         resolvable.asFormattableString() shouldBe "Hello {{0}}!"
+        resolvable.resolve("Subjekt") shouldBe "Hello Subjekt!"
     }
 
     "A Resolvable should be built correctly from a string with expressions containing newlines and spaces" {
@@ -53,6 +57,7 @@ class ResolvableSpec : StringSpec({
         resolvable.expressions.size shouldBe 1
         resolvable.expressions[0].source shouldBe "name"
         resolvable.asFormattableString() shouldBe "Hello {{0}}!"
+        resolvable.resolve("Subjekt") shouldBe "Hello Subjekt!"
     }
 
     "A Resolvable should be built correctly from a string with expressions containing newlines and spaces and " +
@@ -63,6 +68,7 @@ class ResolvableSpec : StringSpec({
             resolvable.expressions[0].source shouldBe "name"
             resolvable.expressions[1].source shouldBe "myName"
             resolvable.asFormattableString() shouldBe "Hello {{0}}! My name is {{1}}."
+            resolvable.resolve("Subjekt", "Francesco") shouldBe "Hello Subjekt! My name is Francesco."
         }
 
     "A Resolvable should be built correctly when expressions are repeated" {
@@ -71,6 +77,7 @@ class ResolvableSpec : StringSpec({
         resolvable.expressions.size shouldBe 1
         resolvable.expressions[0].source shouldBe "name"
         resolvable.asFormattableString() shouldBe "Hello {{0}}! My name is {{0}}."
+        resolvable.resolve("Subjekt") shouldBe "Hello Subjekt! My name is Subjekt."
     }
 
     "A Resolvable should be built correctly when using custom expression delimiters" {
@@ -80,5 +87,6 @@ class ResolvableSpec : StringSpec({
         resolvable.expressions[0].source shouldBe "name"
         resolvable.expressions[1].source shouldBe "myName"
         resolvable.asFormattableString() shouldBe "Hello {{0}}! My name is {{1}}."
+        resolvable.resolve("Subjekt", "Francesco") shouldBe "Hello Subjekt! My name is Francesco."
     }
 })
