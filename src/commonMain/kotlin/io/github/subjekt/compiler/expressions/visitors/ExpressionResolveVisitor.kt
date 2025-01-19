@@ -33,10 +33,10 @@ internal class ExpressionResolveVisitor(
         runCatching {
             val definedMacro = symbol.resolveMacro(context)
             definedMacro.call(arguments)
-        }.onFailure {
+        }.fold({ it }) {
             val definedFunction = symbol.resolveFunction(context)
             definedFunction(arguments)
-        }.getOrThrow()
+        }
 
     override fun visitCall(node: IrNode.IrCall): String {
         val symbol = node.toCallSymbol()
@@ -53,7 +53,7 @@ internal class ExpressionResolveVisitor(
     override fun visitPlus(node: IrNode.IrExpressionPlus): String {
         val left = visit(node.left)
         val right = visit(node.right)
-        return "$left + $right"
+        return "$left$right"
     }
 
     override fun visitLiteral(node: IrNode.IrLiteral): String = node.value
