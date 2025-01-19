@@ -9,6 +9,7 @@
 
 package io.github.subjekt.core.definition
 
+import io.github.subjekt.core.Resolvable
 import io.github.subjekt.core.SymbolTable.Companion.ARGS_SEPARATOR
 
 /**
@@ -23,6 +24,11 @@ data class Context(
     val definedMacros: Map<String, DefinedMacro>,
     val functions: Map<String, Function1<List<String>, String>>,
 ) {
+    /**
+     * Creates a new empty context
+     */
+    constructor() : this(emptyMap(), emptyMap(), emptyMap())
+
     /**
      * Returns the [DefinedParameter] with the given [id], if it exists in this context.
      */
@@ -40,4 +46,37 @@ data class Context(
      * Returns the [Function1] with the given [id], if it exists in this context.
      */
     fun lookupFunction(id: String): Function1<List<String>, String>? = functions[id]
+
+    /**
+     * Returns a new context with the given [DefinedParameter] added to it.
+     */
+    fun withParameter(
+        id: String,
+        value: String,
+    ): Context = copy(definedParameters = definedParameters + (id to DefinedParameter(id, value)))
+
+    /**
+     * Returns a new context with the given [DefinedMacro] added to it.
+     */
+    fun withMacro(
+        id: String,
+        argIds: List<String>,
+        value: Resolvable,
+    ): Context =
+        copy(definedMacros = definedMacros + (id + ARGS_SEPARATOR + argIds.size to DefinedMacro(id, argIds, value)))
+
+    /**
+     * Returns a new context with the given [Function1] added to it.
+     */
+    fun withFunction(
+        id: String,
+        function: Function1<List<String>, String>,
+    ): Context = copy(functions = functions + (id to function))
+
+    companion object {
+        /**
+         * An empty context.
+         */
+        val empty: Context = Context(emptyMap(), emptyMap(), emptyMap())
+    }
 }
