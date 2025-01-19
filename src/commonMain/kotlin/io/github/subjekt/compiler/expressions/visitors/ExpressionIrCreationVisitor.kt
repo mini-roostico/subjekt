@@ -11,6 +11,7 @@ package io.github.subjekt.compiler.expressions.visitors
 
 import io.github.subjekt.compiler.expressions.Expression
 import io.github.subjekt.compiler.expressions.ir.IrNode
+import io.github.subjekt.compiler.expressions.ir.IrNode.IrTree
 import io.github.subjekt.compiler.nodes.expression.Node
 import io.github.subjekt.parsers.generated.ExpressionBaseVisitor
 import io.github.subjekt.parsers.generated.ExpressionLexer
@@ -23,7 +24,7 @@ import org.antlr.v4.kotlinruntime.ParserRuleContext
 /**
  * Visitor that creates the intermediate representation of the expression (a tree of [Node]s).
  */
-internal class ExpressionIrCreationVisitor(
+private class ExpressionIrCreationVisitor(
     /**
      * Expression body to parse into an IR tree.
      */
@@ -115,11 +116,11 @@ internal class ExpressionIrCreationVisitor(
 /**
  * Parses the expression into an IR tree.
  */
-internal fun Expression.parseToIr(): IrNode {
+internal fun Expression.parseToIr(): IrTree {
     val charStream = CharStreams.fromString(source)
     val lexer = ExpressionLexer(charStream)
     val tokens = CommonTokenStream(lexer)
     val parser = ExpressionParser(tokens)
     val tree = parser.expression()
-    return ExpressionIrCreationVisitor(source).visit(tree)
+    return IrTree(ExpressionIrCreationVisitor(source).visit(tree))
 }

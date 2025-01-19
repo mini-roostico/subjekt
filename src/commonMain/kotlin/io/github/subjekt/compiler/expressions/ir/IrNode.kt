@@ -23,6 +23,13 @@ sealed class IrNode(
 //    }
 
     /**
+     * IR wrapper for the entire tree.
+     */
+    data class IrTree(
+        val node: IrNode,
+    ) : IrNode(-1)
+
+    /**
      * Represents an identifier node (e.g. `${{ name }}`).
      */
     data class IrParameter(
