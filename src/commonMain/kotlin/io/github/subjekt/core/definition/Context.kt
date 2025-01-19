@@ -21,6 +21,7 @@ import io.github.subjekt.core.SymbolTable.Companion.ARGS_SEPARATOR
 data class Context(
     val definedParameters: Map<String, DefinedParameter>,
     val definedMacros: Map<String, DefinedMacro>,
+    val functions: Map<String, Function1<List<String>, String>>,
 ) {
     /**
      * Returns the [DefinedParameter] with the given [id], if it exists in this context.
@@ -34,4 +35,9 @@ data class Context(
         id: String,
         nArgs: Int = 0,
     ): DefinedMacro? = definedMacros[id + ARGS_SEPARATOR + nArgs]
+
+    /**
+     * Returns the [Function1] with the given [id], if it exists in this context.
+     */
+    fun lookupFunction(id: String): Function1<List<String>, String>? = functions[id]
 }
