@@ -67,6 +67,17 @@ class Resolvable
         }
 
         /**
+         * Resolves the resolvable with the given [values]. Throws an [IllegalArgumentException] if the [values] number
+         * is not equal to the number of [expressions].
+         */
+        fun resolve(values: List<String>): String = resolvableString.format(values)
+
+        /**
+         * Equal to [resolve] but with a vararg parameter.
+         */
+        fun resolve(vararg values: String): String = resolve(values.toList())
+
+        /**
          * Internal class to handle string substitution with expressions.
          */
         internal data class ResolvableString(
@@ -87,11 +98,11 @@ class Resolvable
              * it not equal to the number of [expressions].
              */
             @Throws(IllegalArgumentException::class)
-            fun format(vararg values: Any): String {
+            fun format(values: List<String>): String {
                 require(values.size == expressions.size) {
                     "Number of values does not match number of expressions"
                 }
-                return toFormat.format(*values)
+                return toFormat.format(values)
             }
         }
 

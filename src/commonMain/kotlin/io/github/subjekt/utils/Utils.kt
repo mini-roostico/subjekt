@@ -46,7 +46,13 @@ object Utils {
      * Simple implementation of the `format` method available on the JVM. It replaces all occurrences of `{{n}}` with
      * the `n`-th element of the `args` array.
      */
-    internal fun String.format(vararg args: Any?): String {
+    internal fun String.format(vararg args: Any?): String = format(args.toList())
+
+    /**
+     * Simple implementation of the `format` method available on the JVM. It replaces all occurrences of `{{n}}` with
+     * the `n`-th element of the `args` array.
+     */
+    internal fun String.format(args: List<Any?>): String {
         var result = this
         val regex = Regex("""\{\{(\d+)\}\}""")
         regex.findAll(this).forEach { matchResult ->

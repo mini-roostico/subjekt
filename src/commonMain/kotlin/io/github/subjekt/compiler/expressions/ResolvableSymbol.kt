@@ -9,10 +9,55 @@
 
 package io.github.subjekt.compiler.expressions
 
+import io.github.subjekt.compiler.expressions.ir.IrNode
+import io.github.subjekt.core.definition.Context
+import io.github.subjekt.core.definition.DefinedMacro
+import io.github.subjekt.core.definition.DefinedParameter
+
 /**
  * Represents a symbol that can be resolved inside a [io.github.subjekt.core.definition.Context].
  */
 sealed class ResolvableSymbol
+
+sealed class CallableSymbol : ResolvableSymbol() {
+    /**
+     * Identifier of the callable.
+     */
+    abstract val callableId: String
+
+    /**
+     * Number of arguments of the callable.
+     */
+    abstract val nArgs: Int
+
+    /**
+     * Resolves the symbol to a [io.github.subjekt.core.definition.DefinedMacro] using the given [Context].
+     */
+    fun resolveMacro(context: Context): DefinedMacro =
+        context.lookupMacro(callableId, nArgs) ?: throw SymbolNotFoundException(this)
+
+    /**
+     * Resolves the symbol to a [Function1] using the given [Context].
+     */
+    fun resolveFunction(context: Context): Function1<List<String>, String> =
+        context.lookupFunction(callableId) ?: throw SymbolNotFoundException(this)
+}
+
+/**
+ * Obtains the [CallSymbol] associated to the [IrNode.IrCall].
+ */
+fun IrNode.IrCall.toCallSymbol(): CallSymbol = CallSymbol(identifier, arguments.size)
+
+/**
+ * Obtains the [QualifiedCallSymbol] associated to the [IrNode.IrDotCall].
+ */
+fun IrNode.IrDotCall.toQualifiedCallSymbol(): QualifiedCallSymbol =
+    QualifiedCallSymbol(moduleId, callId, arguments.size)
+
+/**
+ * Obtains the [ParameterSymbol] associated to the [IrNode.IrParameter].
+ */
+fun IrNode.IrParameter.toParameterSymbol(): ParameterSymbol = ParameterSymbol(identifier)
 
 /**
  * Represents a [io.github.subjekt.core.Parameter] symbol.
@@ -22,21 +67,20 @@ data class ParameterSymbol(
      * Identifier of the parameter.
      */
     val id: String,
-) : ResolvableSymbol()
+) : ResolvableSymbol() {
+    /**
+     * Resolves the symbol to a [io.github.subjekt.core.definition.DefinedParameter] using the given [Context].
+     */
+    fun resolve(context: Context): DefinedParameter = context.lookupParameter(id) ?: throw SymbolNotFoundException(this)
+}
 
 /**
  * Represents a [io.github.subjekt.core.Macro] or [Function1] symbol.
  */
 data class CallSymbol(
-    /**
-     * Identifier of the macro.
-     */
-    val id: String,
-    /**
-     * Number of arguments of the macro.
-     */
-    val nArgs: Int,
-) : ResolvableSymbol()
+    override val callableId: String,
+    override val nArgs: Int,
+) : CallableSymbol()
 
 /**
  * Represents a [io.github.subjekt.core.Macro] or [Function1] symbol qualified with a [io.github.subjekt.core.Module].
@@ -50,8 +94,8 @@ data class QualifiedCallSymbol(
      * Identifier of the macro.
      */
     val id: String,
-    /**
-     * Number of arguments of the macro.
-     */
-    val nArgs: Int,
-) : ResolvableSymbol()
+    override val nArgs: Int,
+) : CallableSymbol() {
+    override val callableId: String
+        get() = "$module.$id"
+}
