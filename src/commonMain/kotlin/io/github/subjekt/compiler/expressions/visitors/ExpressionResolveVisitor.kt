@@ -10,12 +10,13 @@
 package io.github.subjekt.compiler.expressions.visitors
 
 import io.github.subjekt.compiler.expressions.CallableSymbol
-import io.github.subjekt.compiler.expressions.call
+import io.github.subjekt.compiler.expressions.SymbolNotFoundException
 import io.github.subjekt.compiler.expressions.ir.IrNode
 import io.github.subjekt.compiler.expressions.toCallSymbol
 import io.github.subjekt.compiler.expressions.toParameterSymbol
 import io.github.subjekt.compiler.expressions.toQualifiedCallSymbol
 import io.github.subjekt.core.definition.Context
+import io.github.subjekt.core.definition.DefinedMacro
 
 /**
  * Visitor that resolves an [IrNode] to a string result, using the given [Context].
@@ -26,17 +27,34 @@ internal class ExpressionResolveVisitor(
      */
     private val context: Context,
 ) : ExpressionIrVisitor<String> {
+    /**
+     * Calls the [DefinedMacro] with the given [arguments], internally resolving the macro's
+     * [io.github.subjekt.core.Resolvable].
+     */
+    fun DefinedMacro.call(arguments: List<String>): String {
+        argumentsIdentifiers
+            .foldIndexed(context) { index, acc, id ->
+                acc.withParameter(id, arguments[index])
+            }.let { newContext ->
+                return value.resolve(newContext)
+            }
+    }
+
     private fun callSymbol(
         symbol: CallableSymbol,
         arguments: List<String>,
-    ): String =
-        runCatching {
-            val definedMacro = symbol.resolveMacro(context)
+    ): String {
+        val definedMacro = symbol.resolveMacro(context)
+        return if (definedMacro != null) {
             definedMacro.call(arguments)
-        }.fold({ it }) {
+        } else {
             val definedFunction = symbol.resolveFunction(context)
+            if (definedFunction == null) {
+                throw SymbolNotFoundException(symbol)
+            }
             definedFunction(arguments)
         }
+    }
 
     override fun visitCall(node: IrNode.IrCall): String {
         val symbol = node.toCallSymbol()
