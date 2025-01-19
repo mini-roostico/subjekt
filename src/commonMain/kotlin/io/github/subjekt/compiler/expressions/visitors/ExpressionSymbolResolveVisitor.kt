@@ -9,9 +9,9 @@
 
 package io.github.subjekt.compiler.expressions.visitors
 
-import io.github.subjekt.compiler.expressions.MacroSymbol
+import io.github.subjekt.compiler.expressions.CallSymbol
 import io.github.subjekt.compiler.expressions.ParameterSymbol
-import io.github.subjekt.compiler.expressions.QualifiedMacroSymbol
+import io.github.subjekt.compiler.expressions.QualifiedCallSymbol
 import io.github.subjekt.compiler.expressions.ResolvableSymbol
 import io.github.subjekt.compiler.expressions.ir.IrNode
 import io.github.subjekt.compiler.expressions.ir.IrNode.IrTree
@@ -22,7 +22,7 @@ import io.github.subjekt.compiler.expressions.ir.IrNode.IrTree
  */
 private class ExpressionSymbolResolveVisitor : ExpressionIrVisitor<Set<ResolvableSymbol>> {
     override fun visitCall(node: IrNode.IrCall): Set<ResolvableSymbol> =
-        node.arguments.flatMap { visit(it) }.toSet() + MacroSymbol(node.identifier, node.arguments.size)
+        node.arguments.flatMap { visit(it) }.toSet() + CallSymbol(node.identifier, node.arguments.size)
 
     override fun visitParameter(node: IrNode.IrParameter): Set<ResolvableSymbol> =
         setOf(ParameterSymbol(node.identifier))
@@ -33,7 +33,7 @@ private class ExpressionSymbolResolveVisitor : ExpressionIrVisitor<Set<Resolvabl
 
     override fun visitDotCall(node: IrNode.IrDotCall): Set<ResolvableSymbol> =
         node.arguments.flatMap { visit(it) }.toSet() +
-            QualifiedMacroSymbol(node.moduleId, node.callId, node.arguments.size)
+            QualifiedCallSymbol(node.moduleId, node.callId, node.arguments.size)
 }
 
 /**
