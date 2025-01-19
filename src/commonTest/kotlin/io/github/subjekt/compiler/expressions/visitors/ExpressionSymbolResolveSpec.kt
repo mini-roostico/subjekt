@@ -9,10 +9,10 @@
 
 package io.github.subjekt.compiler.expressions.visitors
 
+import io.github.subjekt.compiler.expressions.CallSymbol
 import io.github.subjekt.compiler.expressions.Expression
-import io.github.subjekt.compiler.expressions.MacroSymbol
 import io.github.subjekt.compiler.expressions.ParameterSymbol
-import io.github.subjekt.compiler.expressions.QualifiedMacroSymbol
+import io.github.subjekt.compiler.expressions.QualifiedCallSymbol
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 
@@ -40,13 +40,13 @@ class ExpressionSymbolResolveSpec : StringSpec({
     "An Expression with a call accepting a Parameter argument should return a MacroSymbol and a ParameterSymbol" {
         val expr = Expression("macro(arg)")
         val result = expr.symbols
-        result shouldBe setOf(ParameterSymbol("arg"), MacroSymbol("macro", 1))
+        result shouldBe setOf(ParameterSymbol("arg"), CallSymbol("macro", 1))
     }
 
     "An Expression with a qualified call accepting a Parameter argument should return a MacroSymbol and a " +
         "ParameterSymbol" {
             val expr = Expression("module.macro(arg)")
             val result = expr.symbols
-            result shouldBe setOf(QualifiedMacroSymbol("module", "macro", 1), ParameterSymbol("arg"))
+            result shouldBe setOf(QualifiedCallSymbol("module", "macro", 1), ParameterSymbol("arg"))
         }
 })
