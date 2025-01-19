@@ -23,10 +23,10 @@ class SymbolNotFoundException(
             when (symbol) {
                 is CallSymbol ->
                     "Called '${symbol.callableId}' symbol with ${symbol.nArgs} arguments," +
-                        " but '${symbol.callableId}/${symbol.nArgs} cannot be resolved."
+                        " but '${symbol.callableId}/${symbol.nArgs}' cannot be resolved."
                 is ParameterSymbol -> "Parameter '${symbol.id}' cannot be resolved."
                 is QualifiedCallSymbol ->
                     "Called '${symbol.module}.${symbol.callableId}' symbol with ${symbol.nArgs} arguments," +
-                        " but '${symbol.module}.${symbol.callableId}'/${symbol.nArgs} cannot be resolved."
+                        " but '${symbol.module}.${symbol.callableId}/${symbol.nArgs}' cannot be resolved."
             }
 }
