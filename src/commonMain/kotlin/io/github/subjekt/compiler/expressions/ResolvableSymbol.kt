@@ -33,14 +33,12 @@ sealed class CallableSymbol : ResolvableSymbol() {
     /**
      * Resolves the symbol to a [io.github.subjekt.core.definition.DefinedMacro] using the given [Context].
      */
-    fun resolveMacro(context: Context): DefinedMacro =
-        context.lookupMacro(callableId, nArgs) ?: throw SymbolNotFoundException(this)
+    fun resolveMacro(context: Context): DefinedMacro? = context.lookupMacro(callableId, nArgs)
 
     /**
      * Resolves the symbol to a [Function1] using the given [Context].
      */
-    fun resolveFunction(context: Context): Function1<List<String>, String> =
-        context.lookupFunction(callableId) ?: throw SymbolNotFoundException(this)
+    fun resolveFunction(context: Context): Function1<List<String>, String>? = context.lookupFunction(callableId)
 }
 
 /**
