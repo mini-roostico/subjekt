@@ -57,6 +57,33 @@ class ExpressionResolvingSpec : StringSpec({
         result shouldBe "2, 5111"
     }
 
+    "Resolving an expression with nested function calls should work" {
+        val expression = Expression("fun(fun('1'))")
+        val result =
+            expression.resolve(
+                Context().withFunction("fun") { args -> (args.first().toInt() + 1).toString() },
+            )
+        result shouldBe "3"
+    }
+
+    "Resolving an expression with nested macro calls should work" {
+        val expression = Expression("macro(macro('1'))")
+        val result =
+            expression.resolve(
+                Context().withMacro("macro", listOf("arg"), Resolvable("\${{ arg }} + 1")),
+            )
+        result shouldBe "1 + 1 + 1"
+    }
+
+    "Resolving an expression with a missing function should throw an exception" {
+        val expression = Expression("fun('1')")
+        val exception =
+            shouldThrow<SymbolNotFoundException> {
+                expression.resolve(Context.empty)
+            }
+        exception.message shouldBe "Called 'fun' symbol with 1 arguments, but 'fun/1' cannot be resolved."
+    }
+
     "Resolving an expression with a unresolved parameter should throw an exception" {
         val expression = Expression("param + '1'")
         val exception =
