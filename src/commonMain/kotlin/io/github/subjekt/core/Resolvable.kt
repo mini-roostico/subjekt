@@ -38,7 +38,7 @@ class Resolvable
          * **Note**: these are **unique** expressions, i.e., if the same expression is used multiple times in the
          * source, it will be counted only once.
          */
-        val expressions: List<RawExpression>
+        internal val expressions: List<RawExpression>
             get() = resolvableString.expressions
 
         /**
@@ -109,7 +109,7 @@ class Resolvable
         /**
          * Simple utility class to represent an expression that has not been parsed yet.
          */
-        data class RawExpression(
+        internal data class RawExpression(
             val source: String,
         )
 

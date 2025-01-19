@@ -47,6 +47,6 @@ class Expression(
         /**
          * Parses a [RawExpression] to an [Expression].
          */
-        fun RawExpression.toExpression(): Expression = Expression(this.source)
+        internal fun RawExpression.toExpression(): Expression = Expression(this.source)
     }
 }
