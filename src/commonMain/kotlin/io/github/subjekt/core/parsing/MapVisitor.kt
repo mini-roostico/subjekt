@@ -24,6 +24,8 @@ import io.github.subjekt.core.parsing.SuiteFactory.SubjectBuilder
 import io.github.subjekt.core.parsing.SuiteFactory.SuiteBuilder
 import io.github.subjekt.utils.Logger
 import io.github.subjekt.utils.Utils.checkNulls
+import io.github.subjekt.utils.Utils.parsingCheck
+import io.github.subjekt.utils.Utils.parsingFail
 
 /**
  * Visitor class used to parse a map into a [Suite] instance.
@@ -40,20 +42,6 @@ internal class MapVisitor {
     private var subjectBuilder: SubjectBuilder = SubjectBuilder()
     private var suiteSymbolTable: SymbolTable = SymbolTable()
     private var subjectSymbolTable: SymbolTable = SymbolTable()
-
-    /**
-     * Throws a [ParsingException] with the given message.
-     */
-    private fun parsingFail(message: () -> String): Nothing = throw ParsingException(message())
-
-    private fun parsingCheck(
-        condition: Boolean,
-        message: () -> String,
-    ) {
-        if (!condition) {
-            parsingFail(message)
-        }
-    }
 
     /**
      * Visits a map and creates a [Suite] instance. This method is unsafe and should be encapsulated in a try-catch
