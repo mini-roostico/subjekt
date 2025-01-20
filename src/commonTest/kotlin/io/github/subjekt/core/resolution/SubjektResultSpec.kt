@@ -24,7 +24,7 @@ class SubjektResultSpec : StringSpec({
     "asString should return the correct string representation" {
         val resolvedSubject = getSimpleResolvedSubject("subject1")
         val resolvedSuite =
-            ResolvedSuite(Suite("suite", SymbolTable(), emptyList<Subject>(), Configuration()), listOf(resolvedSubject))
+            ResolvedSuite(Suite("suite", SymbolTable(), emptyList<Subject>(), Configuration()), setOf(resolvedSubject))
         val result = TextResult(resolvedSuite, { it.name?.value ?: "" })
 
         result.asString() shouldBe "subject1"
@@ -36,7 +36,7 @@ class SubjektResultSpec : StringSpec({
         val resolvedSuite =
             ResolvedSuite(
                 Suite("suite", SymbolTable(), emptyList<Subject>(), Configuration()),
-                listOf(resolvedSubject1, resolvedSubject2),
+                setOf(resolvedSubject1, resolvedSubject2),
             )
         val result = TextResult(resolvedSuite, { it.name?.value ?: "" })
 
@@ -46,7 +46,7 @@ class SubjektResultSpec : StringSpec({
     "JsonResult should return the correct JSON string representation" {
         val resolvedSubject = getSimpleResolvedSubject("subject1")
         val resolvedSuite =
-            ResolvedSuite(Suite("suite", SymbolTable(), emptyList<Subject>(), Configuration()), listOf(resolvedSubject))
+            ResolvedSuite(Suite("suite", SymbolTable(), emptyList<Subject>(), Configuration()), setOf(resolvedSubject))
         val result =
             JsonResult(MapSerializer(String.serializer(), String.serializer()), resolvedSuite, {
                 mapOf(
