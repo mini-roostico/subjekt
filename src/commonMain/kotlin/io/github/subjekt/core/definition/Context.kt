@@ -57,6 +57,15 @@ data class Context(
     ): Context = copy(definedParameters = definedParameters + (id to DefinedParameter(id, value)))
 
     /**
+     * Returns a new context with the given [DefinedParameter]s (id -> value) added to it.
+     */
+    fun withParameters(vararg parameters: Pair<String, String>): Context =
+        copy(
+            definedParameters =
+                definedParameters + parameters.map { (id, value) -> id to DefinedParameter(id, value) },
+        )
+
+    /**
      * Returns a new context with the given [DefinedMacro] added to it.
      */
     fun withMacro(
@@ -65,6 +74,15 @@ data class Context(
         value: Resolvable,
     ): Context =
         copy(definedMacros = definedMacros + (id + ARGS_SEPARATOR + argIds.size to DefinedMacro(id, argIds, value)))
+
+    /**
+     * Returns a new context with the given [DefinedMacro]s added to it.
+     */
+    fun withMacros(vararg macros: DefinedMacro): Context =
+        copy(
+            definedMacros =
+                definedMacros + macros.associateBy { it.macroId + ARGS_SEPARATOR + it.argumentsIdentifiers.size },
+        )
 
     /**
      * Returns a new context with the given [Function1] added to it.
