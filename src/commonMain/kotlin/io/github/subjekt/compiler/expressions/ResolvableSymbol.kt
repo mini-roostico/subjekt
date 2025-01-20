@@ -10,6 +10,9 @@
 package io.github.subjekt.compiler.expressions
 
 import io.github.subjekt.compiler.expressions.ir.IrNode
+import io.github.subjekt.core.SubjektFunction
+import io.github.subjekt.core.Symbol
+import io.github.subjekt.core.SymbolTable
 import io.github.subjekt.core.definition.Context
 import io.github.subjekt.core.definition.DefinedMacro
 import io.github.subjekt.core.definition.DefinedParameter
@@ -17,7 +20,16 @@ import io.github.subjekt.core.definition.DefinedParameter
 /**
  * Represents a symbol that can be resolved inside a [io.github.subjekt.core.definition.Context].
  */
-sealed class ResolvableSymbol
+sealed class ResolvableSymbol {
+    /**
+     * Resolves this [ResolvableSymbol] to the corresponding [Symbol] inside the given [symbolTable]. Can throw a
+     * [SymbolNotFoundException] if the symbol is not found.
+     */
+    fun resolveToSymbol(symbolTable: SymbolTable): Symbol {
+        symbolTable
+        TODO()
+    }
+}
 
 sealed class CallableSymbol : ResolvableSymbol() {
     /**
@@ -33,12 +45,12 @@ sealed class CallableSymbol : ResolvableSymbol() {
     /**
      * Resolves the symbol to a [io.github.subjekt.core.definition.DefinedMacro] using the given [Context].
      */
-    fun resolveMacro(context: Context): DefinedMacro? = context.lookupMacro(callableId, nArgs)
+    fun resolveDefinedMacro(context: Context): DefinedMacro? = context.lookupMacro(callableId, nArgs)
 
     /**
      * Resolves the symbol to a [Function1] using the given [Context].
      */
-    fun resolveFunction(context: Context): Function1<List<String>, String>? = context.lookupFunction(callableId)
+    fun resolveFunction(context: Context): SubjektFunction? = context.lookupFunction(callableId)
 }
 
 /**
@@ -69,7 +81,8 @@ data class ParameterSymbol(
     /**
      * Resolves the symbol to a [io.github.subjekt.core.definition.DefinedParameter] using the given [Context].
      */
-    fun resolve(context: Context): DefinedParameter = context.lookupParameter(id) ?: throw SymbolNotFoundException(this)
+    fun resolveDefinedParameter(context: Context): DefinedParameter =
+        context.lookupParameter(id) ?: throw SymbolNotFoundException(this)
 }
 
 /**
