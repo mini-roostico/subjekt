@@ -15,7 +15,7 @@ import io.github.subjekt.core.Resolvable
  * Represents a [Resolvable] that has been resolved to a single value by fixing the
  * [io.github.subjekt.core.definition.Context].
  */
-class Instance(
+data class Instance(
     /**
      * The resolved value of the [Resolvable].
      */
