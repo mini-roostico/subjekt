@@ -28,7 +28,7 @@ data class SymbolTable
          *
          * **Important**: Functions can be defined only programmatically, and are not part of the Suite definition.
          */
-        val functions: Map<String, Function1<List<*>, List<*>>> = emptyMap(),
+        val functions: Map<String, SubjektFunction> = emptyMap(),
     ) {
         /**
          * Returns a new [SymbolTable] with both the symbols from this SymbolTable and the symbols from [symbolTable].
@@ -85,11 +85,11 @@ data class SymbolTable
          */
         fun defineFunction(
             id: String,
-            function: Function1<List<*>, List<*>>,
+            function: Function1<List<String>, String>,
         ): SymbolTable =
             copy(
                 functions =
-                    functions + (id to function),
+                    functions + (id to SubjektFunction(id, function)),
             )
 
         /**
@@ -120,7 +120,7 @@ data class SymbolTable
         /**
          * Returns the [Function1] associated to [id], or `null` if no such function can be resolved.
          */
-        fun resolveFunction(id: String): Function1<List<*>, List<*>>? = functions[id]
+        fun resolveFunction(id: String): SubjektFunction? = functions[id]
 
         companion object {
             /**

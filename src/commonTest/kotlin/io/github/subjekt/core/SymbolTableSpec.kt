@@ -38,15 +38,15 @@ class SymbolTableSpec : StringSpec({
     }
 
     "SymbolTable should combine functions correctly" {
-        val function1: Function1<List<*>, List<*>> = { it }
-        val function2: Function1<List<*>, List<*>> = { it.reversed() }
-        val table1 = SymbolTable(functions = mapOf("func1" to function1))
-        val table2 = SymbolTable(functions = mapOf("func2" to function2))
+        val function1: Function1<List<String>, String> = { it.first() }
+        val function2: Function1<List<String>, String> = { it.last() }
+        val table1 = SymbolTable().defineFunction("func1", function1)
+        val table2 = SymbolTable().defineFunction("func2", function2)
 
         val combinedTable = table1 + table2
 
-        combinedTable.resolveFunction("func1") shouldBe function1
-        combinedTable.resolveFunction("func2") shouldBe function2
+        combinedTable.resolveFunction("func1") shouldBe SubjektFunction("func1", function1)
+        combinedTable.resolveFunction("func2") shouldBe SubjektFunction("func2", function2)
     }
 
     "SymbolTable should define and resolve parameters correctly" {
@@ -64,9 +64,9 @@ class SymbolTableSpec : StringSpec({
     }
 
     "SymbolTable should define and resolve functions correctly" {
-        val function: Function1<List<*>, List<*>> = { it }
+        val function: Function1<List<String>, String> = { it.first() }
         val table = SymbolTable().defineFunction("func", function)
 
-        table.resolveFunction("func") shouldBe function
+        table.resolveFunction("func") shouldBe SubjektFunction("func", function)
     }
 })
