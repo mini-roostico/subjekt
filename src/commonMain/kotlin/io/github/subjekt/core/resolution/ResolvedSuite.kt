@@ -24,7 +24,7 @@ data class ResolvedSuite(
      * The resolved Subjects in the Suite. Each [ResolvedSubject] corresponds to a [io.github.subjekt.core.Subject] in
      * the original Suite.
      */
-    val resolvedSubjects: List<ResolvedSubject>,
+    val resolvedSubjects: Set<ResolvedSubject>,
 ) {
     /**
      * The unique identifier for this [io.github.subjekt.core.resolution.ResolvedSuite] as it was for the original
