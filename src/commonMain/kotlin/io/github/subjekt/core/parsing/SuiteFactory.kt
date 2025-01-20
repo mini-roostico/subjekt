@@ -60,9 +60,9 @@ object SuiteFactory {
         /**
          * Adds multiple [Subject]s to the [Suite].
          */
-        fun subjects(vararg subject: Subject): SuiteBuilder =
+        fun subjects(subjects: List<Subject>): SuiteBuilder =
             apply {
-                subjects += subject
+                this.subjects += subjects
             }
 
         /**
