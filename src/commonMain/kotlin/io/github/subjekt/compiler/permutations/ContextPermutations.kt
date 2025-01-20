@@ -38,6 +38,9 @@ fun Subject.requestNeededContexts(): List<Context> {
     return contextPermutationsOutOf(parameters, macros, functions)
 }
 
+/**
+ * Populates [parameters], [macros], and [functions] with the defined symbols contained this symbol and its children.
+ */
 internal fun Symbol.populateDefinedSymbols(
     symbolTable: SymbolTable,
     parameters: MutableSet<List<DefinedParameter>>,
