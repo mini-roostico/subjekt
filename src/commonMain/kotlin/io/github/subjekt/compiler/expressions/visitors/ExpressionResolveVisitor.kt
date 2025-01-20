@@ -44,7 +44,7 @@ internal class ExpressionResolveVisitor(
         symbol: CallableSymbol,
         arguments: List<String>,
     ): String {
-        val definedMacro = symbol.resolveMacro(context)
+        val definedMacro = symbol.resolveDefinedMacro(context)
         return if (definedMacro != null) {
             definedMacro.call(arguments)
         } else {
@@ -64,7 +64,7 @@ internal class ExpressionResolveVisitor(
     override fun visitParameter(node: IrNode.IrParameter): String =
         node
             .toParameterSymbol()
-            .resolve(context)
+            .resolveDefinedParameter(context)
             .value
             .toString()
 

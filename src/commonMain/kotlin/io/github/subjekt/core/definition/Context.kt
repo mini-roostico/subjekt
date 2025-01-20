@@ -10,6 +10,7 @@
 package io.github.subjekt.core.definition
 
 import io.github.subjekt.core.Resolvable
+import io.github.subjekt.core.SubjektFunction
 import io.github.subjekt.core.SymbolTable.Companion.ARGS_SEPARATOR
 
 /**
@@ -22,7 +23,7 @@ import io.github.subjekt.core.SymbolTable.Companion.ARGS_SEPARATOR
 data class Context(
     val definedParameters: Map<String, DefinedParameter>,
     val definedMacros: Map<String, DefinedMacro>,
-    val functions: Map<String, Function1<List<String>, String>>,
+    val functions: Map<String, SubjektFunction>,
 ) {
     /**
      * Creates a new empty context
@@ -45,7 +46,7 @@ data class Context(
     /**
      * Returns the [Function1] with the given [id], if it exists in this context.
      */
-    fun lookupFunction(id: String): Function1<List<String>, String>? = functions[id]
+    fun lookupFunction(id: String): SubjektFunction? = functions[id]
 
     /**
      * Returns a new context with the given [DefinedParameter] added to it.
@@ -71,7 +72,7 @@ data class Context(
     fun withFunction(
         id: String,
         function: Function1<List<String>, String>,
-    ): Context = copy(functions = functions + (id to function))
+    ): Context = copy(functions = functions + (id to SubjektFunction(id, function)))
 
     companion object {
         /**

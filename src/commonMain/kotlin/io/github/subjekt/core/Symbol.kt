@@ -12,6 +12,76 @@ package io.github.subjekt.core
 import io.github.subjekt.utils.Utils.isLegalIdentifier
 
 /**
+ * Represents a symbol that can be contained inside a [SymbolTable]. Can be a [Parameter] or a [Macro].
+ */
+sealed class Symbol
+
+/**
+ * Represents a parameter in a Suite or Subject. Parameters are used to define the values that can be used in a Suite or
+ * Subject.
+ *
+ * Note: differently from the macros, parameters values are not [Resolvable]s, so their value is always a constant.
+ */
+data class Parameter(
+    /**
+     * The unique identifier of the Parameter. This is used to reference the Parameter in the symbol table.
+     */
+    val id: String,
+    /**
+     * The values that the parameter can assume. These are the possible values that can be used in the [Resolvable]s.
+     */
+    val values: List<String>,
+) : Symbol() {
+    companion object {
+        /**
+         * Keys that can be used as synonyms for [DEFAULT_ID_KEY].
+         */
+        val PARAMETER_NAME_KEYS = setOf("name", "id", "identifier", "title")
+
+        /**
+         * The default key used to indicate the ID of the parameter.
+         */
+        const val DEFAULT_ID_KEY = "id"
+
+        /**
+         * Keys that can be used as synonyms for [DEFAULT_VALUES_KEY].
+         */
+        val PARAMETER_VALUES_KEYS = setOf("values", "value", "val", "v", "bodies")
+
+        /**
+         * The default key used to indicate the values of the parameter.
+         */
+        const val DEFAULT_VALUES_KEY = "values"
+
+        /**
+         * Utility function to create a [Parameter] from a pair of ID and value.
+         */
+        fun Pair<String, String>.toSingleValueParameter(): Parameter {
+            val (id, value) = this
+            return Parameter(id, listOf(value))
+        }
+
+        /**
+         * Utility function to create a [Parameter] from a pair of ID and list of values.
+         */
+        fun Pair<String, List<*>>.toParameter(): Parameter {
+            val (id, values) = this
+            return Parameter(id, values.map { it.toString() })
+        }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Parameter) return false
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int = id.hashCode()
+}
+
+/**
  * Utility typealias to represent a macro definition. A macro definition is a [Pair] where the first values represent
  * the Macro identifier and the second represent the arguments' identifiers.
  */
@@ -39,7 +109,7 @@ data class Macro(
      * The list of resolvables that the Macro can return. Each of these resolvables can resolve to multiple outputs.
      */
     val resolvables: List<Resolvable>,
-) {
+) : Symbol() {
     companion object {
         /**
          * Keys that can be used as synonyms for [DEFAULT_ID_KEY].
@@ -125,4 +195,17 @@ data class Macro(
         result = 31 * result + argumentsIdentifiers.size.hashCode()
         return result
     }
+}
+
+/**
+ * Represents a function that can be contained inside a [SymbolTable].
+ */
+class SubjektFunction(
+    val id: String,
+    private val function: Function1<List<String>, String>,
+) : Symbol() {
+    /**
+     * Calls the function with the given [arguments].
+     */
+    operator fun invoke(arguments: List<String>): String = function(arguments)
 }
