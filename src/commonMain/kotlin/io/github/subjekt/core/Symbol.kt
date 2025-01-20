@@ -200,7 +200,7 @@ data class Macro(
 /**
  * Represents a function that can be contained inside a [SymbolTable].
  */
-class SubjektFunction(
+data class SubjektFunction(
     val id: String,
     private val function: Function1<List<String>, String>,
 ) : Symbol() {
@@ -208,4 +208,15 @@ class SubjektFunction(
      * Calls the function with the given [arguments].
      */
     operator fun invoke(arguments: List<String>): String = function(arguments)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is SubjektFunction) return false
+
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int = id.hashCode()
 }

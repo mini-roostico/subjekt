@@ -25,10 +25,13 @@ sealed class ResolvableSymbol {
      * Resolves this [ResolvableSymbol] to the corresponding [Symbol] inside the given [symbolTable]. Can throw a
      * [SymbolNotFoundException] if the symbol is not found.
      */
-    fun resolveToSymbol(symbolTable: SymbolTable): Symbol {
-        symbolTable
-        TODO()
-    }
+    fun resolveToSymbol(symbolTable: SymbolTable): Symbol =
+        when (this) {
+            is ParameterSymbol -> symbolTable.resolveParameter(this.id) ?: throw SymbolNotFoundException(this)
+            is CallableSymbol ->
+                symbolTable.resolveMacro(this.callableId, this.nArgs)
+                    ?: symbolTable.resolveFunction(this.callableId) ?: throw SymbolNotFoundException(this)
+        }
 }
 
 sealed class CallableSymbol : ResolvableSymbol() {
