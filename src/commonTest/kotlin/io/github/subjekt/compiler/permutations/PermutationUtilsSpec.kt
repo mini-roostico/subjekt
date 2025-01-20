@@ -11,6 +11,7 @@ package io.github.subjekt.compiler.permutations
 
 import io.github.subjekt.core.Resolvable
 import io.github.subjekt.core.SubjektFunction
+import io.github.subjekt.core.SymbolTable.Companion.ARGS_SEPARATOR
 import io.github.subjekt.core.definition.Context
 import io.github.subjekt.core.definition.DefinedMacro
 import io.github.subjekt.core.definition.DefinedParameter
@@ -56,9 +57,9 @@ class PermutationUtilsSpec : StringSpec({
                                         "param2" to DefinedParameter("param2", "value$secondParamNum"),
                                     ),
                                     mapOf(
-                                        "macro1" to
+                                        "macro1" + ARGS_SEPARATOR + "1" to
                                             DefinedMacro("macro1", listOf("arg1"), Resolvable("body$firstMacroNum")),
-                                        "macro2" to
+                                        "macro2" + ARGS_SEPARATOR + "1" to
                                             DefinedMacro("macro2", listOf("arg2"), Resolvable("body$secondMacroNum")),
                                     ),
                                     mapOf(
@@ -105,7 +106,7 @@ class PermutationUtilsSpec : StringSpec({
                             "param2" to DefinedParameter("param2", "value$value"),
                         ),
                         mapOf(
-                            "macro1" to DefinedMacro("macro1", listOf("arg1"), Resolvable("body1")),
+                            "macro1${ARGS_SEPARATOR}1" to DefinedMacro("macro1", listOf("arg1"), Resolvable("body1")),
                         ),
                         emptyMap(),
                     )
