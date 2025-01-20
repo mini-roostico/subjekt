@@ -10,6 +10,7 @@
 package io.github.subjekt.compiler.permutations
 
 import io.github.subjekt.core.SubjektFunction
+import io.github.subjekt.core.SymbolTable.Companion.ARGS_SEPARATOR
 import io.github.subjekt.core.definition.Context
 import io.github.subjekt.core.definition.DefinedMacro
 import io.github.subjekt.core.definition.DefinedParameter
@@ -33,7 +34,7 @@ internal fun contextPermutationsOutOf(
         macroCombinations.map { macroCombo ->
             Context(
                 definedParameters = paramCombo.associateBy { it.parameterId },
-                definedMacros = macroCombo.associateBy { it.macroId },
+                definedMacros = macroCombo.associateBy { it.macroId + ARGS_SEPARATOR + it.argumentsIdentifiers.size },
                 functions = functions.associateBy { it.id },
             )
         }
