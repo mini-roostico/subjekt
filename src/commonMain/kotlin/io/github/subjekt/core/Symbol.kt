@@ -10,6 +10,8 @@
 package io.github.subjekt.core
 
 import io.github.subjekt.utils.Utils.isLegalIdentifier
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
 /**
  * Represents a symbol that can be contained inside a [SymbolTable]. Can be a [Parameter] or a [Macro].
@@ -22,6 +24,8 @@ sealed class Symbol
  *
  * Note: differently from the macros, parameters values are not [Resolvable]s, so their value is always a constant.
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 data class Parameter(
     /**
      * The unique identifier of the Parameter. This is used to reference the Parameter in the symbol table.
@@ -95,6 +99,8 @@ internal typealias MacroDefinition = Pair<String, List<String>>
  * *Note*: macro are unique by [id] and number of arguments (i.e. size of [argumentsIdentifiers]), so two macros with
  * the same [id] and different number of arguments are considered different.
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 data class Macro(
     /**
      * The unique identifier of the Macro. This is used to reference the Macro inside the symbol table.
@@ -135,7 +141,7 @@ data class Macro(
         /**
          * Utility function to create a [Macro] from a pair of ID and list of arguments, with [resolvables] as values.
          */
-        fun MacroDefinition.toMacro(resolvables: List<Resolvable>): Macro {
+        fun MacroDefinition.toActualMacro(resolvables: List<Resolvable>): Macro {
             val (id, arguments) = this
             return Macro(id, arguments, resolvables)
         }
@@ -177,7 +183,7 @@ data class Macro(
          * **IMPORTANT**: the arguments are assumed to be empty, they are NOT parsed from the string. For that, use
          * [asMacroDefinition].
          */
-        fun String.toMacro(resolvable: List<Resolvable>): Macro = Macro(this, emptyList(), resolvable)
+        fun String.asMacro(resolvable: List<Resolvable>): Macro = Macro(this, emptyList(), resolvable)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -200,6 +206,8 @@ data class Macro(
 /**
  * Represents a function that can be contained inside a [SymbolTable].
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 data class SubjektFunction(
     val id: String,
     private val function: Function1<List<String>, String>,

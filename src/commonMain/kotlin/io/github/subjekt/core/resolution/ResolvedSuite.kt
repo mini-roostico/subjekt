@@ -10,11 +10,15 @@
 package io.github.subjekt.core.resolution
 
 import io.github.subjekt.core.Suite
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
 /**
  * Represents a resolved Suite. A [ResolvedSuite] contains the whole result of a Subjekt elaboration, working as a
  * container of the main result objects, the [ResolvedSubject]s.
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 data class ResolvedSuite(
     /**
      * The original [Suite] from which this [ResolvedSuite] was resolved.

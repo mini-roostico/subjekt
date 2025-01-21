@@ -10,11 +10,15 @@
 package io.github.subjekt.core
 
 import io.github.subjekt.core.parsing.SuiteFactory
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
 /**
  * Represents a Subject in a Suite. Subjects are the core entities in Subjekt, and are used to define the structure of
  * the generation.
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 data class Subject(
     /**
      * The unique identifier of the Subject. This is used to reference the Subject in the Suite.

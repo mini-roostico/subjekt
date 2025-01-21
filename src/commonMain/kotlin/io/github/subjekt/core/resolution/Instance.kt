@@ -10,11 +10,15 @@
 package io.github.subjekt.core.resolution
 
 import io.github.subjekt.core.Resolvable
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
 /**
  * Represents a [Resolvable] that has been resolved to a single value by fixing the
  * [io.github.subjekt.core.definition.Context].
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 data class Instance(
     /**
      * The resolved value of the [Resolvable].

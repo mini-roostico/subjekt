@@ -10,11 +10,15 @@
 package io.github.subjekt.core.resolution
 
 import io.github.subjekt.core.Subject.Companion.DEFAULT_NAME_KEY
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
 /**
  * Represents a resolved Subject in a Suite. Resolved Subjects are the core results in Subjekt, containing all the
  * resolved instances of the Subject.
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 data class ResolvedSubject(
     /**
      * The identifier of the Subject from which this [io.github.subjekt.core.resolution.ResolvedSubject] was resolved.

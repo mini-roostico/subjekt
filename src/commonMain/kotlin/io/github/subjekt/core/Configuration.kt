@@ -9,6 +9,11 @@
 
 package io.github.subjekt.core
 
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
+
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 class Configuration : MutableMap<String, Any> by mutableMapOf<String, Any>() {
     /**
      * The code preamble of the suite.
