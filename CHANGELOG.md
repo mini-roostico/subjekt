@@ -1,3 +1,9 @@
+## [2.0.1](https://github.com/mini-roostico/subjekt/compare/2.0.0...2.0.1) (2025-01-21)
+
+### Bug Fixes
+
+* trying fixing jar task dependency issue inside GitHub actions ([ea4ae46](https://github.com/mini-roostico/subjekt/commit/ea4ae4699fae5e0e29af8b21f7bb8ea47704aa96))
+
 ## [2.0.0](https://github.com/mini-roostico/subjekt/compare/v1.1.4...2.0.0) (2025-01-21)
 
 ### ⚠ BREAKING CHANGES
