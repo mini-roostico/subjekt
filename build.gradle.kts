@@ -166,6 +166,10 @@ tasks
         dependsOn(generateKotlinGrammarSource)
     }
 
+tasks.named("jsSourcesJar") {
+    mustRunAfter(generateKotlinGrammarSource)
+}
+
 tasks.withType<Detekt>().configureEach {
     exclude("**/generated/**")
 }
