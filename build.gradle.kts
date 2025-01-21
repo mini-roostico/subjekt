@@ -164,6 +164,7 @@ tasks
             it is Cpd
     }.configureEach {
         dependsOn(generateKotlinGrammarSource)
+        mustRunAfter(generateKotlinGrammarSource)
     }
 
 tasks.named("jsSourcesJar") {
