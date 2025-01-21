@@ -164,10 +164,21 @@ tasks
             it is Cpd
     }.configureEach {
         dependsOn(generateKotlinGrammarSource)
-        mustRunAfter(generateKotlinGrammarSource)
     }
 
 tasks.named("jsSourcesJar") {
+    mustRunAfter(generateKotlinGrammarSource)
+}
+
+tasks.named("jvmSourcesJar") {
+    mustRunAfter(generateKotlinGrammarSource)
+}
+
+tasks.named("sourcesJar") {
+    mustRunAfter(generateKotlinGrammarSource)
+}
+
+tasks.named("dokkaHtml") {
     mustRunAfter(generateKotlinGrammarSource)
 }
 
