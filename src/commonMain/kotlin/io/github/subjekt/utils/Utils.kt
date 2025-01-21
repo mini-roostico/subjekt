@@ -10,6 +10,7 @@
 package io.github.subjekt.utils
 
 import io.github.subjekt.core.parsing.MapVisitor.ParsingException
+import io.github.subjekt.core.resolution.ResolvedSubject
 
 object Utils {
     /**
@@ -90,4 +91,9 @@ object Utils {
             parsingFail(message)
         }
     }
+
+    /**
+     * Utility function to generate a unique name for a [ResolvedSubject].
+     */
+    internal fun ResolvedSubject.uniqueName(): String = "Subject_${subjectId}_${hashCode()}"
 }
