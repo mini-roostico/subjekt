@@ -16,6 +16,7 @@ import io.github.subjekt.core.Suite
 import io.github.subjekt.core.SymbolTable
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 
@@ -48,11 +49,17 @@ class SubjektResultSpec : StringSpec({
         val resolvedSuite =
             ResolvedSuite(Suite("suite", SymbolTable(), emptyList<Subject>(), Configuration()), setOf(resolvedSubject))
         val result =
-            JsonResult(MapSerializer(String.serializer(), String.serializer()), resolvedSuite, {
-                mapOf(
-                    "name" to (it.name?.value.orEmpty()),
-                )
-            })
+            JsonResult(
+                MapSerializer(String.serializer(), String.serializer()),
+                ListSerializer(MapSerializer(String.serializer(), String.serializer())),
+                resolvedSuite,
+                {
+                    mapOf(
+                        "name" to (it.name?.value.orEmpty()),
+                    )
+                },
+                { map -> map },
+            )
 
         result.asString() shouldBe """[{"name":"subject1"}]"""
     }
