@@ -176,10 +176,10 @@ object SuiteFactory {
      * Parses the content of the [Source] (i.e., the map) into a [Suite], returning a [Result] with the [Suite] if
      * the parsing was successful, or failure if it failed.
      */
-    fun Source.parseIntoSuite(): Result<Suite> =
+    fun Source.parseIntoSuite(initialSymbolTable: SymbolTable = SymbolTable()): Result<Suite> =
         extract()
             .mapCatching {
-                with(MapVisitor()) {
+                with(MapVisitor(initialSymbolTable)) {
                     visit(it)
                 }
             }

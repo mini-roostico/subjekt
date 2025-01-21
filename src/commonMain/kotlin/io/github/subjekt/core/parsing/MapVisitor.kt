@@ -30,7 +30,9 @@ import io.github.subjekt.utils.Utils.parsingFail
 /**
  * Visitor class used to parse a map into a [Suite] instance.
  */
-internal class MapVisitor {
+internal class MapVisitor(
+    initialSymbolTable: SymbolTable = SymbolTable(),
+) {
     /**
      * Exception thrown when an error occurs during parsing.
      */
@@ -40,7 +42,7 @@ internal class MapVisitor {
 
     private var suiteBuilder: SuiteBuilder = SuiteBuilder()
     private var subjectBuilder: SubjectBuilder = SubjectBuilder()
-    private var suiteSymbolTable: SymbolTable = SymbolTable()
+    private var suiteSymbolTable: SymbolTable = initialSymbolTable
     private var subjectSymbolTable: SymbolTable = SymbolTable()
 
     /**
