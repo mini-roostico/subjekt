@@ -9,10 +9,15 @@
 
 package io.github.subjekt.core
 
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
+
 /**
  * Entry point of the whole Subjekt configuration. A global entity containing Parameters, Macros, Subjects and a
  * Configuration.
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 data class Suite(
     /**
      * The unique identifier of the Suite. This is used to reference the Suite in other Suites.

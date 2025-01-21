@@ -13,11 +13,15 @@ import io.github.subjekt.compiler.expressions.Expression.Companion.toExpression
 import io.github.subjekt.core.definition.Context
 import io.github.subjekt.utils.Utils.buildRegex
 import io.github.subjekt.utils.Utils.format
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
 /**
  * Core entity used to represent a resolvable value. This is used to represent the values that can be resolved inside
  * a Suite with a proper [io.github.subjekt.core.definition.Context].
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 class Resolvable
     @Throws(IllegalArgumentException::class)
     constructor(
@@ -82,44 +86,8 @@ class Resolvable
         /**
          * Resolves the resolvable with the given [context].
          */
-        fun resolve(context: Context): String =
+        internal fun resolve(context: Context): String =
             resolveFormatting(expressions.map { it.toExpression().resolve(context) })
-
-        /**
-         * Internal class to handle string substitution with expressions.
-         */
-        internal data class ResolvableString(
-            /**
-             * The string that can be formatted with the resolved expressions.
-             */
-            val toFormat: String,
-            /**
-             * The list of [RawExpression]s that can be resolved inside this string.
-             *
-             * **Note**: these are **unique** expressions, i.e., if the same expression is used multiple times in the
-             * source, it will be counted only once.
-             */
-            val expressions: List<RawExpression>,
-        ) {
-            /**
-             * Formats the string with the given [values]. Throws an [IllegalArgumentException] if the [values] number
-             * it not equal to the number of [expressions].
-             */
-            @Throws(IllegalArgumentException::class)
-            fun format(values: List<String>): String {
-                require(values.size == expressions.size) {
-                    "Number of values does not match number of expressions"
-                }
-                return toFormat.format(values)
-            }
-        }
-
-        /**
-         * Simple utility class to represent an expression that has not been parsed yet.
-         */
-        internal data class RawExpression(
-            val source: String,
-        )
 
         companion object {
             /**
@@ -149,3 +117,39 @@ class Resolvable
             }
         }
     }
+
+/**
+ * Internal class to handle string substitution with expressions.
+ */
+internal data class ResolvableString(
+    /**
+     * The string that can be formatted with the resolved expressions.
+     */
+    val toFormat: String,
+    /**
+     * The list of [RawExpression]s that can be resolved inside this string.
+     *
+     * **Note**: these are **unique** expressions, i.e., if the same expression is used multiple times in the
+     * source, it will be counted only once.
+     */
+    val expressions: List<RawExpression>,
+) {
+    /**
+     * Formats the string with the given [values]. Throws an [IllegalArgumentException] if the [values] number
+     * it not equal to the number of [expressions].
+     */
+    @Throws(IllegalArgumentException::class)
+    fun format(values: List<String>): String {
+        require(values.size == expressions.size) {
+            "Number of values does not match number of expressions"
+        }
+        return toFormat.format(values)
+    }
+}
+
+/**
+ * Simple utility class to represent an expression that has not been parsed yet.
+ */
+internal data class RawExpression(
+    val source: String,
+)

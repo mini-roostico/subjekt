@@ -9,9 +9,14 @@
 
 package io.github.subjekt.core.resolution
 
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
+
 /**
  * A mapper is a function that can be applied to a resolved suite to transform it into another resolved suite.
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 fun interface Mapper {
     /**
      * Maps a [resolvedSuite] into another resolved suite.

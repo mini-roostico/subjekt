@@ -12,6 +12,8 @@ package io.github.subjekt.core.resolution
 import io.github.subjekt.files.writeTo
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
 /**
  * A class that represents the result of a resolution process that has been exported via an [Exporter].
@@ -25,6 +27,8 @@ import kotlinx.serialization.json.Json
  *
  * The type [R] represents the type of the final result that will be obtained from the whole [ResolvedSuite].
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 sealed class SubjektResult<I, R>(
     /**
      * The [ResolvedSuite] that has been resolved and that will be exported.
@@ -64,20 +68,29 @@ sealed class SubjektResult<I, R>(
     fun asStrings(): List<String> = resolvedSuite.resolvedSubjects.map { renderOne(contentMapper(it)) }
 
     /**
-     * Writes the whole [ResolvedSuite] to a file at the given [path].
+     * Writes the whole [ResolvedSuite] to a file at the given [path]. Returns `null` if the operation is successful,
+     * otherwise returns the error message.
      */
-    fun toFile(path: String): Result<Unit> =
-        renderAll(reduce(resolvedSuite.resolvedSubjects.map { contentMapper(it) })).writeTo(path, false)
+    fun toFile(path: String): String? =
+        renderAll(reduce(resolvedSuite.resolvedSubjects.map { contentMapper(it) }))
+            .writeTo(path, false)
+            .takeIf {
+                it.isFailure
+            }?.exceptionOrNull()
+            ?.message
 
     /**
      * Writes each [ResolvedSubject] in the [ResolvedSuite] to a file in the given [directory]. The file name for each
-     * is obtained through the [nameMapper] function.
+     * is obtained through the [nameMapper] function. Returns `null` if the operation is successful, otherwise returns
+     * the first error message encountered.
      */
-    fun toFiles(directory: String): Result<Unit> =
+    fun toFiles(directory: String): String? =
         resolvedSuite.resolvedSubjects
             .map {
                 renderOne(contentMapper(it)).writeTo("$directory/${nameMapper(it)}", false)
-            }.firstOrNull { it.isFailure } ?: Result.success(Unit)
+            }.firstOrNull { it.isFailure }
+            ?.exceptionOrNull()
+            ?.message
 }
 
 /**

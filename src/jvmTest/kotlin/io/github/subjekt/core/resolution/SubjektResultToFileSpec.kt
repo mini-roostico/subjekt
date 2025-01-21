@@ -9,7 +9,6 @@
 
 package io.github.subjekt.core.resolution
 
-import io.github.subjekt.TestingUtility.getOrFail
 import io.github.subjekt.TestingUtility.getSimpleResolvedSubject
 import io.github.subjekt.core.Configuration
 import io.github.subjekt.core.Subject
@@ -30,7 +29,7 @@ class SubjektResultToFileSpec : StringSpec({
         val result = TextResult(resolvedSuite, { it.name?.value.orEmpty() })
 
         val filePath = "test.txt"
-        result.toFile(filePath).isSuccess shouldBe true
+        result.toFile(filePath) shouldBe null
         Files.exists(Path(filePath)) shouldBe true
         Files.delete(Path(filePath))
     }
@@ -46,7 +45,7 @@ class SubjektResultToFileSpec : StringSpec({
         val result = TextResult(resolvedSuite, { it.name?.value.orEmpty() })
 
         val directory = "testDir"
-        result.toFiles(directory).getOrFail()
+        result.toFiles(directory) shouldBe null
         Files.exists(Path(directory)) shouldBe true
         File(directory).deleteRecursively()
     }
