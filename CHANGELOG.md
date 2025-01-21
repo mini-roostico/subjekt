@@ -1,3 +1,9 @@
+## [2.0.1](https://github.com/mini-roostico/subjekt/compare/2.0.0...2.0.1) (2025-01-21)
+
+### Bug Fixes
+
+* trying fixing failing task dependency issue inside GitHub actions ([0caeeb8](https://github.com/mini-roostico/subjekt/commit/0caeeb80412ca77754dc4562f51e0fdd3337b1f9))
+
 ## [2.0.0](https://github.com/mini-roostico/subjekt/compare/v1.1.4...2.0.0) (2025-01-21)
 
 ### ⚠ BREAKING CHANGES
