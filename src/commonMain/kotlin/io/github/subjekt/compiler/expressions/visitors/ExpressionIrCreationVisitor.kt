@@ -12,7 +12,6 @@ package io.github.subjekt.compiler.expressions.visitors
 import io.github.subjekt.compiler.expressions.Expression
 import io.github.subjekt.compiler.expressions.ir.IrNode
 import io.github.subjekt.compiler.expressions.ir.IrNode.IrTree
-import io.github.subjekt.compiler.nodes.expression.Node
 import io.github.subjekt.parsers.generated.ExpressionBaseVisitor
 import io.github.subjekt.parsers.generated.ExpressionLexer
 import io.github.subjekt.parsers.generated.ExpressionParser
