@@ -9,10 +9,15 @@
 
 package io.github.subjekt.core.resolution
 
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
+
 /**
  * An exporter is a function that can be applied to a resolved suite to export it to a specific formatted
  * [SubjektResult].
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 fun interface Exporter<I, R> {
     /**
      * Exports a [resolvedSuite] into a specific formatted [SubjektResult].

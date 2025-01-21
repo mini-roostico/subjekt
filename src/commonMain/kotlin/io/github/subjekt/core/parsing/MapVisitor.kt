@@ -11,7 +11,7 @@ package io.github.subjekt.core.parsing
 
 import io.github.subjekt.core.Macro
 import io.github.subjekt.core.Macro.Companion.asMacroDefinition
-import io.github.subjekt.core.Macro.Companion.toMacro
+import io.github.subjekt.core.Macro.Companion.toActualMacro
 import io.github.subjekt.core.MacroDefinition
 import io.github.subjekt.core.Parameter
 import io.github.subjekt.core.Parameter.Companion.toParameter
@@ -227,7 +227,7 @@ internal class MapVisitor(
                 else -> parsingFail { "Unknown macro key: $key" }
             }
         }
-        return macroDefinition?.toMacro(
+        return macroDefinition?.toActualMacro(
             macroResolvables ?: parsingFail { "Macros must have at least one resolvable value" },
         )
             ?: parsingFail { "Macro definition failed" }

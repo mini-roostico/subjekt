@@ -14,10 +14,6 @@ import io.github.subjekt.core.Parameter
 import io.github.subjekt.core.Resolvable
 import io.github.subjekt.core.Source
 import io.github.subjekt.core.SubjektFunction
-import io.github.subjekt.core.SymbolTable
-import io.github.subjekt.core.resolution.Exporter
-import io.github.subjekt.core.resolution.Mapper
-import io.github.subjekt.core.resolution.ResolvedSuite
 import io.github.subjekt.core.resolution.SubjektResult
 
 /**
@@ -25,31 +21,8 @@ import io.github.subjekt.core.resolution.SubjektResult
  * methods of this class.
  */
 class Subjekt internal constructor(
-    private val source: Source,
-) {
-    private var initialSymbolTable =
-        SymbolTable()
-            .defineParameters(stdLibParameters)
-            .defineFunctions(stdLibFunctions)
-
-    /**
-     * The [ResolvedSuite] obtained by parsing and resolving the [source]. If the parsing or the resolution fails, this
-     * property will be `null`.
-     */
-    val resolvedSuite: ResolvedSuite? by lazy {
-        source.compile(initialSymbolTable)
-    }
-
-    /**
-     * Resolves the [source] into the [resolvedSuite] and the returns the [SubjektResult] containing the map of
-     * instances taken from each [io.github.subjekt.core.resolution.ResolvedSubject].
-     */
-    fun resolveSubjectsAsJson(): SubjektResult<Map<String, String>, List<Map<String, String>>>? =
-        mapAndExport(
-            identityMapper,
-            mapJsonExporter,
-        )
-
+    source: Source,
+) : AbstractSubjekt(source) {
     /**
      * Resolves the [source] into the [resolvedSuite] and the returns the [SubjektResult] containing the map of the
      * generation graph (i.e. a map with the subject IDs a keys and the list of the related resolved subjects as
@@ -60,18 +33,6 @@ class Subjekt internal constructor(
             identityMapper,
             generationGraphJsonExporter,
         )
-
-    /**
-     * Customizable exporting behavior that resolves the [source] into the [resolvedSuite] and then maps and exports the
-     * result using the provided [mapper] and [exporter].
-     */
-    fun <I, R> mapAndExport(
-        mapper: Mapper,
-        exporter: Exporter<I, R>,
-    ): SubjektResult<I, R>? =
-        resolvedSuite?.let {
-            exporter.export(mapper.map(it))
-        }
 
     /**
      * Adds a custom parameter to the [initialSymbolTable] used to resolve the [source].
@@ -109,17 +70,6 @@ class Subjekt internal constructor(
      */
     fun customMacros(macros: List<Macro>): Subjekt {
         initialSymbolTable = initialSymbolTable.defineMacros(macros)
-        return this
-    }
-
-    /**
-     * Adds a custom function to the [initialSymbolTable] used to resolve the [source].
-     */
-    fun customFunction(
-        id: String,
-        function: (List<String>) -> String,
-    ): Subjekt {
-        initialSymbolTable = initialSymbolTable.defineFunction(id, function)
         return this
     }
 

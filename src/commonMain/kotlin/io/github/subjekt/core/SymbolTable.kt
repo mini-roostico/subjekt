@@ -9,9 +9,14 @@
 
 package io.github.subjekt.core
 
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
+
 /**
  * Represents a collection of [Parameter]s, [Macro]s, and [Function1]s that can be used to resolve values in a Suite.
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 @ConsistentCopyVisibility
 data class SymbolTable
     internal constructor(
@@ -56,7 +61,7 @@ data class SymbolTable
         /**
          * Returns a new [SymbolTable] with the [Parameter]s [parameters] defined.
          */
-        fun defineParameters(parameters: Iterable<Parameter>): SymbolTable =
+        fun defineParameters(parameters: List<Parameter>): SymbolTable =
             copy(
                 parameters =
                     this.parameters + parameters.map { (it.id to it) },
@@ -74,7 +79,7 @@ data class SymbolTable
         /**
          * Returns a new [SymbolTable] with the [Macro]s [macros] defined.
          */
-        fun defineMacros(macros: Iterable<Macro>): SymbolTable =
+        fun defineMacros(macros: List<Macro>): SymbolTable =
             copy(
                 macros =
                     this.macros + macros.map { ((it.id + ARGS_SEPARATOR + it.argumentsIdentifiers.size) to it) },
@@ -95,7 +100,7 @@ data class SymbolTable
         /**
          * Returns a new [SymbolTable] with the [Function1]s [functions] defined.
          */
-        fun defineFunctions(functions: Iterable<SubjektFunction>): SymbolTable =
+        fun defineFunctions(functions: List<SubjektFunction>): SymbolTable =
             copy(
                 functions =
                     this.functions + functions.map { (it.id to it) },

@@ -13,7 +13,7 @@ import io.github.subjekt.compiler.expressions.ir.IrNode.IrTree
 import io.github.subjekt.compiler.expressions.visitors.ExpressionResolveVisitor
 import io.github.subjekt.compiler.expressions.visitors.parseToIr
 import io.github.subjekt.compiler.expressions.visitors.resolveSymbols
-import io.github.subjekt.core.Resolvable.RawExpression
+import io.github.subjekt.core.RawExpression
 import io.github.subjekt.core.definition.Context
 
 /**

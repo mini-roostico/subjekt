@@ -13,7 +13,6 @@ import io.github.subjekt.core.Macro
 import io.github.subjekt.core.Parameter
 import io.github.subjekt.core.Resolvable
 import io.github.subjekt.core.Source
-import io.github.subjekt.core.SymbolTable
 import io.github.subjekt.core.resolution.SubjektResult
 
 /**
@@ -23,32 +22,8 @@ import io.github.subjekt.core.resolution.SubjektResult
 @OptIn(ExperimentalJsExport::class)
 @JsExport
 class Subjekt internal constructor(
-    private val source: Source,
-) {
-    private var initialSymbolTable =
-        SymbolTable()
-            .defineParameters(stdLibParameters)
-            .defineFunctions(stdLibFunctions)
-
-    /**
-     * The [io.github.subjekt.core.resolution.ResolvedSuite] obtained by parsing and resolving the [source].
-     * If the parsing or the resolution fails, this property will be `null`.
-     */
-    val resolvedSuite: dynamic by lazy {
-        source.compile(initialSymbolTable)
-    }
-
-    /**
-     * Resolves the [source] into the [resolvedSuite] and the returns the
-     * [io.github.subjekt.core.resolution.SubjektResult] containing the map of instances taken from each
-     * [io.github.subjekt.core.resolution.ResolvedSubject].
-     */
-    fun resolveSubjectsAsJson(): dynamic =
-        mapAndExport(
-            identityMapper,
-            mapJsonExporter,
-        )
-
+    source: Source,
+) : AbstractSubjekt(source) {
     /**
      * Resolves the [source] into the [resolvedSuite] and the returns the [SubjektResult] containing the map of the
      * generation graph (i.e. a map with the subject IDs a keys and the list of the related resolved subjects as
@@ -61,25 +36,13 @@ class Subjekt internal constructor(
         )
 
     /**
-     * Customizable exporting behavior that resolves the [source] into the [resolvedSuite] and then maps and exports the
-     * result using the provided [mapper] and [exporter].
-     */
-    fun mapAndExport(
-        mapper: dynamic,
-        exporter: dynamic,
-    ): dynamic =
-        resolvedSuite?.let { suite ->
-            exporter.export(mapper.map(suite))
-        }
-
-    /**
      * Adds a custom parameter to the [initialSymbolTable] used to resolve the [source].
      */
     fun customParameter(
         id: String,
-        values: List<String>,
+        values: Array<String>,
     ): Subjekt {
-        initialSymbolTable = initialSymbolTable.defineParameter(Parameter(id, values))
+        initialSymbolTable = initialSymbolTable.defineParameter(Parameter(id, values.toList()))
         return this
     }
 
@@ -88,22 +51,11 @@ class Subjekt internal constructor(
      */
     fun customMacro(
         id: String,
-        argumentsIdentifiers: List<String>,
-        values: List<String>,
+        argumentsIdentifiers: Array<String>,
+        values: Array<String>,
     ): Subjekt {
         initialSymbolTable =
-            initialSymbolTable.defineMacro(Macro(id, argumentsIdentifiers, values.map { Resolvable(it) }))
-        return this
-    }
-
-    /**
-     * Adds a custom function to the [initialSymbolTable] used to resolve the [source].
-     */
-    fun customFunction(
-        id: String,
-        function: (List<String>) -> String,
-    ): Subjekt {
-        initialSymbolTable = initialSymbolTable.defineFunction(id, function)
+            initialSymbolTable.defineMacro(Macro(id, argumentsIdentifiers.toList(), values.map { Resolvable(it) }))
         return this
     }
 
@@ -111,11 +63,15 @@ class Subjekt internal constructor(
         /**
          * Creates a [Subjekt] instance from a YAML string containing the configuration.
          */
+        @OptIn(ExperimentalJsStatic::class)
+        @JsStatic
         fun fromYaml(yaml: String): Subjekt = Subjekt(Source.Companion.fromYaml(yaml))
 
         /**
          * Creates a [Subjekt] instance from a JSON string containing the configuration.
          */
+        @OptIn(ExperimentalJsStatic::class)
+        @JsStatic
         fun fromJson(json: String): Subjekt = Subjekt(Source.Companion.fromJson(json))
     }
 }

@@ -9,8 +9,9 @@
 
 package io.github.subjekt.core
 
+import io.github.subjekt.core.Macro.Companion.asMacro
 import io.github.subjekt.core.Macro.Companion.asMacroDefinition
-import io.github.subjekt.core.Macro.Companion.toMacro
+import io.github.subjekt.core.Macro.Companion.toActualMacro
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
@@ -21,7 +22,7 @@ class MacroSpec : StringSpec({
     "Macro should be created correctly from MacroDefinition" {
         val macroDefinition = "macroId(arg1, arg2)".asMacroDefinition()
         val resolvables = listOf(Resolvable("value1"), Resolvable("value2"))
-        val macro = macroDefinition.toMacro(resolvables)
+        val macro = macroDefinition.toActualMacro(resolvables)
 
         macro.id shouldBe "macroId"
         macro.argumentsIdentifiers shouldBe listOf("arg1", "arg2")
@@ -30,7 +31,7 @@ class MacroSpec : StringSpec({
 
     "Macro should be created correctly from string ID" {
         val resolvables = listOf(Resolvable("value1"), Resolvable("value2"))
-        val macro = "macroId".toMacro(resolvables)
+        val macro = "macroId".asMacro(resolvables)
 
         macro.id shouldBe "macroId"
         macro.argumentsIdentifiers shouldBe emptyList()
