@@ -93,6 +93,15 @@ data class SymbolTable
             )
 
         /**
+         * Returns a new [SymbolTable] with the [Function1]s [functions] defined.
+         */
+        fun defineFunctions(functions: Iterable<SubjektFunction>): SymbolTable =
+            copy(
+                functions =
+                    this.functions + functions.map { (it.id to it) },
+            )
+
+        /**
          * Returns the [Parameter] associated to [id], or `null` if no such parameter can be resolved.
          */
         fun resolveParameter(id: String): Parameter? = parameters[id]
