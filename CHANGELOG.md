@@ -1,3 +1,9 @@
+## [2.0.1](https://github.com/mini-roostico/subjekt/compare/2.0.0...2.0.1) (2025-01-22)
+
+### Bug Fixes
+
+* fixed build issue due to invalid js moduleName ([b0f6d21](https://github.com/mini-roostico/subjekt/commit/b0f6d21e416ac70af34e3066c8a012da1551c202))
+
 ## [2.0.0](https://github.com/mini-roostico/subjekt/compare/v1.1.4...2.0.0) (2025-01-21)
 
 ### ⚠ BREAKING CHANGES
