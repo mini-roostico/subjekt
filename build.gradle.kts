@@ -155,12 +155,21 @@ generateKotlinGrammarSource.configure {
     }
 }
 
-tasks
-    .matching {
-        name in setOf("jsSourcesJar", "jvmSourcesJar", "sourcesJar", "dokkaHtml")
-    }.configureEach {
-        dependsOn(generateKotlinGrammarSource)
-    }
+tasks.named("jsSourcesJar") {
+    mustRunAfter(generateKotlinGrammarSource)
+}
+
+tasks.named("jvmSourcesJar") {
+    mustRunAfter(generateKotlinGrammarSource)
+}
+
+tasks.named("sourcesJar") {
+    mustRunAfter(generateKotlinGrammarSource)
+}
+
+tasks.named("dokkaHtml") {
+    mustRunAfter(generateKotlinGrammarSource)
+}
 
 tasks.withType<KotlinCompilationTask<*>> {
     dependsOn(generateKotlinGrammarSource)
