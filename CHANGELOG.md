@@ -1,3 +1,9 @@
+## [2.0.2](https://github.com/mini-roostico/subjekt/compare/2.0.1...2.0.2) (2025-01-22)
+
+### Bug Fixes
+
+* fixed missing declarations from javascript package ([5614fb6](https://github.com/mini-roostico/subjekt/commit/5614fb6bc8b4b5c2b68b9f771bd2cb8a37aa9ad2))
+
 ## [2.0.1](https://github.com/mini-roostico/subjekt/compare/2.0.0...2.0.1) (2025-01-22)
 
 ### Bug Fixes
