@@ -13,6 +13,7 @@ import io.github.subjekt.core.Macro
 import io.github.subjekt.core.Parameter
 import io.github.subjekt.core.Resolvable
 import io.github.subjekt.core.Source
+import io.github.subjekt.core.resolution.ResolvedSuite
 import io.github.subjekt.core.resolution.SubjektResult
 
 /**
@@ -36,6 +37,22 @@ class Subjekt internal constructor(
         )
 
     /**
+     * Resolves the [source] into the [resolvedSuite] and the returns the
+     * [io.github.subjekt.core.resolution.SubjektResult] containing the map of instances taken from each
+     * [io.github.subjekt.core.resolution.ResolvedSubject].
+     */
+    fun resolveSubjectsAsJson(): SubjektResult<Map<String, String>, List<Map<String, String>>>? =
+        mapAndExport(
+            identityMapper,
+            mapJsonExporter,
+        )
+
+    /**
+     * Gets the [ResolvedSuite] and resolves it if not already resolved.
+     */
+    fun getResolvedSuite(): ResolvedSuite? = resolvedSuite
+
+    /**
      * Adds a custom parameter to the [initialSymbolTable] used to resolve the [source].
      */
     fun customParameter(
@@ -56,6 +73,17 @@ class Subjekt internal constructor(
     ): Subjekt {
         initialSymbolTable =
             initialSymbolTable.defineMacro(Macro(id, argumentsIdentifiers.toList(), values.map { Resolvable(it) }))
+        return this
+    }
+
+    /**
+     * Adds a custom function to the [initialSymbolTable] used to resolve the [source].
+     */
+    fun customFunction(
+        id: String,
+        function: (List<String>) -> String,
+    ): Subjekt {
+        initialSymbolTable = initialSymbolTable.defineFunction(id, function)
         return this
     }
 
