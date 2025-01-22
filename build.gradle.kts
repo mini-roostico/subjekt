@@ -82,7 +82,7 @@ kotlin {
     }
 
     js(IR) {
-        moduleName = "@mini-roostico/subjekt"
+        moduleName = "subjekt"
         browser()
         nodejs()
         binaries.library()
@@ -157,38 +157,25 @@ generateKotlinGrammarSource.configure {
 
 tasks
     .matching {
-        name in setOf("jsSourcesJar", "jvmSourcesJar", "sourcesJar", "dokkaHtml") ||
-            it is Jar ||
-            it is KotlinCompilationTask<*> ||
-            it is Detekt ||
-            it is Cpd
+        name in setOf("jsSourcesJar", "jvmSourcesJar", "sourcesJar", "dokkaHtml")
     }.configureEach {
         dependsOn(generateKotlinGrammarSource)
     }
 
-tasks.named("jsSourcesJar") {
-    mustRunAfter(generateKotlinGrammarSource)
-}
-
-tasks.named("jvmSourcesJar") {
-    mustRunAfter(generateKotlinGrammarSource)
-}
-
-tasks.named("sourcesJar") {
-    mustRunAfter(generateKotlinGrammarSource)
-}
-
-tasks.named("dokkaHtml") {
-    mustRunAfter(generateKotlinGrammarSource)
+tasks.withType<KotlinCompilationTask<*>> {
+    dependsOn(generateKotlinGrammarSource)
 }
 
 tasks.withType<Detekt>().configureEach {
+    dependsOn(generateKotlinGrammarSource)
     exclude("**/generated/**")
 }
 
 tasks.withType<Cpd>().configureEach {
-    source = files("src/").asFileTree
+    dependsOn(generateKotlinGrammarSource)
+    source = files("src/").asFileTree // excluding generated files
 }
+
 ktlint {
     filter {
         exclude("**/generated/**")
