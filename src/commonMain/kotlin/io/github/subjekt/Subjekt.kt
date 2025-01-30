@@ -24,12 +24,6 @@ import io.github.subjekt.utils.Logger
  */
 internal fun Source.compile(initialSymbolTable: SymbolTable): ResolvedSuite? {
     val parsingResult = parseIntoSuite(initialSymbolTable)
-    parsingResult
-        .getOrNull()
-        ?.symbolTable
-        ?.resolveParameter("par2")
-        ?.values
-        ?.forEach { println(it) }
 
     if (parsingResult.isFailure) {
         Logger.error { parsingResult.exceptionOrNull()?.message.toString() }
