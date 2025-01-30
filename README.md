@@ -11,15 +11,33 @@
 
 ## Overview
 
-Utility software to generate Kotlin testing cases for compiler plugins.
+Subjekt is a Kotlin Multiplatform library to generate permutations of results from a YAML/JSON configuration. 
 
-## Example usage
+It can be configured to handle multiple parameters and utility functions and generate all the possible permutations of their values when they are used in the code.
 
-To generate Kotlin sources from a YAML:
+### About the current version
+
+At the moment, Subjekt has Kotlin Multiplatform has a primary target, but before version `2.0.0` it was a JVM only library.
+
+Some of the platform-specific functionalities that were previously available could be missing right now, for example **external modules** and automatic code linting via `ktlint`. 
+
+In future updates these will be made available on all platforms.
+
+## Quick start
+
+You can include Subjekt as a maven dependency by simply adding this to your `build.gradle.kts`:
+
+```kotlin
+implementation("io.github.mini-roostico:subjekt:<LATEST_VERSION>")
+```
+
+Or, if you want, you can also use it in your node project by running:
 
 ```bash
-subjekt-jar generate sources "/path/to/file.yaml"
+npm i @mini-roostico/subjekt
 ```
+
+To learn how to use Subjekt, please take a look at [the website](https://mini-roostico.github.io/subjekt-doc/)
 
 <!--
 ***
