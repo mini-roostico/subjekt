@@ -17,7 +17,6 @@ import io.github.subjekt.core.resolution.Exporter
 import io.github.subjekt.core.resolution.Mapper
 import io.github.subjekt.core.resolution.ResolvedSuite
 import io.github.subjekt.core.resolution.SubjektResult
-import io.github.subjekt.utils.Logger
 
 /**
  * End to end utility for subjekt to compile a [Source] directly into a [ResolvedSuite].
@@ -26,7 +25,7 @@ internal fun Source.compile(initialSymbolTable: SymbolTable): ResolvedSuite? {
     val parsingResult = parseIntoSuite(initialSymbolTable)
 
     if (parsingResult.isFailure) {
-        Logger.error { parsingResult.exceptionOrNull()?.message.toString() }
+        parsingResult.exceptionOrNull()?.let { throw it }
         return null
     }
     val resolvingResult =
@@ -35,7 +34,7 @@ internal fun Source.compile(initialSymbolTable: SymbolTable): ResolvedSuite? {
             return resolvedSuite ?: error("Failed to resolve the suite.")
         }
     if (resolvingResult.isFailure) {
-        Logger.error { resolvingResult.exceptionOrNull()?.message.toString() }
+        resolvingResult.exceptionOrNull()?.let { throw it }
         return null
     }
     return resolvingResult.getOrNull()
