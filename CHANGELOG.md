@@ -1,3 +1,40 @@
+## [2.0.3](https://github.com/mini-roostico/subjekt/compare/2.0.2...2.0.3) (2025-01-30)
+
+### Dependency updates
+
+* **deps:** update dependency gradle to v8.12.1 ([#45](https://github.com/mini-roostico/subjekt/issues/45)) ([d700395](https://github.com/mini-roostico/subjekt/commit/d70039570ea93579cbb6cb2611665857f448a590))
+* **deps:** update plugin com.gradle.develocity to v3.19.1 ([#42](https://github.com/mini-roostico/subjekt/issues/42)) ([72289b0](https://github.com/mini-roostico/subjekt/commit/72289b0943863db06ae911c3d7bd20ba7ce6ac44))
+* **deps:** update plugin gitsemver to v3.1.10 ([#51](https://github.com/mini-roostico/subjekt/issues/51)) ([39a83e0](https://github.com/mini-roostico/subjekt/commit/39a83e006c966b9b31fc86d9d54240cb93a3f2df))
+* **deps:** update plugin gitsemver to v3.1.9 ([#49](https://github.com/mini-roostico/subjekt/issues/49)) ([afd5192](https://github.com/mini-roostico/subjekt/commit/afd5192fa3da8da492e4bd6a555355e88b77fd75))
+* **deps:** update plugin gitsemver to v4 ([#53](https://github.com/mini-roostico/subjekt/issues/53)) ([cddf4d7](https://github.com/mini-roostico/subjekt/commit/cddf4d77146c9ac04b7bc1cc1457c39308f8790f))
+* **deps:** update plugin gitsemver to v4.0.2 ([#56](https://github.com/mini-roostico/subjekt/issues/56)) ([f5cc83b](https://github.com/mini-roostico/subjekt/commit/f5cc83b3149274f15d6b15c933f25893a846f043))
+* **deps:** update plugin multijvmtesting to v3.2.0 ([#44](https://github.com/mini-roostico/subjekt/issues/44)) ([36abbc0](https://github.com/mini-roostico/subjekt/commit/36abbc04b790bc8bf92b972b67256b8d5be86a61))
+* **deps:** update plugin multijvmtesting to v3.2.1 ([#46](https://github.com/mini-roostico/subjekt/issues/46)) ([58a1a2e](https://github.com/mini-roostico/subjekt/commit/58a1a2e556cf0e86655b449dd3e44a508ff91c61))
+* **deps:** update plugin multijvmtesting to v3.2.2 ([#54](https://github.com/mini-roostico/subjekt/issues/54)) ([a6157e3](https://github.com/mini-roostico/subjekt/commit/a6157e392404ece74b33bf89f24f47af6501b3c6))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.0.19 ([#47](https://github.com/mini-roostico/subjekt/issues/47)) ([4038cdf](https://github.com/mini-roostico/subjekt/commit/4038cdf95952ce142e2ef2871005f895ec8a3b40))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.0.20 ([#55](https://github.com/mini-roostico/subjekt/issues/55)) ([0a5cad4](https://github.com/mini-roostico/subjekt/commit/0a5cad4715ae096947486f085e0ac0fe5c98f3be))
+
+### Bug Fixes
+
+* **deps:** update kotlin monorepo to v2.1.10 ([#52](https://github.com/mini-roostico/subjekt/issues/52)) ([aff5bfd](https://github.com/mini-roostico/subjekt/commit/aff5bfd2dd66092ccda95fc006101d66c3818ad8))
+
+### Build and continuous integration
+
+* **deps:** update actions/setup-node action to v4.2.0 ([#50](https://github.com/mini-roostico/subjekt/issues/50)) ([35752e2](https://github.com/mini-roostico/subjekt/commit/35752e24d303b011e05cf7fd88d68a66247a3a9a))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.7.1 ([#41](https://github.com/mini-roostico/subjekt/issues/41)) ([edcbab3](https://github.com/mini-roostico/subjekt/commit/edcbab33cc1892e328f1312e575c8670ece0486e))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.7.2 ([#43](https://github.com/mini-roostico/subjekt/issues/43)) ([72cf24a](https://github.com/mini-roostico/subjekt/commit/72cf24a23193ba602eaa9d853d7480a7730ccf5a))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.7.6 ([#48](https://github.com/mini-roostico/subjekt/issues/48)) ([e8cd2f6](https://github.com/mini-roostico/subjekt/commit/e8cd2f640122e71fa3ea9f53fc0949df7dfee3e0))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.7.7 ([#57](https://github.com/mini-roostico/subjekt/issues/57)) ([654a34d](https://github.com/mini-roostico/subjekt/commit/654a34d3d152e1b0f11eb7e87e35363af4967fce))
+
+### General maintenance
+
+* removed useless print ([8252ba9](https://github.com/mini-roostico/subjekt/commit/8252ba975ed3b77a349294a63becba9c8473b25c))
+
+### Refactoring
+
+* changed error message ([f17121e](https://github.com/mini-roostico/subjekt/commit/f17121e013501bf004f58b6d3e09d6472da4520c))
+* made the `compile` method throw an exception on failure instead of logging the message ([363636d](https://github.com/mini-roostico/subjekt/commit/363636d20eda58a8ed2babbc2c18595bfc3a5296))
+
 ## [2.0.2](https://github.com/mini-roostico/subjekt/compare/2.0.1...2.0.2) (2025-01-22)
 
 ### Bug Fixes
