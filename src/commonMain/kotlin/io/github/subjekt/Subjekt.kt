@@ -31,7 +31,7 @@ internal fun Source.compile(initialSymbolTable: SymbolTable): ResolvedSuite? {
     val resolvingResult =
         runCatching {
             val resolvedSuite = parsingResult.getOrNull()?.resolve()
-            return resolvedSuite ?: error("Failed to resolve the suite.")
+            return resolvedSuite ?: error("There was an error resolving the suite.")
         }
     if (resolvingResult.isFailure) {
         resolvingResult.exceptionOrNull()?.let { throw it }
