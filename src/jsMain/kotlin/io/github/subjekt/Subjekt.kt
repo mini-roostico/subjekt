@@ -30,7 +30,7 @@ class Subjekt internal constructor(
      * generation graph (i.e. a map with the subject IDs a keys and the list of the related resolved subjects as
      * values).
      */
-    fun getGenerationGraph(): dynamic =
+    fun getGenerationGraph(): SubjektResult<dynamic, Map<Int, List<String>>>? =
         mapAndExport(
             identityMapper,
             generationGraphJsonExporter,
