@@ -1,3 +1,22 @@
+## [2.0.4](https://github.com/mini-roostico/subjekt/compare/2.0.3...2.0.4) (2025-02-07)
+
+### Dependency updates
+
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.120 ([#62](https://github.com/mini-roostico/subjekt/issues/62)) ([3964add](https://github.com/mini-roostico/subjekt/commit/3964adddd252dc3b0fda8289d16041825ae8d75e))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.121 ([#64](https://github.com/mini-roostico/subjekt/issues/64)) ([2d41296](https://github.com/mini-roostico/subjekt/commit/2d41296929adef02b0ba44762f23d093c8bd1ccb))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.122 ([#65](https://github.com/mini-roostico/subjekt/issues/65)) ([aadb5e1](https://github.com/mini-roostico/subjekt/commit/aadb5e1ae178919143c6430285360853ac00650d))
+
+### Bug Fixes
+
+* **deps:** update kotest to v6.0.0.m2 ([#63](https://github.com/mini-roostico/subjekt/issues/63)) ([1b89b19](https://github.com/mini-roostico/subjekt/commit/1b89b19f78d9a594e16869f7742cadd580e16d73))
+* fixed dynamic type inside js Subjekt ([3f9b2d7](https://github.com/mini-roostico/subjekt/commit/3f9b2d7a744252165045791f1a3e1679e17c240f))
+
+### Build and continuous integration
+
+* added deploy-on-pages job ([a10465b](https://github.com/mini-roostico/subjekt/commit/a10465bde3ca29162b0fb0469bfc008e3023fcb7))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v3.7.8 ([#61](https://github.com/mini-roostico/subjekt/issues/61)) ([725ec8c](https://github.com/mini-roostico/subjekt/commit/725ec8cf77b861365b8814860ab8638755c52421))
+* fixed deploy-on-pages pre-condition ([9fa5e06](https://github.com/mini-roostico/subjekt/commit/9fa5e066974dd5f5a51ca6ee76899e4bbc580b3e))
+
 ## [2.0.3](https://github.com/mini-roostico/subjekt/compare/2.0.2...2.0.3) (2025-01-30)
 
 ### Dependency updates
