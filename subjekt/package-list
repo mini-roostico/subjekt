@@ -299,6 +299,7 @@ $dokka.location:io.github.subjekt//generationGraphJsonExporter/#/PointingToDecla
 $dokka.location:io.github.subjekt//identityMapper/#/PointingToDeclaration/subjekt/io.github.subjekt/identity-mapper.html
 $dokka.location:io.github.subjekt//mapJsonExporter/#/PointingToDeclaration/subjekt/io.github.subjekt/map-json-exporter.html
 $dokka.location:io.github.subjekt//prettify/#kotlin.collections.List[kotlin.String]/PointingToDeclaration/subjekt/io.github.subjekt/prettify.html
+$dokka.location:io.github.subjekt//safeNameResolverAsPlaceholder/#kotlin.String/PointingToDeclaration/subjekt/io.github.subjekt/safe-name-resolver-as-placeholder.html
 $dokka.location:io.github.subjekt//safeNameResolverUniqueFallback/#/PointingToDeclaration/subjekt/io.github.subjekt/safe-name-resolver-unique-fallback.html
 $dokka.location:io.github.subjekt//stdLibFunctions/#/PointingToDeclaration/subjekt/io.github.subjekt/std-lib-functions.html
 $dokka.location:io.github.subjekt//stdLibParameters/#/PointingToDeclaration/subjekt/io.github.subjekt/std-lib-parameters.html
