@@ -24,8 +24,17 @@ import kotlinx.serialization.builtins.serializer
  * a [ResolvedSubject] if the name is not present.
  */
 val safeNameResolverUniqueFallback: (ResolvedSubject) -> String = {
-    it.name?.value ?: it.uniqueName()
+    safeNameResolverAsPlaceholder(it.uniqueName())(it)
 }
+
+/**
+ * A name resolver, useful for [io.github.subjekt.core.resolution.SubjektResult], that generates a placeholder name for
+ * a [ResolvedSubject] if the name is not present.
+ */
+fun safeNameResolverAsPlaceholder(placeholder: String): (ResolvedSubject) -> String =
+    {
+        it.name?.value ?: placeholder
+    }
 
 /**
  * Utility class to create an [Exporter] that produces [JsonResult], where [singleSerializer] is the serializer for the
@@ -72,8 +81,10 @@ val generationGraphJsonExporter: Exporter<Pair<Int, String>, Map<Int, List<Strin
     createJsonExporter(
         PairSerializer(Int.serializer(), String.serializer()),
         MapSerializer(Int.serializer(), ListSerializer(String.serializer())),
-        { it.subjectId to safeNameResolverUniqueFallback(it) },
+        { it.subjectId to safeNameResolverAsPlaceholder("placeholder")(it) },
         { subjectIdToName ->
-            subjectIdToName.groupBy({ it.first }, { it.second })
+            subjectIdToName.groupBy({ it.first }, { it.second }).mapValues { (_, v) ->
+                v.mapIndexed { _, i -> "Resolved Subject $i" }
+            }
         },
     )
