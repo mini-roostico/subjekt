@@ -1,3 +1,9 @@
+## [2.0.5](https://github.com/mini-roostico/subjekt/compare/2.0.4...2.0.5) (2025-02-10)
+
+### Bug Fixes
+
+* gracefully named resolved subject in generation graph ([10c8de9](https://github.com/mini-roostico/subjekt/commit/10c8de9005797fa243e2cd73d050899eb326c6b6))
+
 ## [2.0.4](https://github.com/mini-roostico/subjekt/compare/2.0.3...2.0.4) (2025-02-07)
 
 ### Dependency updates
