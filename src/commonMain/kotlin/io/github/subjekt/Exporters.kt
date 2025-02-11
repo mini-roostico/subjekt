@@ -84,7 +84,7 @@ val generationGraphJsonExporter: Exporter<Pair<Int, String>, Map<Int, List<Strin
         { it.subjectId to safeNameResolverAsPlaceholder("placeholder")(it) },
         { subjectIdToName ->
             subjectIdToName.groupBy({ it.first }, { it.second }).mapValues { (_, v) ->
-                v.mapIndexed { _, i -> "Resolved Subject $i" }
+                v.mapIndexed { i, _ -> "Resolved Subject $i" }
             }
         },
     )
