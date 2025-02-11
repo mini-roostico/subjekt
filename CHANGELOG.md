@@ -1,3 +1,9 @@
+## [2.0.6](https://github.com/mini-roostico/subjekt/compare/2.0.5...2.0.6) (2025-02-11)
+
+### Bug Fixes
+
+* placeholder names correctly substituted by an index ([aca7318](https://github.com/mini-roostico/subjekt/commit/aca7318f81a8a406596f6f8982e0fe11723a88c7))
+
 ## [2.0.5](https://github.com/mini-roostico/subjekt/compare/2.0.4...2.0.5) (2025-02-10)
 
 ### Bug Fixes
