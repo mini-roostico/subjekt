@@ -11,7 +11,7 @@
 
 ## Overview
 
-Subjekt is a Kotlin Multiplatform library to generate permutations of results from a YAML/JSON configuration. 
+Subjekt is a Kotlin Multiplatform Library to generate permutations of results from a YAML/JSON configuration. 
 
 It can be configured to handle multiple parameters and utility functions and generate all the possible permutations of their values when they are used in the code.
 
