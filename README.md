@@ -31,7 +31,7 @@ In future updates these will be made available on all platforms.
 You can include Subjekt as a maven dependency by simply adding this to your `build.gradle.kts`:
 
 ```kotlin
-implementation("io.github.mini-roostico:subjekt:<LATEST_VERSION>")
+implementation("io.github.subjekt:subjekt:<LATEST_VERSION>")
 ```
 
 Or, if you want, you can also use it in your node project by running:
