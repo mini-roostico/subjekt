@@ -30,7 +30,7 @@ plugins {
     alias(libs.plugins.serialization)
 }
 
-group = "io.github.mini-roostico"
+group = "io.github.subjekt"
 
 repositories {
     google()
