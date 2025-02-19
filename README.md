@@ -1,13 +1,16 @@
-<p align="center"><img width=60% src="resources/img/logo.png"></p>
-
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-[![Language][kotlin-shield]][kotlin-url]
-[![MIT License][license-shield]][license-url]
-[![Conventional Commits][conventional-commits-shield]][conventional-commits-url]
-
+<p align="center">
+    <img width=60% src="resources/img/logo.png">
+</p>
+<p align="center">
+    <a href="https://kotlinlang.org/"><img src="https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=Kotlin&logoColor=white"></a>  
+    <a href="https://github.com/mini-roostico/subjekt/blob/master/LICENSE"><img src="https://img.shields.io/github/license/FreshMag/subjekt.svg?style=flat"></a>
+    <a href="https://conventionalcommits.org"><img src="https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits"></a>
+    <a href="https://github.com/mini-roostico/subjekt/actions"><img src="https://github.com/mini-roostico/subjekt/actions/workflows/dispatcher.yml/badge.svg"></a>
+    <img src="https://img.shields.io/maven-central/v/io.github.mini-roostico/subjekt" >
+    <img src="https://img.shields.io/npm/v/@mini-roostico/subjekt">
+    <a href="https://ktlint.github.io/"><img src="https://img.shields.io/badge/code%20style-%E2%9D%A4-FF4081.svg"></a>
+    <img src="https://img.shields.io/github/repo-size/mini-roostico/subjekt">
+</p>
 
 ## Overview
 
@@ -38,21 +41,3 @@ npm i @mini-roostico/subjekt
 ```
 
 To learn how to use Subjekt, please take a look at [the website](https://mini-roostico.github.io/subjekt-doc/)
-
-<!--
-***
-    GITHUB SHIELDS VARIABLES
-***
--->
-
-[kotlin-shield]: https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=Kotlin&logoColor=white
-
-[kotlin-url]: https://kotlinlang.org/
-
-[license-shield]: https://img.shields.io/github/license/FreshMag/subjekt.svg?style=flat
-
-[license-url]: https://github.com/FreshMag/subjekt/blob/master/LICENSE
-
-[conventional-commits-shield]: https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits
-
-[conventional-commits-url]: https://conventionalcommits.org
