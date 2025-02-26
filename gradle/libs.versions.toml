@@ -11,7 +11,7 @@ kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", versio
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
 kotlin-test-common = { module = "org.jetbrains.kotlin:kotlin-test-common", version.ref = "kotlin" }
 kotlin-test-annotations-common = { module = "org.jetbrains.kotlin:kotlin-test-annotations-common", version.ref = "kotlin" }
-kotlinx-io = "org.jetbrains.kotlinx:kotlinx-io-core:0.6.0"
+kotlinx-io = "org.jetbrains.kotlinx:kotlinx-io-core:0.7.0"
 yamlkt = "net.mamoe.yamlkt:yamlkt:0.13.0"
 
 [bundles]
