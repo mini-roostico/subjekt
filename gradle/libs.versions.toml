@@ -5,7 +5,7 @@ antlr-kotlin = "1.0.2"
 
 [libraries]
 antlr-runtime = { module = "com.strumenta:antlr-kotlin-runtime", version.ref = "antlr-kotlin" }
-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0"
+json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1"
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
