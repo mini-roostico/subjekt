@@ -32,7 +32,7 @@ plugins {
 
 group = "io.github.subjekt"
 
-val distFile = "subjekt.js"
+val distFile = "subjekt.min.js"
 
 repositories {
     google()
@@ -87,17 +87,14 @@ kotlin {
         outputModuleName = "subjekt"
         browser {
             webpackTask {
+                cssSupport { enabled = false }
                 mainOutputFileName = distFile
-                output.libraryTarget = "umd"
-            }
-
-            commonWebpackConfig {
-                cssSupport { enabled = true }
-                outputFileName = distFile
             }
         }
         nodejs()
         binaries.library()
+
+        binaries.executable()
     }
 
     applyDefaultHierarchyTemplate()
@@ -139,15 +136,12 @@ val generateKotlinGrammarSource =
     }
 
 tasks.register<Copy>("copyUmdToNpm") {
+    dependsOn("jsBrowserProductionWebpack")
     from("${layout.buildDirectory}/kotlin-webpack/js/productionExecutable/${distFile}")
     into("${layout.buildDirectory}/packages/js/dist")
 }
 
-tasks.named("jsBrowserProductionWebpack") {
-    dependsOn("copyUmdToNpm")
-}
-
-tasks.named("publishJsPackageToNpmRepository") {
+tasks.named("publish") {
     dependsOn("copyUmdToNpm")
 }
 
