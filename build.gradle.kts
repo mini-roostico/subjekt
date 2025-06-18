@@ -137,7 +137,7 @@ val generateKotlinGrammarSource =
 
 tasks.register<Copy>("copyUmdToNpm") {
     dependsOn("jsBrowserProductionWebpack")
-    from("${layout.buildDirectory}/kotlin-webpack/js/productionExecutable/${distFile}")
+    from("${layout.buildDirectory}/kotlin-webpack/js/productionExecutable/$distFile")
     into("${layout.buildDirectory}/packages/js/dist")
 }
 
