@@ -32,6 +32,8 @@ plugins {
 
 group = "io.github.subjekt"
 
+val distFile = "subjekt.js"
+
 repositories {
     google()
     mavenCentral()
@@ -82,8 +84,18 @@ kotlin {
     }
 
     js(IR) {
-        moduleName = "subjekt"
-        browser()
+        outputModuleName = "subjekt"
+        browser {
+            webpackTask {
+                mainOutputFileName = distFile
+                output.libraryTarget = "umd"
+            }
+
+            commonWebpackConfig {
+                cssSupport { enabled = true }
+                outputFileName = distFile
+            }
+        }
         nodejs()
         binaries.library()
     }
@@ -125,6 +137,19 @@ val generateKotlinGrammarSource =
                 .get()
                 .asFile
     }
+
+tasks.register<Copy>("copyUmdToNpm") {
+    from("${layout.buildDirectory}/kotlin-webpack/js/productionExecutable/${distFile}")
+    into("${layout.buildDirectory}/packages/js/dist")
+}
+
+tasks.named("jsBrowserProductionWebpack") {
+    dependsOn("copyUmdToNpm")
+}
+
+tasks.named("publishJsPackageToNpmRepository") {
+    dependsOn("copyUmdToNpm")
+}
 
 /**
  * Unfortunately, the generated code contains some unsafe calls suppression annotations that are not needed.
