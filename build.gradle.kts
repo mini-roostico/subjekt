@@ -145,6 +145,10 @@ tasks.named("publish") {
     dependsOn("copyUmdToNpm")
 }
 
+tasks.named("jsBrowserProductionWebpack") {
+    dependsOn("jsProductionLibraryCompileSync")
+}
+
 /**
  * Unfortunately, the generated code contains some unsafe calls suppression annotations that are not needed.
  * At the time of writing, there is an open issue of the antlr-kotlin plugin that will address this
