@@ -144,9 +144,16 @@ tasks.register<Copy>("copyUmdToNpm") {
 tasks.named("publish") {
     dependsOn("copyUmdToNpm")
 }
+afterEvaluate {
+    tasks.named("jsBrowserProductionLibraryDistribution") {
+        dependsOn("jsProductionExecutableCompileSync")
+        dependsOn("jsProductionLibraryCompileSync")
+    }
 
-tasks.named("jsBrowserProductionWebpack") {
-    dependsOn("jsProductionLibraryCompileSync")
+    tasks.named("jsBrowserProductionWebpack") {
+        dependsOn("jsProductionExecutableCompileSync")
+        dependsOn("jsProductionLibraryCompileSync")
+    }
 }
 
 /**
