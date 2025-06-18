@@ -144,15 +144,19 @@ tasks.register<Copy>("copyUmdToNpm") {
 tasks.named("publish") {
     dependsOn("copyUmdToNpm")
 }
+
 afterEvaluate {
-    tasks.named("jsBrowserProductionLibraryDistribution") {
-        dependsOn("jsProductionExecutableCompileSync")
+    tasks.named("jsBrowserProductionWebpack") {
         dependsOn("jsProductionLibraryCompileSync")
+        dependsOn("jsProductionExecutableCompileSync")
     }
 
-    tasks.named("jsBrowserProductionWebpack") {
+    tasks.named("jsBrowserProductionLibraryDistribution") {
         dependsOn("jsProductionExecutableCompileSync")
-        dependsOn("jsProductionLibraryCompileSync")
+    }
+
+    tasks.named("jsNodeProductionLibraryDistribution") {
+        dependsOn("jsProductionExecutableCompileSync")
     }
 }
 
