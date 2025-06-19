@@ -7,6 +7,8 @@
  *
  */
 
+@file:OptIn(ExperimentalDistributionDsl::class)
+
 import com.strumenta.antlrkotlin.gradle.AntlrKotlinTask
 import com.vanniktech.maven.publish.SonatypeHost
 import de.aaschmid.gradle.plugins.cpd.Cpd
@@ -14,6 +16,7 @@ import io.gitlab.arturbosch.detekt.Detekt
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
@@ -84,16 +87,30 @@ kotlin {
     }
 
     js(IR) {
-        outputModuleName = "subjekt"
         browser {
+            commonWebpackConfig {
+                // Configurazione per generare un bundle standalone
+                outputFileName = "subjekt.js"
+            }
             webpackTask {
-                cssSupport { enabled = false }
-                mainOutputFileName = distFile
+                // Opzioni per il bundle di produzione
+                mode = org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode.PRODUCTION
+            }
+            distribution {
+                // Directory dove verrà generato il bundle
+                outputDirectory = File("$buildDir/distributions")
             }
         }
-        nodejs()
-        binaries.library()
 
+        // Configurazione per il bundle UMD (Universal Module Definition)
+        compilations.all {
+            kotlinOptions {
+                moduleKind = "umd"
+                sourceMap = true
+                sourceMapEmbedSources = "always"
+            }
+        }
+        binaries.library()
         binaries.executable()
     }
 
@@ -107,6 +124,50 @@ kotlin {
                     freeCompilerArgs.add("-Xexpect-actual-classes")
                 }
             }
+        }
+    }
+}
+
+tasks.register<Copy>("prepareNpmDistribution") {
+    dependsOn("build", "jsBrowserDistribution")
+
+    // Copia i file generati da Kotlin/JS
+    from("$buildDir/js/packages/${project.name}/kotlin") {
+        into("kotlin")
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.WARN
+
+    // Copia il bundle del browser
+    from("$buildDir/distributions") {
+        into("dist")
+        rename { filename ->
+            when {
+                filename.endsWith(".js") -> "${project.name}.min.js"
+                filename.endsWith(".js.map") -> "${project.name}.min.js.map"
+                else -> filename
+            }
+        }
+    }
+
+    // Copia package.json e altri file necessari
+    from("package.json", "README.md", "LICENSE")
+
+    into("$buildDir/npm-package")
+}
+
+tasks.named("jsProductionLibraryCompileSync") {
+    // Ensure that the npm package is prepared before the jsProductionLibraryCompileSync task runs
+    dependsOn("jsBrowserProductionWebpack")
+}
+
+tasks.register("publishToNpm") {
+    dependsOn("prepareNpmDistribution")
+
+    doLast {
+        exec {
+            workingDir = file("$buildDir/npm-package")
+            commandLine("npm", "publish")
         }
     }
 }
@@ -134,31 +195,6 @@ val generateKotlinGrammarSource =
                 .get()
                 .asFile
     }
-
-tasks.register<Copy>("copyUmdToNpm") {
-    dependsOn("jsBrowserProductionWebpack")
-    from("${layout.buildDirectory}/kotlin-webpack/js/productionExecutable/$distFile")
-    into("${layout.buildDirectory}/packages/js/dist")
-}
-
-tasks.named("publish") {
-    dependsOn("copyUmdToNpm")
-}
-
-afterEvaluate {
-    tasks.named("jsBrowserProductionWebpack") {
-        dependsOn("jsProductionLibraryCompileSync")
-        dependsOn("jsProductionExecutableCompileSync")
-    }
-
-    tasks.named("jsBrowserProductionLibraryDistribution") {
-        dependsOn("jsProductionExecutableCompileSync")
-    }
-
-    tasks.named("jsNodeProductionLibraryDistribution") {
-        dependsOn("jsProductionExecutableCompileSync")
-    }
-}
 
 /**
  * Unfortunately, the generated code contains some unsafe calls suppression annotations that are not needed.
