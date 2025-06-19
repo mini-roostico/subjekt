@@ -1,3 +1,10 @@
+## [2.0.10](https://github.com/mini-roostico/subjekt/compare/2.0.9...2.0.10) (2025-06-19)
+
+### Bug Fixes
+
+* removed package.json inside inner "dist" folder ([5c05511](https://github.com/mini-roostico/subjekt/commit/5c0551187b5bfa1d58afb495f217489d582f6a0b))
+* removed package.json inside inner "dist" folder ([9d983d1](https://github.com/mini-roostico/subjekt/commit/9d983d18bc97626425f5a292943ba3a0bf510b6e))
+
 ## [2.0.9](https://github.com/mini-roostico/subjekt/compare/2.0.8...2.0.9) (2025-06-19)
 
 ### Bug Fixes
