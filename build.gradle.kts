@@ -89,15 +89,12 @@ kotlin {
     js(IR) {
         browser {
             commonWebpackConfig {
-                // Configurazione per generare un bundle standalone
                 outputFileName = "subjekt.js"
             }
             webpackTask {
-                // Opzioni per il bundle di produzione
                 mode = org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode.PRODUCTION
             }
             distribution {
-                // Directory dove verrà generato il bundle
                 outputDirectory = File("$buildDir/distributions")
             }
         }
