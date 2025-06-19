@@ -97,7 +97,6 @@ kotlin {
             }
         }
 
-        // Configurazione per il bundle UMD (Universal Module Definition)
         compilations.all {
             kotlinOptions {
                 moduleKind = "umd"
@@ -128,8 +127,7 @@ tasks.register<Copy>("prepareNpmDistribution") {
 
     duplicatesStrategy = DuplicatesStrategy.WARN
 
-    // Copia il bundle del browser
-    from("$buildDir/distributions") {
+    from("$buildDir/kotlin-webpack/js/productionExecutable") {
         into("dist")
         exclude("package.json")
         rename { filename ->
