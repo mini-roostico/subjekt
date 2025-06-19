@@ -128,11 +128,6 @@ kotlin {
 tasks.register<Copy>("prepareNpmDistribution") {
     dependsOn("build", "jsBrowserDistribution")
 
-    // Copia i file generati da Kotlin/JS
-    from("$buildDir/js/packages/${project.name}/kotlin") {
-        into("kotlin")
-    }
-
     duplicatesStrategy = DuplicatesStrategy.WARN
 
     // Copia il bundle del browser
@@ -159,12 +154,6 @@ tasks.configureEach {
         dependsOn("prepareNpmDistribution")
 
         doFirst {
-            // Sovrascrivi il package.json generato automaticamente
-            copy {
-                from("$buildDir/npm-package/package.json")
-                into("$buildDir/js/packages/${project.name}")
-                duplicatesStrategy = DuplicatesStrategy.INCLUDE
-            }
 
             // Copia anche il bundle dist
             copy {
