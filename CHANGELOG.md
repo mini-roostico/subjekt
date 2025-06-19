@@ -1,3 +1,9 @@
+## [2.0.9](https://github.com/mini-roostico/subjekt/compare/2.0.8...2.0.9) (2025-06-19)
+
+### Bug Fixes
+
+* added dist file to npm package ([c60fe3a](https://github.com/mini-roostico/subjekt/commit/c60fe3aecbb743e8275a8bfdb72b869fc20eb5d7))
+
 ## [2.0.8](https://github.com/mini-roostico/subjekt/compare/2.0.7...2.0.8) (2025-06-19)
 
 ### Bug Fixes
