@@ -35,8 +35,6 @@ plugins {
 
 group = "io.github.subjekt"
 
-val distFile = "subjekt.min.js"
-
 repositories {
     google()
     mavenCentral()
@@ -133,6 +131,7 @@ tasks.register<Copy>("prepareNpmDistribution") {
     // Copia il bundle del browser
     from("$buildDir/distributions") {
         into("dist")
+        exclude("package.json")
         rename { filename ->
             when {
                 filename.endsWith(".js") -> "${project.name}.min.js"
@@ -142,20 +141,14 @@ tasks.register<Copy>("prepareNpmDistribution") {
         }
     }
 
-    // Copia package.json e altri file necessari
-    from("package.json", "README.md", "LICENSE")
-
     into("$buildDir/packages/js")
 }
 
-// Configura il task integrato di Kotlin se esiste
 tasks.configureEach {
     if (name.contains("publishJsPackage") && name.contains("Registry")) {
         dependsOn("prepareNpmDistribution")
 
         doFirst {
-
-            // Copia anche il bundle dist
             copy {
                 from("$buildDir/npm-package/dist")
                 into("$buildDir/js/packages/${project.name}/dist")
@@ -166,7 +159,6 @@ tasks.configureEach {
 }
 
 tasks.named("jsProductionLibraryCompileSync") {
-    // Ensure that the npm package is prepared before the jsProductionLibraryCompileSync task runs
     dependsOn("jsBrowserProductionWebpack")
 }
 
