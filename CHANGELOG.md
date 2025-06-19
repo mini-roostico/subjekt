@@ -1,3 +1,9 @@
+## [2.0.11](https://github.com/mini-roostico/subjekt/compare/2.0.10...2.0.11) (2025-06-19)
+
+### Bug Fixes
+
+* copied the right subjekt.min.js ([6030c9c](https://github.com/mini-roostico/subjekt/commit/6030c9cdea8074b7244abf35e951c8e8defaa5e8))
+
 ## [2.0.10](https://github.com/mini-roostico/subjekt/compare/2.0.9...2.0.10) (2025-06-19)
 
 ### Bug Fixes
