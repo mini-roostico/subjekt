@@ -1,3 +1,9 @@
+## [2.0.8](https://github.com/mini-roostico/subjekt/compare/2.0.7...2.0.8) (2025-06-19)
+
+### Bug Fixes
+
+* removed conflict ([a807ba1](https://github.com/mini-roostico/subjekt/commit/a807ba128f47e1cb9863d808699eb2cfd89878d7))
+
 ## [2.0.7](https://github.com/mini-roostico/subjekt/compare/2.0.6...2.0.7) (2025-06-18)
 
 ### Dependency updates
