@@ -150,23 +150,35 @@ tasks.register<Copy>("prepareNpmDistribution") {
     // Copia package.json e altri file necessari
     from("package.json", "README.md", "LICENSE")
 
-    into("$buildDir/npm-package")
+    into("$buildDir/packages/js")
+}
+
+// Configura il task integrato di Kotlin se esiste
+tasks.configureEach {
+    if (name.contains("publishJsPackage") && name.contains("Registry")) {
+        dependsOn("prepareNpmDistribution")
+
+        doFirst {
+            // Sovrascrivi il package.json generato automaticamente
+            copy {
+                from("$buildDir/npm-package/package.json")
+                into("$buildDir/js/packages/${project.name}")
+                duplicatesStrategy = DuplicatesStrategy.INCLUDE
+            }
+
+            // Copia anche il bundle dist
+            copy {
+                from("$buildDir/npm-package/dist")
+                into("$buildDir/js/packages/${project.name}/dist")
+                duplicatesStrategy = DuplicatesStrategy.INCLUDE
+            }
+        }
+    }
 }
 
 tasks.named("jsProductionLibraryCompileSync") {
     // Ensure that the npm package is prepared before the jsProductionLibraryCompileSync task runs
     dependsOn("jsBrowserProductionWebpack")
-}
-
-tasks.register("publishToNpm") {
-    dependsOn("prepareNpmDistribution")
-
-    doLast {
-        exec {
-            workingDir = file("$buildDir/npm-package")
-            commandLine("npm", "publish")
-        }
-    }
 }
 
 // Package set for generated ANTLR files
