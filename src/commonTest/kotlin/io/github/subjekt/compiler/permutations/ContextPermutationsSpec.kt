@@ -97,8 +97,11 @@ class ContextPermutationsSpec : StringSpec({
 
         val parameter = Parameter("param1", listOf("value1", "value2"))
         parameter.populateDefinedSymbols(symbolTable, parameters, macros, functions)
-
-        parameters shouldContain listOf(DefinedParameter("param1", "value1"), DefinedParameter("param1", "value2"))
+        parameters shouldContain
+            listOf(
+                DefinedParameter("param1", "value1", parameter),
+                DefinedParameter("param1", "value2", parameter),
+            )
         macros shouldBe emptySet()
         functions shouldBe emptySet()
 
@@ -148,9 +151,7 @@ class ContextPermutationsSpec : StringSpec({
 
     "extractNeededSymbols should return correct resolvable symbols" {
         val macro = Macro("macro1", listOf("arg1"), listOf(Resolvable("\${{ par1 + mac(par1) }}")))
-
         val result = macro.extractNeededSymbols()
-
-        result shouldBe listOf(ParameterSymbol("par1"), CallSymbol("mac", 1))
+        result shouldBe setOf(ParameterSymbol("par1"), CallSymbol("mac", 1))
     }
 })

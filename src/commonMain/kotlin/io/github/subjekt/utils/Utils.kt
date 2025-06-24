@@ -34,6 +34,11 @@ object Utils {
         }
 
     /**
+     * Checks if any of the given values is null.
+     */
+    internal fun <T> anyNulls(vararg values: T?): Boolean = values.any { it == null }
+
+    /**
      * Checks if a string is a legal identifier. A legal identifier must start with a letter and can contain letters,
      * digits and [legalSymbols]. By default, '_' is the only legal symbol.
      */

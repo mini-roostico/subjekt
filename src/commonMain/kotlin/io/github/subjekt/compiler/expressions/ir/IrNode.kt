@@ -9,6 +9,8 @@
 
 package io.github.subjekt.compiler.expressions.ir
 
+import io.github.subjekt.compiler.expressions.visitors.ir.IrVisitor
+
 /**
  * Represents a node in the expression tree.
  */
@@ -18,92 +20,29 @@ sealed class IrNode(
      */
     open val line: Int,
 ) {
-//    fun <T> accept(irVisitor: ExpressionIrVisitor<T>) {
-//        irVisitor.visit(this)
-//    }
+    var type: Type = Type.UNDEFINED
 
-    /**
-     * IR wrapper for the entire tree.
-     */
-    data class IrTree(
-        val node: IrNode,
-    ) : IrNode(-1)
-
-    /**
-     * Represents an identifier node (e.g. `${{ name }}`).
-     */
-    data class IrParameter(
-        /**
-         * Identifier value.
-         */
-        val identifier: String,
-        override val line: Int,
-    ) : IrNode(line)
-
-    /**
-     * Represents a literal node (e.g. `${{ "Hello" }}` or `${{ 'Hello' }}`).
-     */
-    data class IrLiteral(
-        /**
-         * Literal value (without quotes).
-         */
-        val value: String,
-        override val line: Int,
-    ) : IrNode(line)
-
-    /**
-     * Represents a plus node (e.g. `${{ 1 + 1 }}`).
-     */
-    data class IrExpressionPlus(
-        /**
-         * Left operand.
-         */
-        val left: IrNode,
-        /**
-         * Right operand.
-         */
-        val right: IrNode,
-        override val line: Int,
-    ) : IrNode(line)
-
-    /**
-     * Represents a call node (e.g. `${{ name() }}`).
-     */
-    data class IrCall(
-        /**
-         * Identifier of the call.
-         */
-        val identifier: String,
-        /**
-         * Arguments expressions of the call.
-         */
-        val arguments: List<IrNode>,
-        override val line: Int,
-    ) : IrNode(line)
-
-    /**
-     * Represents a dot call node (e.g. `${{ std.name() }}`).
-     */
-    data class IrDotCall(
-        /**
-         * Identifier of the module (e.g. `std`).
-         */
-        val moduleId: String,
-        /**
-         * Identifier of the call (e.g. `name`).
-         */
-        val callId: String,
-        /**
-         * Arguments expressions of the call.
-         */
-        val arguments: List<IrNode>,
-        override val line: Int,
-    ) : IrNode(line)
-
-    /**
-     * Represents an error node.
-     */
-    data class Error(
-        override val line: Int,
-    ) : IrNode(line)
+    fun <T> accept(irVisitor: IrVisitor<T>) = irVisitor.visit(this)
 }
+
+enum class Type {
+    STRING,
+    INTEGER,
+    FLOAT,
+    NUMBER,
+    UNDEFINED,
+}
+
+/**
+ * IR wrapper for the entire tree.
+ */
+data class IrTree(
+    val node: IrNode,
+) : IrNode(-1)
+
+/**
+ * Represents an error node.
+ */
+data class Error(
+    override val line: Int,
+) : IrNode(line)

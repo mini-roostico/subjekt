@@ -63,7 +63,10 @@ internal fun Symbol.populateDefinedSymbols(
 /**
  * Extracts all the values from this parameter and creates a set of [DefinedParameter]s with those values.
  */
-internal fun Parameter.toDefinedParameters(): List<DefinedParameter> = values.map { DefinedParameter(id, it) }
+internal fun Parameter.toDefinedParameters(): List<DefinedParameter> =
+    values.map {
+        DefinedParameter(id, it, this)
+    }
 
 /**
  * Extracts all the values from this macro and creates a set of [DefinedMacro]s with those values.
