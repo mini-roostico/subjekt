@@ -156,7 +156,7 @@ class ResolutionSpec : StringSpec({
     }
 
     "resolution of a Suite with overloaded macros using parameters should work" {
-        val resolvable = Resolvable("Test number: \${{ test() + test('1')}}")
+        val resolvable = Resolvable("Test number: \${{ test() .. test('1')}}")
         val symbolTable =
             SymbolTable()
                 .defineMacro(
@@ -200,8 +200,8 @@ class ResolutionSpec : StringSpec({
     }
 
     "resolution of a Suite with multiple subjects should work" {
-        val resolvable1 = Resolvable("Test number: \${{ param + test(param2)}}")
-        val resolvable2 = Resolvable("Test number: \${{ param + test(param2)}}")
+        val resolvable1 = Resolvable("Test number: \${{ param .. test(param2)}}")
+        val resolvable2 = Resolvable("Test number: \${{ param .. test(param2)}}")
         val symbolTable1 =
             SymbolTable()
                 .defineMacro(

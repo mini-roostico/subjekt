@@ -65,6 +65,19 @@ data class Context(
                 definedParameters + parameters.map { (id, value) -> id to DefinedParameter(id, value) },
         )
 
+    fun withParameters(vararg parameters: DefinedParameter): Context =
+        copy(
+            definedParameters =
+                definedParameters +
+                    parameters.associate { (id, value) ->
+                        id to
+                            DefinedParameter(
+                                id,
+                                value,
+                            )
+                    },
+        )
+
     /**
      * Returns a new context with the given [DefinedMacro] added to it.
      */

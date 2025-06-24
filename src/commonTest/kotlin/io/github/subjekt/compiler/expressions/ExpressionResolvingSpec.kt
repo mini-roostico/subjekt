@@ -18,37 +18,37 @@ import io.kotest.matchers.shouldBe
 class ExpressionResolvingSpec : StringSpec({
 
     "Resolving a simple expression should work" {
-        val expression = Expression("'1' + '1'")
+        val expression = Expression("'1' .. '1'")
         val result = expression.resolve(Context.empty)
         result shouldBe "11"
     }
 
     "Resolving a simple expression with a parameter should work" {
-        val expression = Expression("param + '1'")
+        val expression = Expression("param .. '1'")
         val result = expression.resolve(Context().withParameter("param", "2"))
         result shouldBe "21"
     }
 
     "Resolving a simple expression with a macro should work" {
-        val expression = Expression("macro('1') + '1'")
+        val expression = Expression("macro('1') .. '1'")
         val result = expression.resolve(Context().withMacro("macro", listOf("arg"), Resolvable("\${{ arg }}")))
         result shouldBe "11"
     }
 
     "Resolving a simple expression with a function should work" {
-        val expression = Expression("fun('1') + '1'")
+        val expression = Expression("fun('1') .. '1'")
         val result = expression.resolve(Context().withFunction("fun") { args -> (args.first().toInt() + 1).toString() })
         result shouldBe "21"
     }
 
     "Resolving an expression with multiple parameters and calls should work" {
-        val expression = Expression("macro(param1, fun(param1, param2)) + '1' + fun('6', '5')")
+        val expression = Expression("macro(param1, fun(param1, param2)) .. '1' .. fun('6', '5')")
         val result =
             expression.resolve(
                 Context()
                     .withParameter("param1", "2")
                     .withParameter("param2", "3")
-                    .withMacro("macro", listOf("arg1", "arg2"), Resolvable("\${{ arg1 }},\${{ ' ' + arg2 }}"))
+                    .withMacro("macro", listOf("arg1", "arg2"), Resolvable("\${{ arg1 }},\${{ ' ' .. arg2 }}"))
                     .withFunction("fun") {
                         require(it.size == 2)
                         (it.first().toInt() + it.last().toInt()).toString()
@@ -94,7 +94,7 @@ class ExpressionResolvingSpec : StringSpec({
     }
 
     "Resolving an expression with a unresolved macro should throw an exception" {
-        val expression = Expression("macro('1') + '1'")
+        val expression = Expression("macro('1') .. '1'")
         val exception =
             shouldThrow<SymbolNotFoundException> {
                 expression.resolve(Context.empty)

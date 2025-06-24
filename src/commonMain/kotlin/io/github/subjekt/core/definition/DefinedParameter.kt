@@ -9,6 +9,8 @@
 
 package io.github.subjekt.core.definition
 
+import io.github.subjekt.core.Parameter
+
 /**
  * Represents a parameter fixed to a value. Contrary to the original Parameter, a [parameterId] is not unique to
  * [DefinedParameter]s and can be repeated as many times as the number of the possible values of the original Parameter.
@@ -22,5 +24,25 @@ data class DefinedParameter(
      * Value of this [DefinedParameter]. It derives from one of the possible values of the original
      * [io.github.subjekt.core.Parameter].
      */
-    val value: Any,
-)
+    val value: String,
+    /**
+     * Original [io.github.subjekt.core.Parameter] from which this [DefinedParameter] has been derived.
+     */
+    val originalParameter: Parameter? = null,
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is DefinedParameter) return false
+
+        if (parameterId != other.parameterId) return false
+        if (value != other.value) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = parameterId.hashCode()
+        result = 31 * result + value.hashCode()
+        return result
+    }
+}

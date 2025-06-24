@@ -9,7 +9,11 @@
 
 package io.github.subjekt.compiler.expressions
 
+import io.github.subjekt.compiler.expressions.ir.IrCall
+import io.github.subjekt.compiler.expressions.ir.IrDotCall
 import io.github.subjekt.compiler.expressions.ir.IrNode
+import io.github.subjekt.compiler.expressions.ir.IrParameter
+import io.github.subjekt.compiler.expressions.ir.IrSingleSlice
 import io.github.subjekt.core.SubjektFunction
 import io.github.subjekt.core.Symbol
 import io.github.subjekt.core.SymbolTable
@@ -59,18 +63,19 @@ sealed class CallableSymbol : ResolvableSymbol() {
 /**
  * Obtains the [CallSymbol] associated to the [IrNode.IrCall].
  */
-fun IrNode.IrCall.toCallSymbol(): CallSymbol = CallSymbol(identifier, arguments.size)
+fun IrCall.toCallSymbol(): CallSymbol = CallSymbol(identifier, arguments.size)
 
 /**
  * Obtains the [QualifiedCallSymbol] associated to the [IrNode.IrDotCall].
  */
-fun IrNode.IrDotCall.toQualifiedCallSymbol(): QualifiedCallSymbol =
-    QualifiedCallSymbol(moduleId, callId, arguments.size)
+fun IrDotCall.toQualifiedCallSymbol(): QualifiedCallSymbol = QualifiedCallSymbol(moduleId, callId, arguments.size)
 
 /**
  * Obtains the [ParameterSymbol] associated to the [IrNode.IrParameter].
  */
-fun IrNode.IrParameter.toParameterSymbol(): ParameterSymbol = ParameterSymbol(identifier)
+fun IrParameter.toParameterSymbol(): ParameterSymbol = ParameterSymbol(identifier)
+
+fun IrSingleSlice.toParameterSymbol(): ParameterSymbol = ParameterSymbol(identifier)
 
 /**
  * Represents a [io.github.subjekt.core.Parameter] symbol.

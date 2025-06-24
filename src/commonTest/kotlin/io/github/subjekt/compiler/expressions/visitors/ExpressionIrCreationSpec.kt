@@ -10,12 +10,13 @@
 package io.github.subjekt.compiler.expressions.visitors
 
 import io.github.subjekt.compiler.expressions.Expression
-import io.github.subjekt.compiler.expressions.ir.IrNode.IrCall
-import io.github.subjekt.compiler.expressions.ir.IrNode.IrDotCall
-import io.github.subjekt.compiler.expressions.ir.IrNode.IrExpressionPlus
-import io.github.subjekt.compiler.expressions.ir.IrNode.IrLiteral
-import io.github.subjekt.compiler.expressions.ir.IrNode.IrParameter
-import io.github.subjekt.compiler.expressions.ir.IrNode.IrTree
+import io.github.subjekt.compiler.expressions.ir.BinaryOperator
+import io.github.subjekt.compiler.expressions.ir.IrBinaryOperation
+import io.github.subjekt.compiler.expressions.ir.IrCall
+import io.github.subjekt.compiler.expressions.ir.IrDotCall
+import io.github.subjekt.compiler.expressions.ir.IrParameter
+import io.github.subjekt.compiler.expressions.ir.IrStringLiteral
+import io.github.subjekt.compiler.expressions.ir.IrTree
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 
@@ -31,13 +32,21 @@ class ExpressionIrCreationSpec : StringSpec({
         val expr = Expression("a + b")
         val result = expr.parseToIr()
 
-        result shouldBe IrTree(IrExpressionPlus(IrParameter("a", 1), IrParameter("b", 1), 1))
+        result shouldBe
+            IrTree(
+                IrBinaryOperation(
+                    IrParameter("a", 1),
+                    IrParameter("b", 1),
+                    BinaryOperator.PLUS,
+                    1,
+                ),
+            )
     }
 
     "visitLiteral should return correct IrLiteral" {
         val expr = Expression("\"literal\"")
         val result = expr.parseToIr()
-        result shouldBe IrTree(IrLiteral("literal", 1))
+        result shouldBe IrTree(IrStringLiteral("literal", 1))
     }
 
     "visitMacroCall should return correct IrCall" {
