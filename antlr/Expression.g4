@@ -15,12 +15,10 @@ atomicExpr
     | macroCall                 #call
     | dotCall                   #moduleCall
     | singleSlice               #singleSliceExpr
-    | atomicExpr '+' atomicExpr #plus
-    | atomicExpr '-' atomicExpr #minus
-    | atomicExpr '*' atomicExpr #multiply
-    | atomicExpr '/' atomicExpr #divide
-    | atomicExpr '%' atomicExpr #modulus
+    | atomicExpr (mod='%'|mul='*'|div='/') atomicExpr #modMulDiv
+    | atomicExpr (plus='+'|minus='-') atomicExpr #plusMinus
     | atomicExpr '..' atomicExpr #concat
+    | '(' atomicExpr ')'        #atomicParenthesis
     | ID                        #identifier
     | NUMBER                    #intLiteral
     | FLOAT                     #floatLiteral
@@ -56,8 +54,8 @@ rangeSlice
 STRING : '"' (ESC | ~[\r\n"\\])* '"' | '\'' (ESC | ~[\r\n'\\])* '\'' ;
 ESC : '\\' . ;
 ID  	: ('a'..'z'|'A'..'Z')('a'..'z' | 'A'..'Z' | '0'..'9' | '_')* ;
-NUMBER : ('0'..'9')+ ('.' ('0'..'9')+)? ;
 FLOAT : ('0'..'9')+ '.' ('0'..'9')+ ;
+NUMBER : ('0'..'9')+ ;
 
 WHITESP  : ( '\t' | ' ' | '\n' | '\r' )+    -> channel(HIDDEN) ;
 
