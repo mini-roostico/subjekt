@@ -60,7 +60,7 @@ private class ExpressionIrCreationVisitor(
                             ?.charPositionInLine
                             ?.toString()
                             .orEmpty(),
-                    ).orEmpty() +
+                    ).orEmpty() + " " +
                 message()
         }
     }
@@ -97,40 +97,46 @@ private class ExpressionIrCreationVisitor(
             { visit(it) },
         )
 
-    override fun visitPlus(ctx: ExpressionParser.PlusContext): IrNode =
-        ctx.makeBinaryOperation(
-            ctx.atomicExpr(0),
-            ctx.atomicExpr(1),
-            BinaryOperator.PLUS,
-        )
+    override fun visitPlusMinus(ctx: ExpressionParser.PlusMinusContext): IrNode =
+        if (ctx.minus != null) {
+            ctx.makeBinaryOperation(
+                ctx.atomicExpr(0),
+                ctx.atomicExpr(1),
+                BinaryOperator.MINUS,
+            )
+        } else {
+            ctx.makeBinaryOperation(
+                ctx.atomicExpr(0),
+                ctx.atomicExpr(1),
+                BinaryOperator.PLUS,
+            )
+        }
 
-    override fun visitMultiply(ctx: ExpressionParser.MultiplyContext): IrNode =
-        ctx.makeBinaryOperation(
-            ctx.atomicExpr(0),
-            ctx.atomicExpr(1),
-            BinaryOperator.MULTIPLY,
-        )
+    override fun visitModMulDiv(ctx: ExpressionParser.ModMulDivContext): IrNode =
+        when {
+            ctx.mod != null ->
+                ctx.makeBinaryOperation(
+                    ctx.atomicExpr(0),
+                    ctx.atomicExpr(1),
+                    BinaryOperator.MODULO,
+                )
+            ctx.mul != null ->
+                ctx.makeBinaryOperation(
+                    ctx.atomicExpr(0),
+                    ctx.atomicExpr(1),
+                    BinaryOperator.MULTIPLY,
+                )
+            ctx.div != null ->
+                ctx.makeBinaryOperation(
+                    ctx.atomicExpr(0),
+                    ctx.atomicExpr(1),
+                    BinaryOperator.DIVIDE,
+                )
+            else -> Error(0)
+        }
 
-    override fun visitMinus(ctx: ExpressionParser.MinusContext): IrNode =
-        ctx.makeBinaryOperation(
-            ctx.atomicExpr(0),
-            ctx.atomicExpr(1),
-            BinaryOperator.MINUS,
-        )
-
-    override fun visitDivide(ctx: ExpressionParser.DivideContext): IrNode =
-        ctx.makeBinaryOperation(
-            ctx.atomicExpr(0),
-            ctx.atomicExpr(1),
-            BinaryOperator.DIVIDE,
-        )
-
-    override fun visitModulus(ctx: ExpressionParser.ModulusContext): IrNode =
-        ctx.makeBinaryOperation(
-            ctx.atomicExpr(0),
-            ctx.atomicExpr(1),
-            BinaryOperator.MODULO,
-        )
+    override fun visitAtomicParenthesis(ctx: ExpressionParser.AtomicParenthesisContext): IrNode =
+        visit(ctx.atomicExpr())
 
     override fun visitConcat(ctx: ExpressionParser.ConcatContext): IrNode =
         ctx.makeBinaryOperation(
