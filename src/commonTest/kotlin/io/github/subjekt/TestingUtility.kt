@@ -10,9 +10,12 @@
 package io.github.subjekt
 
 import io.github.subjekt.core.Resolvable
+import io.github.subjekt.core.definition.Context
 import io.github.subjekt.core.resolution.Instance
 import io.github.subjekt.core.resolution.ResolvedSubject
 import io.kotest.assertions.fail
+import io.kotest.matchers.doubles.plusOrMinus
+import io.kotest.matchers.shouldBe
 
 object TestingUtility {
     /**
@@ -28,4 +31,12 @@ object TestingUtility {
 
     fun getSimpleResolvedSubject(name: String): ResolvedSubject =
         ResolvedSubject(0, mapOf("name" to Instance(name, Resolvable(name))))
+
+    fun String.resolveAsExpression(context: Context = Context.empty): String =
+        Resolvable("\${{$this}}").resolve(context)
+
+    infix fun String.shouldResolveTo(expected: String) = this.resolveAsExpression() shouldBe expected
+
+    infix fun String.shouldResolveToDouble(expected: Double) =
+        this.resolveAsExpression().toDoubleOrNull() shouldBe (expected.plusOrMinus(0.000001))
 }
