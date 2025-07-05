@@ -25,7 +25,7 @@ import io.github.subjekt.compiler.expressions.ir.IrTree
 import io.github.subjekt.compiler.expressions.toCallSymbol
 import io.github.subjekt.compiler.expressions.toParameterSymbol
 import io.github.subjekt.compiler.expressions.toQualifiedCallSymbol
-import io.github.subjekt.compiler.expressions.visitors.ir.impl.base.BaseExpressionVisitor
+import io.github.subjekt.compiler.expressions.visitors.ir.impl.BaseExpressionVisitor
 
 /**
  * Visitor for the intermediate representation of an expression (a tree of [IrNode]s). It finds the symbols used in
