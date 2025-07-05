@@ -11,6 +11,7 @@ package io.github.subjekt.core.definition
 
 import io.github.subjekt.core.Resolvable
 import io.github.subjekt.core.SubjektFunction
+import io.github.subjekt.core.SymbolTable
 import io.github.subjekt.core.SymbolTable.Companion.ARGS_SEPARATOR
 
 /**
@@ -21,15 +22,11 @@ import io.github.subjekt.core.SymbolTable.Companion.ARGS_SEPARATOR
  * [io.github.subjekt.core.resolution.Instance].
  */
 data class Context(
-    val definedParameters: Map<String, DefinedParameter>,
-    val definedMacros: Map<String, DefinedMacro>,
-    val functions: Map<String, SubjektFunction>,
+    val definedParameters: Map<String, DefinedParameter> = emptyMap(),
+    val definedMacros: Map<String, DefinedMacro> = emptyMap(),
+    val functions: Map<String, SubjektFunction> = emptyMap(),
+    val originalSymbolTable: SymbolTable? = null,
 ) {
-    /**
-     * Creates a new empty context
-     */
-    constructor() : this(emptyMap(), emptyMap(), emptyMap())
-
     /**
      * Returns the [DefinedParameter] with the given [id], if it exists in this context.
      */

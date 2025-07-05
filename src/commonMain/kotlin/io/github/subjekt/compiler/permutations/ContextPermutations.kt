@@ -35,7 +35,7 @@ fun Subject.requestNeededContexts(): List<Context> {
     symbols.forEach {
         it.populateDefinedSymbols(symbolTable, parameters, macros, functions)
     }
-    return contextPermutationsOutOf(parameters, macros, functions)
+    return symbolTable.contextPermutationsOutOf(parameters, macros, functions)
 }
 
 /**
