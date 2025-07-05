@@ -9,8 +9,11 @@
 
 package io.github.subjekt
 
+import io.github.subjekt.compiler.resolve
 import io.github.subjekt.core.Resolvable
+import io.github.subjekt.core.SymbolTable
 import io.github.subjekt.core.definition.Context
+import io.github.subjekt.core.parsing.SuiteFactory
 import io.github.subjekt.core.resolution.Instance
 import io.github.subjekt.core.resolution.ResolvedSubject
 import io.kotest.assertions.fail
@@ -39,4 +42,27 @@ object TestingUtility {
 
     infix fun String.shouldResolveToDouble(expected: Double) =
         this.resolveAsExpression().toDoubleOrNull() shouldBe (expected.plusOrMinus(0.000001))
+
+    fun String.resolveSingleSubject(symbolTable: SymbolTable = SymbolTable()): Set<String> =
+        SuiteFactory
+            .SuiteBuilder()
+            .id("test")
+            .symbolTable(symbolTable)
+            .subject(
+                SuiteFactory
+                    .SubjectBuilder()
+                    .id(0)
+                    .symbolTable(symbolTable)
+                    .name(Resolvable(this))
+                    .build(),
+            ).build()
+            .resolve()
+            .resolvedSubjects
+            .map { it.name!!.value }
+            .toSet()
+
+    fun String.shouldResolveToSubjects(
+        symbolTable: SymbolTable,
+        vararg expected: String,
+    ) = this.resolveSingleSubject(symbolTable) shouldBe expected.toSet()
 }
