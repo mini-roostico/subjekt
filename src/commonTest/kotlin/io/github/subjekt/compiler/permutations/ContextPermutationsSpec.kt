@@ -26,6 +26,7 @@ import io.kotest.matchers.shouldBe
 
 class ContextPermutationsSpec : StringSpec({
     "requestNeededContexts should return only one empty context when there are no expressions" {
+        val initialSymbolTable = SymbolTable()
         val subject =
             Subject(
                 id = 0,
@@ -34,15 +35,26 @@ class ContextPermutationsSpec : StringSpec({
                         "name" to Resolvable("resolvable1"),
                         "body" to Resolvable("resolvable2"),
                     ),
-                symbolTable = SymbolTable(),
+                symbolTable = initialSymbolTable,
             )
 
         val result = subject.requestNeededContexts()
 
-        result shouldBe listOf(Context())
+        result shouldBe listOf(Context(originalSymbolTable = initialSymbolTable))
     }
 
     "requestNeededContexts should return all the needed contexts for the given subject" {
+        val initialSymbolTable =
+            SymbolTable()
+                .defineParameter(Parameter("param1", listOf("value1", "value2")))
+                .defineParameter(Parameter("param2", listOf("value3", "value4")))
+                .defineParameter(Parameter("param3", listOf("value5")))
+                .defineParameter(Parameter("shouldNotBeIncluded", listOf("value6")))
+                .defineMacro(
+                    Macro("macro1", listOf("arg1"), listOf(Resolvable("\${{ param3 }}"))),
+                ).defineMacro(
+                    Macro("notIncluded", listOf("arg2"), listOf(Resolvable("\${{ param4 }}"))),
+                ).defineFunction("fun") { it.first() }
         val subject =
             Subject(
                 id = 0,
@@ -51,17 +63,7 @@ class ContextPermutationsSpec : StringSpec({
                         "name" to Resolvable("\${{ param1 }} + \${{ macro1(param1) }}"),
                         "body" to Resolvable("\${{ param2 }} rest of the body \${{ fun(param1) }}"),
                     ),
-                symbolTable =
-                    SymbolTable()
-                        .defineParameter(Parameter("param1", listOf("value1", "value2")))
-                        .defineParameter(Parameter("param2", listOf("value3", "value4")))
-                        .defineParameter(Parameter("param3", listOf("value5")))
-                        .defineParameter(Parameter("shouldNotBeIncluded", listOf("value6")))
-                        .defineMacro(
-                            Macro("macro1", listOf("arg1"), listOf(Resolvable("\${{ param3 }}"))),
-                        ).defineMacro(
-                            Macro("notIncluded", listOf("arg2"), listOf(Resolvable("\${{ param4 }}"))),
-                        ).defineFunction("fun") { it.first() },
+                symbolTable = initialSymbolTable,
             )
 
         val result = subject.requestNeededContexts()
@@ -70,7 +72,7 @@ class ContextPermutationsSpec : StringSpec({
             listOf("1", "2")
                 .flatMap { valueParam1 ->
                     listOf("3", "4").map { valueParam2 ->
-                        Context.empty
+                        Context(originalSymbolTable = initialSymbolTable)
                             .withParameters(
                                 "param1" to "value$valueParam1",
                                 "param2" to "value$valueParam2",
