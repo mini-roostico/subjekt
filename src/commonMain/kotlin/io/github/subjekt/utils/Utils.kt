@@ -101,4 +101,11 @@ object Utils {
      * Utility function to generate a unique name for a [ResolvedSubject].
      */
     internal fun ResolvedSubject.uniqueName(): String = "Subject_${subjectId}_${hashCode()}"
+
+    internal fun getRandomString(length: Int): String {
+        val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
+        return (1..length)
+            .map { allowedChars.random() }
+            .joinToString("")
+    }
 }
