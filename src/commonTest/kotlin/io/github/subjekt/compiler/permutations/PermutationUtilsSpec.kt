@@ -11,6 +11,7 @@ package io.github.subjekt.compiler.permutations
 
 import io.github.subjekt.core.Resolvable
 import io.github.subjekt.core.SubjektFunction
+import io.github.subjekt.core.SymbolTable
 import io.github.subjekt.core.SymbolTable.Companion.ARGS_SEPARATOR
 import io.github.subjekt.core.definition.Context
 import io.github.subjekt.core.definition.DefinedMacro
@@ -44,7 +45,8 @@ class PermutationUtilsSpec : StringSpec({
                 ),
             )
         val functions = setOf(SubjektFunction("func1") { it.first() }, SubjektFunction("func2") { it.last() })
-        val contexts = contextPermutationsOutOf(parameters, macros, functions)
+        val symbolTable = SymbolTable()
+        val contexts = symbolTable.contextPermutationsOutOf(parameters, macros, functions)
         val expectedSet =
             listOf("1", "2")
                 .flatMap { firstParamNum ->
@@ -66,6 +68,7 @@ class PermutationUtilsSpec : StringSpec({
                                         "func1" to SubjektFunction("func1") { it.first() },
                                         "func2" to SubjektFunction("func2") { it.last() },
                                     ),
+                                    symbolTable,
                                 )
                             }
                         }
@@ -75,8 +78,9 @@ class PermutationUtilsSpec : StringSpec({
     }
 
     "contextPermutationsOutOf should return all the possible contexts with empty parameters, macros, and functions" {
-        val contexts = contextPermutationsOutOf(emptySet(), emptySet(), emptySet())
-        contexts shouldBe listOf(Context())
+        val symbolTable = SymbolTable()
+        val contexts = symbolTable.contextPermutationsOutOf(emptySet(), emptySet(), emptySet())
+        contexts shouldBe listOf(Context(originalSymbolTable = symbolTable))
     }
 
     "contextPermutationsOutOf should return all the possible context with possibly single parameters" {
@@ -96,7 +100,8 @@ class PermutationUtilsSpec : StringSpec({
                     DefinedMacro("macro1", listOf("arg1"), Resolvable("body1")),
                 ),
             )
-        val contexts = contextPermutationsOutOf(parameters, macros, emptySet())
+        val symbolTable = SymbolTable()
+        val contexts = symbolTable.contextPermutationsOutOf(parameters, macros, emptySet())
         val expectedSet =
             listOf("3", "4")
                 .map { value ->
@@ -109,6 +114,7 @@ class PermutationUtilsSpec : StringSpec({
                             "macro1${ARGS_SEPARATOR}1" to DefinedMacro("macro1", listOf("arg1"), Resolvable("body1")),
                         ),
                         emptyMap(),
+                        symbolTable,
                     )
                 }.toSet()
         contexts.toSet() shouldBe expectedSet
