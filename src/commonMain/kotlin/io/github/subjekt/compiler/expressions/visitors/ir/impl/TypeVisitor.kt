@@ -1,4 +1,4 @@
-package io.github.subjekt.compiler.expressions.visitors.ir.impl.resolve
+package io.github.subjekt.compiler.expressions.visitors.ir.impl
 
 import io.github.subjekt.compiler.expressions.TypeException
 import io.github.subjekt.compiler.expressions.ir.BinaryOperator

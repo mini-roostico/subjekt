@@ -11,8 +11,8 @@ package io.github.subjekt.compiler.expressions
 
 import io.github.subjekt.compiler.expressions.ir.IrTree
 import io.github.subjekt.compiler.expressions.visitors.debug.LogVisitor
-import io.github.subjekt.compiler.expressions.visitors.ir.impl.resolve.ExpressionVisitor
-import io.github.subjekt.compiler.expressions.visitors.ir.impl.resolve.TypeVisitor
+import io.github.subjekt.compiler.expressions.visitors.ir.impl.ExpressionVisitor
+import io.github.subjekt.compiler.expressions.visitors.ir.impl.TypeVisitor
 import io.github.subjekt.compiler.expressions.visitors.ir.impl.resolveSymbols
 import io.github.subjekt.compiler.expressions.visitors.parseToIr
 import io.github.subjekt.core.RawExpression

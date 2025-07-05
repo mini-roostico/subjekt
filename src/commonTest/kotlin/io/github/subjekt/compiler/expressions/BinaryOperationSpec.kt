@@ -6,7 +6,7 @@ import io.github.subjekt.compiler.expressions.ir.BinaryOperator
 import io.github.subjekt.compiler.expressions.ir.IrIntegerLiteral
 import io.github.subjekt.compiler.expressions.ir.IrStringLiteral
 import io.github.subjekt.compiler.expressions.ir.Type
-import io.github.subjekt.compiler.expressions.visitors.ir.impl.resolve.ExpressionVisitor
+import io.github.subjekt.compiler.expressions.visitors.ir.impl.ExpressionVisitor
 import io.github.subjekt.core.definition.Context
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec

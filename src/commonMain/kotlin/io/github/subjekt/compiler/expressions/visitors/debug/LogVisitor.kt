@@ -15,7 +15,7 @@ import io.github.subjekt.compiler.expressions.ir.IrSingleSlice
 import io.github.subjekt.compiler.expressions.ir.IrStartEndSlice
 import io.github.subjekt.compiler.expressions.ir.IrStartSlice
 import io.github.subjekt.compiler.expressions.ir.IrStringLiteral
-import io.github.subjekt.compiler.expressions.visitors.ir.impl.base.BaseExpressionVisitor
+import io.github.subjekt.compiler.expressions.visitors.ir.impl.BaseExpressionVisitor
 
 class LogVisitor(
     private val enabled: Boolean = true,

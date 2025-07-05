@@ -1,4 +1,4 @@
-package io.github.subjekt.compiler.expressions.visitors.ir.impl.resolve
+package io.github.subjekt.compiler.expressions.visitors.ir.impl
 
 import io.github.subjekt.compiler.expressions.ExpressionUtils
 import io.github.subjekt.compiler.expressions.ir.IrBinaryOperation
@@ -15,7 +15,6 @@ import io.github.subjekt.compiler.expressions.ir.utils.IrUtils.callSymbol
 import io.github.subjekt.compiler.expressions.toCallSymbol
 import io.github.subjekt.compiler.expressions.toParameterSymbol
 import io.github.subjekt.compiler.expressions.toQualifiedCallSymbol
-import io.github.subjekt.compiler.expressions.visitors.ir.impl.base.BaseExpressionVisitor
 import io.github.subjekt.core.definition.Context
 
 class ExpressionVisitor(
