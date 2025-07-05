@@ -39,7 +39,7 @@ class ExpressionVisitor(
 
     override fun visitSingleSlice(node: IrSingleSlice): String {
         val originalParameter =
-            node.toParameterSymbol().resolveDefinedParameter(context).originalParameter
+            context.originalSymbolTable?.resolveParameter(node.identifier)
                 ?: throw IllegalArgumentException(
                     "Performing slice on a DefinedParameter '${node.identifier}' " +
                         "with no original parameter defined. Are you defining a Parameter programmatically?",

@@ -20,6 +20,7 @@ import io.github.subjekt.core.SymbolTable
 import io.github.subjekt.core.definition.Context
 import io.github.subjekt.core.definition.DefinedMacro
 import io.github.subjekt.core.definition.DefinedParameter
+import io.github.subjekt.utils.Utils
 
 /**
  * Represents a symbol that can be resolved inside a [io.github.subjekt.core.definition.Context].
@@ -35,6 +36,7 @@ sealed class ResolvableSymbol {
             is CallableSymbol ->
                 symbolTable.resolveMacro(this.callableId, this.nArgs)
                     ?: symbolTable.resolveFunction(this.callableId) ?: throw SymbolNotFoundException(this)
+            is SliceSymbol -> symbolTable.resolveParameter(this.identifier) ?: throw SymbolNotFoundException(this)
         }
 }
 
@@ -117,4 +119,19 @@ data class QualifiedCallSymbol(
 ) : CallableSymbol() {
     override val callableId: String
         get() = "$module.$id"
+}
+
+data class SliceSymbol(
+    /**
+     * Parameter symbol associated with the slice.
+     */
+    val parameter: ParameterSymbol,
+    /**
+     * Identifier of the slice.
+     */
+    val identifier: String = "slice_${parameter.id}_${Utils.getRandomString(RANDOM_STRING_LENGTH)}",
+) : ResolvableSymbol() {
+    companion object {
+        private const val RANDOM_STRING_LENGTH = 16
+    }
 }

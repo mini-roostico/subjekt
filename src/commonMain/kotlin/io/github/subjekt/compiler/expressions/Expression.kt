@@ -10,6 +10,7 @@
 package io.github.subjekt.compiler.expressions
 
 import io.github.subjekt.compiler.expressions.ir.IrTree
+import io.github.subjekt.compiler.expressions.visitors.debug.LogVisitor
 import io.github.subjekt.compiler.expressions.visitors.ir.impl.resolve.ExpressionVisitor
 import io.github.subjekt.compiler.expressions.visitors.ir.impl.resolve.TypeVisitor
 import io.github.subjekt.compiler.expressions.visitors.ir.impl.resolveSymbols
@@ -44,7 +45,10 @@ class Expression(
     @Throws(SymbolNotFoundException::class)
     fun resolve(context: Context): String =
         TypeVisitor(context).visit(ir).run {
-            ExpressionVisitor(context).visit(ir)
+            with(LogVisitor(false)) {
+                visit(ir)
+                ExpressionVisitor(context).visit(ir)
+            }
         }
 
     companion object {

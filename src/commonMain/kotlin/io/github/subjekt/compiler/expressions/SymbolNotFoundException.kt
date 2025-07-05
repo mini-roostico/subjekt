@@ -28,5 +28,7 @@ class SymbolNotFoundException(
                 is QualifiedCallSymbol ->
                     "Called '${symbol.module}.${symbol.callableId}' symbol with ${symbol.nArgs} arguments," +
                         " but '${symbol.module}.${symbol.callableId}/${symbol.nArgs}' cannot be resolved."
+                is SliceSymbol ->
+                    "Slice on parameter '${symbol.identifier}' cannot be resolved."
             }
 }
