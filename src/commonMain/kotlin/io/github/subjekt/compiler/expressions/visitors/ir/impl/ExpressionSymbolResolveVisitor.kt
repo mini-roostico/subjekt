@@ -26,10 +26,13 @@ import io.github.subjekt.compiler.expressions.toQualifiedCallSymbol
 import io.github.subjekt.compiler.expressions.visitors.debug.LogVisitor
 
 /**
- * Visitor for the intermediate representation of an expression (a tree of [IrNode]s). It finds the symbols used in
- * the expression.
+ * Visitor for the intermediate representation of an expression
+ * (a tree of [io.github.subjekt.compiler.expressions.ir.IrNode]s). It finds the symbols used in the expression.
  */
 private class ExpressionSymbolResolveVisitor : BaseExpressionVisitor<Set<ResolvableSymbol>>(emptySet()) {
+    /**
+     * Visitor for integer expressions. It is used to resolve the start, end, and step of range slices.
+     */
     private val intVisitor: IntegerExpressionVisitor = IntegerExpressionVisitor()
 
     private fun ResolvableSymbol.toSet(): Set<ResolvableSymbol> = setOf(this)

@@ -6,6 +6,16 @@ import io.github.subjekt.compiler.expressions.ir.Type
 import kotlin.math.round
 
 object ExpressionUtils {
+    /**
+     * Resolves a binary operation between two [IrNode]s based on the provided [BinaryOperator] and [Type].
+     *
+     * @param leftNode The left operand of the binary operation.
+     * @param rightNode The right operand of the binary operation.
+     * @param operator The binary operator to apply.
+     * @param type The type of the operation, which determines how the operation is resolved.
+     * @param visitMethod A function that converts an [IrNode] to a string representation.
+     * @return A string representation of the result of the binary operation.
+     */
     internal fun resolveBinaryOperation(
         leftNode: IrNode,
         rightNode: IrNode,

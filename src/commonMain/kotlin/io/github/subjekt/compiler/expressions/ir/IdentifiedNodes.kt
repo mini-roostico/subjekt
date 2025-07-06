@@ -1,6 +1,12 @@
 package io.github.subjekt.compiler.expressions.ir
 
+/**
+ * Represents a node of the IR tree that has an identifier.
+ */
 sealed class IrIdentified(
+    /**
+     * Identifier of the node.
+     */
     open val identifier: String,
     override val line: Int,
 ) : IrAtomicNode(line)

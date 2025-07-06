@@ -1,5 +1,8 @@
 package io.github.subjekt.compiler.expressions.ir
 
+/**
+ * Represents a binary operation in the Subjekt language.
+ */
 enum class BinaryOperator {
     PLUS,
     MINUS,
@@ -9,6 +12,9 @@ enum class BinaryOperator {
     CONCAT,
 }
 
+/**
+ * Represents a binary operation in the IR tree.
+ */
 data class IrBinaryOperation(
     /**
      * Left operand.

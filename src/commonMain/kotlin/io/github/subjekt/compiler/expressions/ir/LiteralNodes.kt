@@ -1,5 +1,8 @@
 package io.github.subjekt.compiler.expressions.ir
 
+/**
+ * Represents a literal value in the Subjekt IR.
+ */
 sealed class IrLiteral(
     override val line: Int,
 ) : IrAtomicNode(line)

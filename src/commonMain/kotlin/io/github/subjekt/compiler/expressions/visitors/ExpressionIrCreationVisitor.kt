@@ -39,7 +39,7 @@ import org.antlr.v4.kotlinruntime.CommonTokenStream
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 /**
- * Visitor that creates the intermediate representation of the expression (a tree of [Node]s).
+ * Visitor that creates the intermediate representation of the expression (a tree of [IrNode]s).
  */
 private class ExpressionIrCreationVisitor(
     /**
@@ -55,6 +55,9 @@ private class ExpressionIrCreationVisitor(
      */
     private var indentLevel: Int = 0,
 ) : ExpressionBaseVisitor<IrNode>() {
+    /**
+     * Current slice ID, used for slice expressions.
+     */
     private var slice: String? = null
 
     private fun newSlice(

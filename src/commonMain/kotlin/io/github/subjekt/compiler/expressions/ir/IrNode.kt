@@ -22,9 +22,15 @@ sealed class IrNode(
 ) {
     var type: Type = Type.UNDEFINED
 
+    /**
+     * Accepts a [irVisitor] to visit this node.
+     */
     fun <T> accept(irVisitor: IrVisitor<T>) = irVisitor.visit(this)
 }
 
+/**
+ * Represents the type of IR node.
+ */
 enum class Type {
     STRING,
     INTEGER,
@@ -37,6 +43,9 @@ enum class Type {
  * IR wrapper for the entire tree.
  */
 data class IrTree(
+    /**
+     * The root node of the IR tree.
+     */
     val node: IrNode,
 ) : IrNode(-1)
 
