@@ -1,3 +1,56 @@
+## [2.1.0](https://github.com/mini-roostico/subjekt/compare/2.0.11...2.1.0) (2025-07-06)
+
+### Features
+
+* extended grammar to support slices and numbers (integer and floats) ([fe8756d](https://github.com/mini-roostico/subjekt/commit/fe8756d9f3f06ba3ae3a2cec189aa0ab32790fcf))
+* implemented operator precedence ([df006e5](https://github.com/mini-roostico/subjekt/commit/df006e5348994a1e1ca37d59300270bc67df724a))
+* implemented range slice resolution ([1f5b91b](https://github.com/mini-roostico/subjekt/commit/1f5b91baa6369682592b5c0b6c247b30cb142c07))
+* implemented single slice expression resolution ([2a0f775](https://github.com/mini-roostico/subjekt/commit/2a0f775a25e8373670089eb9d6b230d6bb573af5))
+* major rework of the whole expression resolving system, making use of types and more advanced visitors ([490e90a](https://github.com/mini-roostico/subjekt/commit/490e90a8dbbe5d38b009347497c054284769a981))
+
+### Dependency updates
+
+* **deps:** update dependency gradle to v8.14.3 ([#188](https://github.com/mini-roostico/subjekt/issues/188)) ([5b1f5fe](https://github.com/mini-roostico/subjekt/commit/5b1f5fe914b5420d6f762ec0107b16d64500e285))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.134 ([#180](https://github.com/mini-roostico/subjekt/issues/180)) ([5a20673](https://github.com/mini-roostico/subjekt/commit/5a2067302384d729acbf0ca7726a13377dda2511))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.135 ([#183](https://github.com/mini-roostico/subjekt/issues/183)) ([a34d805](https://github.com/mini-roostico/subjekt/commit/a34d805549da877548a20fe3a8c0f59dd1d66aa0))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.136 ([#186](https://github.com/mini-roostico/subjekt/issues/186)) ([be8168f](https://github.com/mini-roostico/subjekt/commit/be8168fe2760850319337656f717920ec8d4741b))
+* **deps:** update node.js to v22.17.0 ([#178](https://github.com/mini-roostico/subjekt/issues/178)) ([38b22d7](https://github.com/mini-roostico/subjekt/commit/38b22d7b1486932556ecfcec36cda055859ec7a5))
+* **deps:** update plugin gitsemver to v5.1.5 ([#184](https://github.com/mini-roostico/subjekt/issues/184)) ([6239737](https://github.com/mini-roostico/subjekt/commit/62397376790b7dd1961a75d4686a4d3c134ef832))
+* **deps:** update plugin gitsemver to v5.1.6 ([#185](https://github.com/mini-roostico/subjekt/issues/185)) ([88577db](https://github.com/mini-roostico/subjekt/commit/88577dbb34210e3fac92e90de07e6b121566933d))
+* **deps:** update plugin gitsemver to v5.1.7 ([#189](https://github.com/mini-roostico/subjekt/issues/189)) ([4c2116b](https://github.com/mini-roostico/subjekt/commit/4c2116b01f544142fbe39a2f2e3f1d31f93027d4))
+* **deps:** update plugin mavenpublish to v0.33.0 ([#173](https://github.com/mini-roostico/subjekt/issues/173)) ([4531365](https://github.com/mini-roostico/subjekt/commit/45313656735ae428e5387624aed22e64eb677204))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.0.27 ([#177](https://github.com/mini-roostico/subjekt/issues/177)) ([aa444a9](https://github.com/mini-roostico/subjekt/commit/aa444a9a9b90664bc7db3ca1dfe63802cec8efb5))
+
+### Bug Fixes
+
+* corrected tests ([656c003](https://github.com/mini-roostico/subjekt/commit/656c003751c2956d815c7c9df7c3d5ff6455a553))
+* re-added old visitor ([9c140cc](https://github.com/mini-roostico/subjekt/commit/9c140cc4dcd8e4761bff588f77a9c0fe55e8bad3))
+
+### Documentation
+
+* added documentation ([d173f2a](https://github.com/mini-roostico/subjekt/commit/d173f2ad70b2f77d0b1feaa53e6e0e41e5d09003))
+
+### Tests
+
+* added tests for binary operations ([88e9f3e](https://github.com/mini-roostico/subjekt/commit/88e9f3eadcf49a4f1c4335f53d7cb01d845ec815))
+* added tests for single slice ([53109ac](https://github.com/mini-roostico/subjekt/commit/53109ac180fd0bcbf5152a7dc5e50daafc9641aa))
+* fixed tests. Added tests for slices ([7cb8550](https://github.com/mini-roostico/subjekt/commit/7cb85504ae50685f3fb40e340e93ace90a93163d))
+
+### Build and continuous integration
+
+* changed group ([c2527c0](https://github.com/mini-roostico/subjekt/commit/c2527c08e008670df19476229a542203609b309f))
+
+### General maintenance
+
+* modified .detekt.yml ([477924c](https://github.com/mini-roostico/subjekt/commit/477924c3399da1e520d8f9cf1e8b26e4cb59e5d1))
+
+### Refactoring
+
+* added originalSymbolTable to Context properties ([da615b7](https://github.com/mini-roostico/subjekt/commit/da615b737cdb867926f78226a61ff824c9e7c37c))
+* added utility visitor to log the tree ([030929e](https://github.com/mini-roostico/subjekt/commit/030929eee6902aa1b452a24c4f9f05e13e70da1b))
+* deep modifications to the grammar and the IR structure. ([9713325](https://github.com/mini-roostico/subjekt/commit/9713325c19430e5b110466c4a4fa12f46ef3a172))
+* moved visitors out of sub-packages ([b726e80](https://github.com/mini-roostico/subjekt/commit/b726e80bc4122a87c0327530b86a39ee060f26e9))
+
 ## [2.0.11](https://github.com/mini-roostico/subjekt/compare/2.0.10...2.0.11) (2025-06-19)
 
 ### Bug Fixes
