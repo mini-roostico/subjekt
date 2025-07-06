@@ -2,6 +2,9 @@ package io.github.subjekt.compiler.expressions.ir
 
 import io.github.subjekt.compiler.expressions.SliceSymbol
 
+/**
+ * Represents a slice operation in the Subjekt IR.
+ */
 data class IrRangeSlice(
     val identifier: String,
     /**

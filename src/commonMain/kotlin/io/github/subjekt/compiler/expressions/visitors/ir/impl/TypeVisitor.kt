@@ -21,9 +21,20 @@ import io.github.subjekt.compiler.expressions.toParameterSymbol
 import io.github.subjekt.compiler.expressions.visitors.ir.IrVisitor
 import io.github.subjekt.core.definition.Context
 
+/**
+ * A visitor that infers the type of an expression in the intermediate representation (IR).
+ * It traverses the IR tree and assigns types to nodes based on the operations and operands.
+ *
+ * @property context The context in which the IR is evaluated, providing access to symbols and definitions.
+ */
 class TypeVisitor(
     val context: Context,
 ) : IrVisitor<Type> {
+    /**
+     * A temporary variable to hold the type we are trying to infer.
+     * This is used to handle cases where the type is not explicitly defined,
+     * such as in binary operations or function calls.
+     */
     private var tryInferType: Type? = null
 
     override fun visitBinaryOperation(node: IrBinaryOperation): Type {

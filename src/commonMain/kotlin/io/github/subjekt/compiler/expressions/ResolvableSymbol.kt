@@ -141,6 +141,12 @@ data class SliceSymbol(
     val identifier: String = "slice_${parameter.id}_$startIndex:${endIndex ?: ""}:$stepIndex"
 }
 
+/**
+ * Converts an [IrRangeSlice] to a [ParameterSymbol].
+ *
+ * @throws InternalCompilerException if the slice has no symbol defined, which should not happen and should be
+ * considered a bug.
+ */
 fun IrRangeSlice.toParameterSymbol(): ParameterSymbol =
     symbol?.run { ParameterSymbol(this.identifier) } ?: throw InternalCompilerException(
         this,

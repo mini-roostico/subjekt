@@ -17,11 +17,17 @@ import io.github.subjekt.core.definition.DefinedMacro
 import org.antlr.v4.kotlinruntime.ParserRuleContext
 
 object IrUtils {
+    /**
+     * Represents the type of binary operation.
+     */
     internal enum class BinaryOperationType {
         INTEGER,
         STRING,
     }
 
+    /**
+     * Creates a binary operation [IrBinaryOperation] from the given [ParserRuleContext]s and [BinaryOperator].
+     */
     internal fun ParserRuleContext?.binaryOperation(
         right: ParserRuleContext?,
         op: BinaryOperator,
@@ -59,6 +65,11 @@ object IrUtils {
             }
     }
 
+    /**
+     * Calls the [CallableSymbol] with the given [arguments], resolving it to either a macro or a function.
+     *
+     * @throws SymbolNotFoundException if the symbol is not found in the context.
+     */
     fun Context.callSymbol(
         symbol: CallableSymbol,
         arguments: List<String>,
@@ -75,6 +86,9 @@ object IrUtils {
         }
     }
 
+    /**
+     * Resolves the [IrCall] to a string result using the given [Context] and [visitMethod] to visit inner nodes.
+     */
     fun IrCall.resolveCall(
         context: Context,
         visitMethod: (IrNode) -> String,
@@ -83,7 +97,10 @@ object IrUtils {
         return context.callSymbol(symbol, arguments.map { visitMethod(it) })
     }
 
-    fun IrDotCall.resolveCall(
+    /**
+     * Resolves the [IrDotCall] to a string result using the given [Context] and [visitMethod] to visit inner nodes.
+     */
+    internal fun IrDotCall.resolveCall(
         context: Context,
         visitMethod: (IrNode) -> String,
     ): String {
@@ -91,7 +108,12 @@ object IrUtils {
         return context.callSymbol(symbol, arguments.map { visitMethod(it) })
     }
 
-    fun tryInferType(
+    /**
+     * Infers the type of the given [value] based on the provided [type].
+     *
+     * @throws TypeException if the value cannot be converted to the specified type.
+     */
+    internal fun tryInferType(
         value: String,
         type: Type?,
         message: String,

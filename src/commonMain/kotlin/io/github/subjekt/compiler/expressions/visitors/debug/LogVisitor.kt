@@ -15,6 +15,11 @@ import io.github.subjekt.compiler.expressions.ir.IrStringLiteral
 import io.github.subjekt.compiler.expressions.ir.IrUnaryOperation
 import io.github.subjekt.compiler.expressions.visitors.ir.impl.BaseExpressionVisitor
 
+/**
+ * A visitor that logs the structure of the IR tree to the console.
+ *
+ * @property enabled Whether the logging is enabled. If false, no logging will occur.
+ */
 class LogVisitor(
     private val enabled: Boolean = true,
 ) : BaseExpressionVisitor<Unit>(Unit) {

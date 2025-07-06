@@ -22,10 +22,19 @@ import io.github.subjekt.utils.Utils
  * [io.github.subjekt.compiler.expressions.ir.IrNode]s).
  */
 interface IrVisitor<T> {
+    /**
+     * Visits a [io.github.subjekt.compiler.expressions.ir.IrBinaryOperation] node.
+     */
     fun visitBinaryOperation(node: IrBinaryOperation): T
 
+    /**
+     * Visits a [io.github.subjekt.compiler.expressions.ir.IrCast] node.
+     */
     fun visitCast(node: IrCast): T
 
+    /**
+     * Visits a [io.github.subjekt.compiler.expressions.ir.IrEndOfSlice] node.
+     */
     fun visitEndOfSlice(node: IrEndOfSlice): T
 
     /**

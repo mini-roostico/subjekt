@@ -20,7 +20,15 @@ import io.github.subjekt.compiler.expressions.toParameterSymbol
 import io.github.subjekt.compiler.expressions.toQualifiedCallSymbol
 import io.github.subjekt.core.definition.Context
 
+/**
+ * Visitor for the intermediate representation of an expression
+ * (a tree of [io.github.subjekt.compiler.expressions.ir.IrNode]s). It evaluates the expression
+ * and returns a string representation of the result.
+ */
 class ExpressionVisitor(
+    /**
+     * The context in which the expression is evaluated.
+     */
     val context: Context,
 ) : BaseExpressionVisitor<String>("") {
     override fun visitCall(node: IrCall): String {

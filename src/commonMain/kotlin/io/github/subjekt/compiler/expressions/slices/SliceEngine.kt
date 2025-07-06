@@ -3,7 +3,15 @@ package io.github.subjekt.compiler.expressions.slices
 import io.github.subjekt.compiler.expressions.SliceSymbol
 import io.github.subjekt.core.Parameter
 
+/**
+ * Slice engine for handling slice operations in the Subjekt language.
+ *
+ * This engine provides functionality to apply slice operations on parameters based on the defined slice symbol.
+ */
 object SliceEngine {
+    /**
+     * Applies the slice operation defined by the [SliceSymbol] to the given [Parameter].
+     */
     fun SliceSymbol.view(parameter: Parameter): Parameter =
         parameter.values.slice(startIndex, endIndex, stepIndex).run {
             Parameter(
@@ -12,6 +20,9 @@ object SliceEngine {
             )
         }
 
+    /**
+     * Performs a Python-like slice of a list of elements based on the provided start, end, and step indices.
+     */
     internal fun <T> List<T>.slice(
         start: Int? = null,
         end: Int? = null,

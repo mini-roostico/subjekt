@@ -12,6 +12,9 @@ import io.github.subjekt.compiler.expressions.ir.IrUnaryOperation
 import io.github.subjekt.compiler.expressions.ir.Type
 import io.github.subjekt.compiler.expressions.ir.UnaryOperator
 
+/**
+ * Visitor for evaluating integer expressions in the intermediate representation (IR).
+ */
 class IntegerExpressionVisitor :
     BaseExpressionVisitor<Int>(
         Int.MIN_VALUE,

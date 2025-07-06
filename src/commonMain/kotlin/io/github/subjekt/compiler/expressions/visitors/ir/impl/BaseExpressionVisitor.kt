@@ -14,7 +14,13 @@ import io.github.subjekt.compiler.expressions.ir.IrStringLiteral
 import io.github.subjekt.compiler.expressions.ir.IrUnaryOperation
 import io.github.subjekt.compiler.expressions.visitors.ir.IrVisitor
 
+/**
+ * Base implementation of [IrVisitor] that provides default behavior for visiting.
+ */
 abstract class BaseExpressionVisitor<T>(
+    /**
+     * Default value to return when visiting nodes.
+     */
     private val default: T,
 ) : IrVisitor<T> {
     override fun visitBinaryOperation(node: IrBinaryOperation): T {
