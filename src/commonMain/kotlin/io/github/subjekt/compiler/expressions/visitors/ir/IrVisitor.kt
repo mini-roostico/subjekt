@@ -4,19 +4,17 @@ import io.github.subjekt.compiler.expressions.ir.Error
 import io.github.subjekt.compiler.expressions.ir.IrBinaryOperation
 import io.github.subjekt.compiler.expressions.ir.IrCall
 import io.github.subjekt.compiler.expressions.ir.IrCast
-import io.github.subjekt.compiler.expressions.ir.IrCompleteSlice
 import io.github.subjekt.compiler.expressions.ir.IrDotCall
 import io.github.subjekt.compiler.expressions.ir.IrEndOfSlice
-import io.github.subjekt.compiler.expressions.ir.IrEndSlice
 import io.github.subjekt.compiler.expressions.ir.IrFloatLiteral
 import io.github.subjekt.compiler.expressions.ir.IrIntegerLiteral
 import io.github.subjekt.compiler.expressions.ir.IrNode
 import io.github.subjekt.compiler.expressions.ir.IrParameter
+import io.github.subjekt.compiler.expressions.ir.IrRangeSlice
 import io.github.subjekt.compiler.expressions.ir.IrSingleSlice
-import io.github.subjekt.compiler.expressions.ir.IrStartEndSlice
-import io.github.subjekt.compiler.expressions.ir.IrStartSlice
 import io.github.subjekt.compiler.expressions.ir.IrStringLiteral
 import io.github.subjekt.compiler.expressions.ir.IrTree
+import io.github.subjekt.compiler.expressions.ir.IrUnaryOperation
 import io.github.subjekt.utils.Utils
 
 /**
@@ -66,24 +64,14 @@ interface IrVisitor<T> {
     fun visitStringLiteral(node: IrStringLiteral): T
 
     /**
-     * Visits a [io.github.subjekt.compiler.expressions.ir.IrCompleteSlice] node.
+     * Visits a [IrRangeSlice] node.
      */
-    fun visitCompleteSlice(node: IrCompleteSlice): T
+    fun visitRangeSlice(node: IrRangeSlice): T
 
     /**
-     * Visits a [io.github.subjekt.compiler.expressions.ir.IrEndSlice] node.
+     * Visits a [IrUnaryOperation] node.
      */
-    fun visitEndSlice(node: IrEndSlice): T
-
-    /**
-     * Visits a [io.github.subjekt.compiler.expressions.ir.IrStartEndSlice] node.
-     */
-    fun visitStartEndSlice(node: IrStartEndSlice): T
-
-    /**
-     * Visits a [io.github.subjekt.compiler.expressions.ir.IrStartSlice] node.
-     */
-    fun visitStartSlice(node: IrStartSlice): T
+    fun visitUnaryOperation(node: IrUnaryOperation): T
 
     /**
      * Visits a [io.github.subjekt.compiler.expressions.ir.IrNode], calling the appropriate visit method based on the
@@ -100,11 +88,9 @@ interface IrVisitor<T> {
             is IrFloatLiteral -> visitFloatLiteral(node)
             is IrIntegerLiteral -> visitIntegerLiteral(node)
             is IrStringLiteral -> visitStringLiteral(node)
-            is IrCompleteSlice -> visitCompleteSlice(node)
-            is IrEndSlice -> visitEndSlice(node)
-            is IrStartEndSlice -> visitStartEndSlice(node)
-            is IrStartSlice -> visitStartSlice(node)
             is IrParameter -> visitParameter(node)
+            is IrRangeSlice -> visitRangeSlice(node)
+            is IrUnaryOperation -> visitUnaryOperation(node)
             is IrTree -> visit(node.node)
             is Error -> Utils.parsingFail { "Cannot visit an error node: $node" }
         }

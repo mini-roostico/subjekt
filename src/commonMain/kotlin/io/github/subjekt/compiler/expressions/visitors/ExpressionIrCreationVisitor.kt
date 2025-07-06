@@ -16,20 +16,19 @@ import io.github.subjekt.compiler.expressions.ir.Error
 import io.github.subjekt.compiler.expressions.ir.IrAtomicNode
 import io.github.subjekt.compiler.expressions.ir.IrCall
 import io.github.subjekt.compiler.expressions.ir.IrCast
-import io.github.subjekt.compiler.expressions.ir.IrCompleteSlice
 import io.github.subjekt.compiler.expressions.ir.IrDotCall
 import io.github.subjekt.compiler.expressions.ir.IrEndOfSlice
-import io.github.subjekt.compiler.expressions.ir.IrEndSlice
 import io.github.subjekt.compiler.expressions.ir.IrFloatLiteral
 import io.github.subjekt.compiler.expressions.ir.IrIntegerLiteral
 import io.github.subjekt.compiler.expressions.ir.IrNativeType
 import io.github.subjekt.compiler.expressions.ir.IrNode
 import io.github.subjekt.compiler.expressions.ir.IrParameter
+import io.github.subjekt.compiler.expressions.ir.IrRangeSlice
 import io.github.subjekt.compiler.expressions.ir.IrSingleSlice
-import io.github.subjekt.compiler.expressions.ir.IrStartEndSlice
-import io.github.subjekt.compiler.expressions.ir.IrStartSlice
 import io.github.subjekt.compiler.expressions.ir.IrStringLiteral
 import io.github.subjekt.compiler.expressions.ir.IrTree
+import io.github.subjekt.compiler.expressions.ir.IrUnaryOperation
+import io.github.subjekt.compiler.expressions.ir.UnaryOperator
 import io.github.subjekt.compiler.expressions.ir.utils.IrUtils.binaryOperation
 import io.github.subjekt.parsers.generated.ExpressionBaseVisitor
 import io.github.subjekt.parsers.generated.ExpressionLexer
@@ -47,7 +46,54 @@ private class ExpressionIrCreationVisitor(
      * Expression body to parse into an IR tree.
      */
     val expressionSource: String,
+    /**
+     * Flag to enable IR tree logging.
+     */
+    private val enableLogging: Boolean = false,
+    /**
+     * Current indentation level for logging.
+     */
+    private var indentLevel: Int = 0,
 ) : ExpressionBaseVisitor<IrNode>() {
+    private var slice: String? = null
+
+    private fun newSlice(
+        id: String,
+        creation: () -> IrNode,
+    ): IrNode {
+        slice = id
+        val res = creation()
+        slice = null
+        return res
+    }
+
+    private fun log(message: String) {
+        if (enableLogging) {
+            val indent = "  ".repeat(indentLevel)
+            println("$indent$message")
+        }
+    }
+
+    private fun <T> withIndent(block: () -> T): T {
+        indentLevel++
+        return try {
+            block()
+        } finally {
+            indentLevel--
+        }
+    }
+
+    private fun logVisit(
+        ruleName: String,
+        context: ParserRuleContext,
+        result: IrNode,
+    ): IrNode {
+        if (enableLogging) {
+            log("Visiting $ruleName: '${context.text}' -> ${result::class.simpleName}")
+        }
+        return result
+    }
+
     private fun ParserRuleContext.createError(message: () -> String): Nothing {
         parsingFail {
             "Parsing expression $expressionSource failed: " +
@@ -74,13 +120,103 @@ private class ExpressionIrCreationVisitor(
         }
     }
 
-    override fun visitIdentifier(ctx: ExpressionParser.IdentifierContext): IrNode =
-        IrParameter(
-            identifier = ctx.ID().text,
-            line = ctx.start?.line ?: -1,
-        )
+    override fun visitMulDivMod(ctx: ExpressionParser.MulDivModContext): IrNode =
+        withIndent {
+            log("ModMulDiv: ${ctx.text}")
+            val result =
+                when {
+                    ctx.mod != null ->
+                        ctx.makeBinaryOperation(
+                            ctx.left,
+                            ctx.right,
+                            BinaryOperator.MODULO,
+                        )
 
-    override fun visitSingleSliceExpr(ctx: ExpressionParser.SingleSliceExprContext): IrNode = visit(ctx.singleSlice())
+                    ctx.mul != null ->
+                        ctx.makeBinaryOperation(
+                            ctx.left,
+                            ctx.right,
+                            BinaryOperator.MULTIPLY,
+                        )
+
+                    ctx.div != null ->
+                        ctx.makeBinaryOperation(
+                            ctx.left,
+                            ctx.right,
+                            BinaryOperator.DIVIDE,
+                        )
+
+                    else -> Error(0)
+                }
+            logVisit("ModMulDiv", ctx, result)
+        }
+
+    override fun visitQualifiedCall(ctx: ExpressionParser.QualifiedCallContext): IrNode =
+        withIndent {
+            log("DotCall: ${ctx.text}")
+            val callId = ctx.call?.text ?: ""
+            ctx.parsingCheck(callId.isNotBlank()) {
+                "qualified call is missing identifiers"
+            }
+            val arguments = ctx.expr().map { visit(it) }
+            val receiver = ctx.receiver ?: parsingFail { "Receiver of the dot call is missing" }
+            val result =
+                IrDotCall(
+                    visit(receiver),
+                    callId,
+                    arguments.map { it },
+                    ctx.start?.line ?: -1,
+                )
+            logVisit("DotCall", ctx, result)
+        }
+
+    override fun visitUnaryPlusMinus(ctx: ExpressionParser.UnaryPlusMinusContext): IrNode =
+        withIndent {
+            log("UnaryPlusMinus: ${ctx.text}")
+            IrUnaryOperation(
+                if (ctx.minus != null) UnaryOperator.MINUS else UnaryOperator.PLUS,
+                visit(ctx.expr()),
+                ctx.start?.line ?: -1,
+            )
+        }
+
+    override fun visitAddSub(ctx: ExpressionParser.AddSubContext): IrNode =
+        withIndent {
+            log("PlusMinus: ${ctx.text}")
+            val result =
+                if (ctx.minus != null) {
+                    ctx.makeBinaryOperation(
+                        ctx.left,
+                        ctx.right,
+                        BinaryOperator.MINUS,
+                    )
+                } else {
+                    ctx.makeBinaryOperation(
+                        ctx.left,
+                        ctx.right,
+                        BinaryOperator.PLUS,
+                    )
+                }
+            logVisit("PlusMinus", ctx, result)
+        }
+
+    override fun visitSlice(ctx: ExpressionParser.SliceContext): IrNode =
+        withIndent {
+            log("SliceExpr: ${ctx.text}")
+            newSlice(ctx.ID().text) {
+                visit(ctx.sliceExpr())
+            }
+        }
+
+    override fun visitIdentifier(ctx: ExpressionParser.IdentifierContext): IrNode =
+        withIndent {
+            val result =
+                IrParameter(
+                    identifier = ctx.ID().text,
+                    line = ctx.start?.line ?: -1,
+                )
+            logVisit("Identifier", ctx, result)
+        }
 
     private fun ParserRuleContext.makeBinaryOperation(
         left: ParserRuleContext?,
@@ -97,188 +233,227 @@ private class ExpressionIrCreationVisitor(
             { visit(it) },
         )
 
-    override fun visitPlusMinus(ctx: ExpressionParser.PlusMinusContext): IrNode =
-        if (ctx.minus != null) {
-            ctx.makeBinaryOperation(
-                ctx.atomicExpr(0),
-                ctx.atomicExpr(1),
-                BinaryOperator.MINUS,
-            )
-        } else {
-            ctx.makeBinaryOperation(
-                ctx.atomicExpr(0),
-                ctx.atomicExpr(1),
-                BinaryOperator.PLUS,
-            )
-        }
-
-    override fun visitModMulDiv(ctx: ExpressionParser.ModMulDivContext): IrNode =
-        when {
-            ctx.mod != null ->
-                ctx.makeBinaryOperation(
-                    ctx.atomicExpr(0),
-                    ctx.atomicExpr(1),
-                    BinaryOperator.MODULO,
-                )
-            ctx.mul != null ->
-                ctx.makeBinaryOperation(
-                    ctx.atomicExpr(0),
-                    ctx.atomicExpr(1),
-                    BinaryOperator.MULTIPLY,
-                )
-            ctx.div != null ->
-                ctx.makeBinaryOperation(
-                    ctx.atomicExpr(0),
-                    ctx.atomicExpr(1),
-                    BinaryOperator.DIVIDE,
-                )
-            else -> Error(0)
-        }
-
-    override fun visitAtomicParenthesis(ctx: ExpressionParser.AtomicParenthesisContext): IrNode =
-        visit(ctx.atomicExpr())
-
     override fun visitConcat(ctx: ExpressionParser.ConcatContext): IrNode =
-        ctx.makeBinaryOperation(
-            ctx.atomicExpr(0),
-            ctx.atomicExpr(1),
-            BinaryOperator.CONCAT,
-        )
+        withIndent {
+            log("Concat: ${ctx.text}")
+            val result =
+                ctx.makeBinaryOperation(
+                    ctx.left,
+                    ctx.right,
+                    BinaryOperator.CONCAT,
+                )
+            logVisit("Concat", ctx, result)
+        }
 
     override fun visitIntLiteral(ctx: ExpressionParser.IntLiteralContext): IrNode =
-        IrIntegerLiteral(
-            ctx.NUMBER().text.toIntOrNull()
-                ?: ctx.createError { "error converting ${ctx.text} to integer" },
-            ctx.start?.line ?: -1,
-        )
+        withIndent {
+            val result =
+                IrIntegerLiteral(
+                    ctx
+                        .INT()
+                        .text
+                        .replace("\\s".toRegex(), "")
+                        .toIntOrNull()
+                        ?: ctx.createError { "error converting ${ctx.text} to integer" },
+                    ctx.start?.line ?: -1,
+                )
+            logVisit("IntLiteral", ctx, result)
+        }
 
     override fun visitStringLiteral(ctx: ExpressionParser.StringLiteralContext): IrNode =
-        IrStringLiteral(
-            ctx.text
-                .trim()
-                .removePrefix("\"")
-                .removePrefix("'")
-                .removeSuffix("\"")
-                .removeSuffix("'")
-                .replace("\\\"", "\"")
-                .replace("\\'", "'"),
-            ctx.start?.line ?: -1,
-        )
+        withIndent {
+            val result =
+                IrStringLiteral(
+                    ctx.text
+                        .trim()
+                        .removePrefix("\"")
+                        .removePrefix("'")
+                        .removeSuffix("\"")
+                        .removeSuffix("'")
+                        .replace("\\\"", "\"")
+                        .replace("\\'", "'"),
+                    ctx.start?.line ?: -1,
+                )
+            logVisit("StringLiteral", ctx, result)
+        }
 
     override fun visitFloatLiteral(ctx: ExpressionParser.FloatLiteralContext): IrNode =
-        IrFloatLiteral(
-            ctx.FLOAT().text.toDoubleOrNull()
-                ?: ctx.createError { "error converting ${ctx.text} to float" },
-            ctx.start?.line ?: -1,
-        )
+        withIndent {
+            val result =
+                IrFloatLiteral(
+                    ctx
+                        .FLOAT()
+                        .text
+                        .replace("\\s".toRegex(), "")
+                        .toDoubleOrNull()
+                        ?: ctx.createError { "error converting ${ctx.text} to float" },
+                    ctx.start?.line ?: -1,
+                )
+            logVisit("FloatLiteral", ctx, result)
+        }
 
     override fun visitSingleSlice(ctx: ExpressionParser.SingleSliceContext): IrNode =
-        IrSingleSlice(
-            identifier = ctx.ID().text,
-            indexExpression = visit(ctx.atomicExpr()),
-            line = ctx.start?.line ?: -1,
-        )
+        withIndent {
+            log("SingleSlice: ${ctx.text}")
+            val result =
+                IrSingleSlice(
+                    identifier = slice ?: parsingFail { "Internal compiler error: slice ID was null" },
+                    indexExpression = visit(ctx.index ?: ctx.createError { "error converting ${ctx.text} to index" }),
+                    line = ctx.start?.line ?: -1,
+                )
+            logVisit("SingleSlice", ctx, result)
+        }
 
-    override fun visitSliceStartEnd(ctx: ExpressionParser.SliceStartEndContext): IrNode {
-        val start = ctx.startExpr?.let { visit(it) } ?: ctx.createError { "start of slice is null" }
-        val end = ctx.endExpr?.let { visit(it) } ?: ctx.createError { "end of slice is null" }
-        return IrStartEndSlice(
-            identifier = ctx.ID().text,
-            start = start as? IrAtomicNode ?: ctx.createError { "start of slice is not atomic" },
-            end = end as? IrAtomicNode ?: ctx.createError { "end of slice is not atomic" },
-            line = ctx.start?.line ?: -1,
-        )
-    }
+    override fun visitSliceStartStep(ctx: ExpressionParser.SliceStartStepContext): IrNode =
+        withIndent {
+            log("SliceStartStep: ${ctx.text}")
+            val start = ctx.startSlice?.let { visit(it) } ?: ctx.createError { "start of slice is null" }
+            val step = ctx.stepSlice?.let { visit(it) } ?: IrIntegerLiteral(1, ctx.start?.line ?: -1)
+            val result =
+                IrRangeSlice(
+                    identifier = slice ?: ctx.createError { "slice ID is null" },
+                    start = start as? IrAtomicNode ?: ctx.createError { "start of slice is not atomic" },
+                    step = step as? IrAtomicNode ?: ctx.createError { "step of slice is not atomic" },
+                    line = ctx.start?.line ?: -1,
+                )
+            logVisit("SliceStartStep", ctx, result)
+        }
 
-    override fun visitSliceEnd(ctx: ExpressionParser.SliceEndContext): IrNode {
-        val end = ctx.endExpr?.let { visit(it) } ?: ctx.createError { "end of slice is null" }
-        return IrEndSlice(
-            identifier = ctx.ID().text,
-            end = end as? IrAtomicNode ?: ctx.createError { "end of slice is not atomic" },
-            line = ctx.start?.line ?: -1,
-        )
-    }
+    override fun visitSliceEndStep(ctx: ExpressionParser.SliceEndStepContext): IrNode =
+        withIndent {
+            log("SliceEndStep: ${ctx.text}")
+            val end = ctx.endSlice?.let { visit(it) } ?: IrEndOfSlice(ctx.start?.line ?: -1)
+            val step = ctx.stepSlice?.let { visit(it) } ?: IrIntegerLiteral(1, ctx.start?.line ?: -1)
+            val result =
+                IrRangeSlice(
+                    identifier = slice ?: ctx.createError { "slice ID is null" },
+                    end = end as? IrAtomicNode ?: ctx.createError { "end of slice is not atomic" },
+                    step = step as? IrAtomicNode ?: ctx.createError { "step of slice is not atomic" },
+                    line = ctx.start?.line ?: -1,
+                )
+            logVisit("SliceEndStep", ctx, result)
+        }
 
-    override fun visitSliceStart(ctx: ExpressionParser.SliceStartContext): IrNode {
-        val start = ctx.startExpr?.let { visit(it) } ?: ctx.createError { "start of slice is null" }
-        return IrStartSlice(
-            identifier = ctx.ID().text,
-            start = start as? IrAtomicNode ?: ctx.createError { "start of slice is not atomic" },
-            line = ctx.start?.line ?: -1,
-        )
-    }
+    override fun visitSliceStartEnd(ctx: ExpressionParser.SliceStartEndContext): IrNode =
+        withIndent {
+            log("SliceStartEnd: ${ctx.text}")
+            val start = ctx.startSlice?.let { visit(it) } ?: IrIntegerLiteral(0, ctx.start?.line ?: -1)
+            val end = ctx.endSlice?.let { visit(it) } ?: IrEndOfSlice(ctx.start?.line ?: -1)
+            val result =
+                IrRangeSlice(
+                    identifier = slice ?: ctx.createError { "slice ID is null" },
+                    start = start as? IrAtomicNode ?: ctx.createError { "start of slice is not atomic" },
+                    end = end as? IrAtomicNode ?: ctx.createError { "end of slice is not atomic" },
+                    line = ctx.start?.line ?: -1,
+                )
+            logVisit("SliceStartEnd", ctx, result)
+        }
 
-    override fun visitSliceWithStep(ctx: ExpressionParser.SliceWithStepContext): IrNode {
-        val start = ctx.startExpr?.let { visit(it) } ?: IrIntegerLiteral(0, ctx.start?.line ?: -1)
-        val end = ctx.endExpr?.let { visit(it) } ?: IrEndOfSlice(ctx.start?.line ?: -1)
-        val step = ctx.stepExpr?.let { visit(it) } ?: IrIntegerLiteral(1, ctx.start?.line ?: -1)
-        return IrCompleteSlice(
-            identifier = ctx.ID().text,
-            start = start as? IrAtomicNode ?: ctx.createError { "start of slice is not atomic" },
-            end = end as? IrAtomicNode ?: ctx.createError { "end of slice is not atomic" },
-            step = step as? IrAtomicNode ?: ctx.createError { "step of slice is not atomic" },
-            line = ctx.start?.line ?: -1,
-        )
-    }
+    override fun visitSliceEnd(ctx: ExpressionParser.SliceEndContext): IrNode =
+        withIndent {
+            log("SliceEnd: ${ctx.text}")
+            val end = ctx.endSlice?.let { visit(it) } ?: ctx.createError { "end of slice is null" }
+            val result =
+                IrRangeSlice(
+                    identifier = slice ?: ctx.createError { "slice ID is null" },
+                    end = end as? IrAtomicNode ?: ctx.createError { "end of slice is not atomic" },
+                    line = ctx.start?.line ?: -1,
+                )
+            logVisit("SliceEnd", ctx, result)
+        }
 
-    override fun visitCall(ctx: ExpressionParser.CallContext): IrNode = visit(ctx.macroCall())
+    override fun visitSliceStart(ctx: ExpressionParser.SliceStartContext): IrNode =
+        withIndent {
+            log("SliceStart: ${ctx.text}")
+            val start = ctx.startSlice?.let { visit(it) } ?: ctx.createError { "start of slice is null" }
+            val result =
+                IrRangeSlice(
+                    identifier = slice ?: ctx.createError { "slice ID is null" },
+                    start = start as? IrAtomicNode ?: ctx.createError { "start of slice is not atomic" },
+                    line = ctx.start?.line ?: -1,
+                )
+            logVisit("SliceStart", ctx, result)
+        }
 
-    override fun visitModuleCall(ctx: ExpressionParser.ModuleCallContext): IrNode = visit(ctx.dotCall())
+    override fun visitSliceWithStep(ctx: ExpressionParser.SliceWithStepContext): IrNode =
+        withIndent {
+            log("SliceWithStep: ${ctx.text}")
+            val start = ctx.startSlice?.let { visit(it) } ?: IrIntegerLiteral(0, ctx.start?.line ?: -1)
+            val end = ctx.endSlice?.let { visit(it) } ?: IrEndOfSlice(ctx.endSlice?.start?.line ?: -1)
+            val step = ctx.stepSlice?.let { visit(it) } ?: IrIntegerLiteral(1, ctx.start?.line ?: -1)
+            val result =
+                IrRangeSlice(
+                    identifier = slice ?: ctx.createError { "slice ID is null" },
+                    start = start as? IrAtomicNode ?: ctx.createError { "start of slice is not atomic" },
+                    end = end as? IrAtomicNode ?: ctx.createError { "end of slice is not atomic" },
+                    step = step as? IrAtomicNode ?: ctx.createError { "step of slice is not atomic" },
+                    line = ctx.start?.line ?: -1,
+                )
+            logVisit("SliceWithStep", ctx, result)
+        }
 
-    override fun visitMacroCall(ctx: ExpressionParser.MacroCallContext): IrNode {
-        val id = ctx.ID().text
-        ctx.parsingCheck(id.isNotBlank()) { "macro call has no identifier" }
-        val arguments = ctx.expression().map { visit(it) }
-        return IrCall(
-            id,
-            arguments.map { it },
-            ctx.start?.line ?: -1,
-        )
-    }
-
-    override fun visitDotCall(ctx: ExpressionParser.DotCallContext): IrNode {
-        val moduleId = ctx.ID(0)?.text ?: ""
-        val macroId = ctx.ID(1)?.text ?: ""
-        ctx.parsingCheck(moduleId.isNotBlank() && macroId.isNotBlank()) { "module call is missing identifiers" }
-        val arguments = ctx.expression().map { visit(it) }
-        return IrDotCall(
-            moduleId,
-            macroId,
-            arguments.map { it },
-            ctx.start?.line ?: -1,
-        )
-    }
+    override fun visitCall(ctx: ExpressionParser.CallContext): IrNode =
+        withIndent {
+            log("MacroCall: ${ctx.text}")
+            val id = ctx.ID().text
+            ctx.parsingCheck(id.isNotBlank()) { "macro call has no identifier" }
+            val arguments = ctx.expr().map { visit(it) }
+            val result =
+                IrCall(
+                    id,
+                    arguments.map { it },
+                    ctx.start?.line ?: -1,
+                )
+            logVisit("MacroCall", ctx, result)
+        }
 
     override fun visitIntCast(ctx: ExpressionParser.IntCastContext): IrNode =
-        IrCast(
-            visit(ctx.atomicExpr()),
-            IrNativeType.INTEGER,
-            ctx.start?.line ?: -1,
-        )
+        withIndent {
+            log("IntCast: ${ctx.text}")
+            val result =
+                IrCast(
+                    null,
+                    IrNativeType.INTEGER,
+                    ctx.start?.line ?: -1,
+                )
+            logVisit("IntCast", ctx, result)
+        }
 
     override fun visitFloatCast(ctx: ExpressionParser.FloatCastContext): IrNode =
-        IrCast(
-            visit(ctx.atomicExpr()),
-            IrNativeType.FLOAT,
-            ctx.start?.line ?: -1,
-        )
+        withIndent {
+            log("FloatCast: ${ctx.text}")
+            val result =
+                IrCast(
+                    null,
+                    IrNativeType.FLOAT,
+                    ctx.start?.line ?: -1,
+                )
+            logVisit("FloatCast", ctx, result)
+        }
 
     override fun visitStringCast(ctx: ExpressionParser.StringCastContext): IrNode =
-        IrCast(
-            visit(ctx.atomicExpr()),
-            IrNativeType.STRING,
-            ctx.start?.line ?: -1,
-        )
+        withIndent {
+            log("StringCast: ${ctx.text}")
+            val result =
+                IrCast(
+                    null,
+                    IrNativeType.STRING,
+                    ctx.start?.line ?: -1,
+                )
+            logVisit("StringCast", ctx, result)
+        }
 
-    override fun visitSliceExpr(ctx: ExpressionParser.SliceExprContext): IrNode = visit(ctx.rangeSlice())
+    override fun visitCast(ctx: ExpressionParser.CastContext): IrNode =
+        withIndent {
+            log("Cast: ${ctx.text}")
+            (visit(ctx.castType()) as IrCast).apply { this.value = visit(ctx.expr()) }
+        }
 
-    override fun visitParenthesis(ctx: ExpressionParser.ParenthesisContext): IrNode = visit(ctx.expression())
-
-    override fun visitResolvable(ctx: ExpressionParser.ResolvableContext): IrNode = visit(ctx.resolvableExpr())
-
-    override fun visitAtomic(ctx: ExpressionParser.AtomicContext): IrNode = visit(ctx.atomicExpr())
-
-    override fun visitCast(ctx: ExpressionParser.CastContext): IrNode = visit(ctx.castExpr())
+    override fun visitParenthesized(ctx: ExpressionParser.ParenthesizedContext): IrNode =
+        withIndent {
+            log("Parenthesized: ${ctx.text}")
+            visit(ctx.expr())
+        }
 
     override fun defaultResult(): IrNode = Error(0)
 }
@@ -286,11 +461,22 @@ private class ExpressionIrCreationVisitor(
 /**
  * Parses the expression into an IR tree.
  */
-internal fun Expression.parseToIr(): IrTree {
+internal fun Expression.parseToIr(enableLogging: Boolean = false): IrTree {
     val charStream = CharStreams.fromString(source)
     val lexer = ExpressionLexer(charStream)
     val tokens = CommonTokenStream(lexer)
     val parser = ExpressionParser(tokens)
-    val tree = parser.expression()
-    return IrTree(ExpressionIrCreationVisitor(source).visit(tree))
+    val tree = parser.expr()
+
+    if (enableLogging) {
+        println("=== Parsing expression: '$source' ===")
+    }
+
+    val irTree = IrTree(ExpressionIrCreationVisitor(source, enableLogging).visit(tree))
+
+    if (enableLogging) {
+        println("=== IR Tree created successfully ===")
+    }
+
+    return irTree
 }

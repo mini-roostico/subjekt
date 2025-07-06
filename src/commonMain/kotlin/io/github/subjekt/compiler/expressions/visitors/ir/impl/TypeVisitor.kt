@@ -5,18 +5,16 @@ import io.github.subjekt.compiler.expressions.ir.BinaryOperator
 import io.github.subjekt.compiler.expressions.ir.IrBinaryOperation
 import io.github.subjekt.compiler.expressions.ir.IrCall
 import io.github.subjekt.compiler.expressions.ir.IrCast
-import io.github.subjekt.compiler.expressions.ir.IrCompleteSlice
 import io.github.subjekt.compiler.expressions.ir.IrDotCall
 import io.github.subjekt.compiler.expressions.ir.IrEndOfSlice
-import io.github.subjekt.compiler.expressions.ir.IrEndSlice
 import io.github.subjekt.compiler.expressions.ir.IrFloatLiteral
 import io.github.subjekt.compiler.expressions.ir.IrIntegerLiteral
 import io.github.subjekt.compiler.expressions.ir.IrNativeType
 import io.github.subjekt.compiler.expressions.ir.IrParameter
+import io.github.subjekt.compiler.expressions.ir.IrRangeSlice
 import io.github.subjekt.compiler.expressions.ir.IrSingleSlice
-import io.github.subjekt.compiler.expressions.ir.IrStartEndSlice
-import io.github.subjekt.compiler.expressions.ir.IrStartSlice
 import io.github.subjekt.compiler.expressions.ir.IrStringLiteral
+import io.github.subjekt.compiler.expressions.ir.IrUnaryOperation
 import io.github.subjekt.compiler.expressions.ir.Type
 import io.github.subjekt.compiler.expressions.ir.utils.IrUtils
 import io.github.subjekt.compiler.expressions.toParameterSymbol
@@ -64,7 +62,7 @@ class TypeVisitor(
                 IrNativeType.STRING -> Type.STRING
             }.also { node.type = it }
         tryInferType = type
-        visit(node.value)
+        node.value?.accept(this)
         tryInferType = previousTryInferType
         return type
     }
@@ -106,7 +104,7 @@ class TypeVisitor(
 
     override fun visitStringLiteral(node: IrStringLiteral): Type = Type.STRING.also { node.type = it }
 
-    override fun visitCompleteSlice(node: IrCompleteSlice): Type {
+    override fun visitRangeSlice(node: IrRangeSlice): Type {
         val previousTryInferType = tryInferType
         tryInferType = Type.INTEGER
         visit(node.start)
@@ -116,28 +114,18 @@ class TypeVisitor(
         return (tryInferType ?: Type.STRING).also { node.type = it }
     }
 
-    override fun visitEndSlice(node: IrEndSlice): Type {
-        val previousTryInferType = tryInferType
-        tryInferType = Type.INTEGER
-        visit(node.end)
-        tryInferType = previousTryInferType
-        return (tryInferType ?: Type.STRING).also { node.type = it }
-    }
-
-    override fun visitStartEndSlice(node: IrStartEndSlice): Type {
-        val previousTryInferType = tryInferType
-        tryInferType = Type.INTEGER
-        visit(node.start)
-        visit(node.end)
-        tryInferType = previousTryInferType
-        return (tryInferType ?: Type.STRING).also { node.type = it }
-    }
-
-    override fun visitStartSlice(node: IrStartSlice): Type {
-        val previousTryInferType = tryInferType
-        tryInferType = Type.INTEGER
-        visit(node.start)
-        tryInferType = previousTryInferType
-        return (tryInferType ?: Type.STRING).also { node.type = it }
+    override fun visitUnaryOperation(node: IrUnaryOperation): Type {
+        val type = visit(node.operand)
+        if (type == Type.UNDEFINED) {
+            throw TypeException(
+                "Cannot infer type for unary operation '${node.operator}' with operand type '$type'.",
+            )
+        } else if (type == Type.STRING) {
+            throw TypeException(
+                "Cannot perform unary operation '${node.operator}' on a string type. " +
+                    "Expected a numeric type.",
+            )
+        }
+        return type
     }
 }

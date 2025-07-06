@@ -7,7 +7,7 @@ enum class IrNativeType {
 }
 
 data class IrCast(
-    val value: IrNode,
+    var value: IrNode?,
     val targetType: IrNativeType,
     override val line: Int = -1,
 ) : IrAtomicNode(line)
