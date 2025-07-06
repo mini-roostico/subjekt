@@ -13,14 +13,15 @@ import io.github.subjekt.compiler.expressions.ir.IrCall
 import io.github.subjekt.compiler.expressions.ir.IrDotCall
 import io.github.subjekt.compiler.expressions.ir.IrNode
 import io.github.subjekt.compiler.expressions.ir.IrParameter
+import io.github.subjekt.compiler.expressions.ir.IrRangeSlice
 import io.github.subjekt.compiler.expressions.ir.IrSingleSlice
+import io.github.subjekt.compiler.expressions.slices.SliceEngine.view
 import io.github.subjekt.core.SubjektFunction
 import io.github.subjekt.core.Symbol
 import io.github.subjekt.core.SymbolTable
 import io.github.subjekt.core.definition.Context
 import io.github.subjekt.core.definition.DefinedMacro
 import io.github.subjekt.core.definition.DefinedParameter
-import io.github.subjekt.utils.Utils
 
 /**
  * Represents a symbol that can be resolved inside a [io.github.subjekt.core.definition.Context].
@@ -36,7 +37,11 @@ sealed class ResolvableSymbol {
             is CallableSymbol ->
                 symbolTable.resolveMacro(this.callableId, this.nArgs)
                     ?: symbolTable.resolveFunction(this.callableId) ?: throw SymbolNotFoundException(this)
-            is SliceSymbol -> symbolTable.resolveParameter(this.identifier) ?: throw SymbolNotFoundException(this)
+            is SliceSymbol ->
+                view(
+                    symbolTable.resolveParameter(parameter.id)
+                        ?: throw SymbolNotFoundException(parameter),
+                )
         }
 }
 
@@ -70,7 +75,7 @@ fun IrCall.toCallSymbol(): CallSymbol = CallSymbol(identifier, arguments.size)
 /**
  * Obtains the [QualifiedCallSymbol] associated to the [IrNode.IrDotCall].
  */
-fun IrDotCall.toQualifiedCallSymbol(): QualifiedCallSymbol = QualifiedCallSymbol(moduleId, callId, arguments.size)
+fun IrDotCall.toQualifiedCallSymbol(): QualifiedCallSymbol = QualifiedCallSymbol(receiver, callId, arguments.size)
 
 /**
  * Obtains the [ParameterSymbol] associated to the [IrNode.IrParameter].
@@ -110,7 +115,7 @@ data class QualifiedCallSymbol(
     /**
      * Identifier of the module.
      */
-    val module: String,
+    val receiver: IrNode,
     /**
      * Identifier of the macro.
      */
@@ -118,7 +123,7 @@ data class QualifiedCallSymbol(
     override val nArgs: Int,
 ) : CallableSymbol() {
     override val callableId: String
-        get() = "$module.$id"
+        get() = id
 }
 
 data class SliceSymbol(
@@ -126,12 +131,18 @@ data class SliceSymbol(
      * Parameter symbol associated with the slice.
      */
     val parameter: ParameterSymbol,
+    val startIndex: Int = 0,
+    val endIndex: Int? = null,
+    val stepIndex: Int = 1,
+) : ResolvableSymbol() {
     /**
      * Identifier of the slice.
      */
-    val identifier: String = "slice_${parameter.id}_${Utils.getRandomString(RANDOM_STRING_LENGTH)}",
-) : ResolvableSymbol() {
-    companion object {
-        private const val RANDOM_STRING_LENGTH = 16
-    }
+    val identifier: String = "slice_${parameter.id}_$startIndex:${endIndex ?: ""}:$stepIndex"
 }
+
+fun IrRangeSlice.toParameterSymbol(): ParameterSymbol =
+    symbol?.run { ParameterSymbol(this.identifier) } ?: throw InternalCompilerException(
+        this,
+        "Slice symbol is not defined. This should not happen, please report this issue.",
+    )

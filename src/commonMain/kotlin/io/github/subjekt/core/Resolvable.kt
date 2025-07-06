@@ -9,7 +9,9 @@
 
 package io.github.subjekt.core
 
+import io.github.subjekt.compiler.expressions.Expression
 import io.github.subjekt.compiler.expressions.Expression.Companion.toExpression
+import io.github.subjekt.compiler.expressions.ResolvableSymbol
 import io.github.subjekt.core.definition.Context
 import io.github.subjekt.utils.Utils.buildRegex
 import io.github.subjekt.utils.Utils.format
@@ -44,15 +46,24 @@ class Resolvable
          * **Note**: these are **unique** expressions, i.e., if the same expression is used multiple times in the
          * source, it will be counted only once.
          */
-        internal val expressions: List<RawExpression>
-            get() = resolvableString.expressions
+        internal val rawExpressions: List<RawExpression> by lazy {
+            resolvableString.expressions
+        }
+
+        internal val expressions: List<Expression> by lazy {
+            rawExpressions.map { it.toExpression() }
+        }
+
+        internal val symbols: List<ResolvableSymbol> by lazy {
+            expressions.map { it.symbols }.flatten()
+        }
 
         /**
          * Returns a string representation of this [Resolvable] as a formattable string (i.e., containing blocks `{0}`).
          */
         internal fun asFormattableString(): String = resolvableString.toFormat
 
-        override fun toString(): String = "Resolvable(source='$source', expressions=$expressions)"
+        override fun toString(): String = "Resolvable(source='$source', expressions=$rawExpressions)"
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -60,7 +71,7 @@ class Resolvable
 
             if (source != other.source) return false
             if (resolvableString != other.resolvableString) return false
-            if (expressions != other.expressions) return false
+            if (rawExpressions != other.rawExpressions) return false
 
             return true
         }
@@ -68,13 +79,13 @@ class Resolvable
         override fun hashCode(): Int {
             var result = source.hashCode()
             result = 31 * result + resolvableString.hashCode()
-            result = 31 * result + expressions.hashCode()
+            result = 31 * result + rawExpressions.hashCode()
             return result
         }
 
         /**
          * Resolves the resolvable with the given [values]. Throws an [IllegalArgumentException] if the [values] number
-         * is not equal to the number of [expressions].
+         * is not equal to the number of [rawExpressions].
          */
         internal fun resolveFormatting(values: List<String>): String = resolvableString.format(values)
 
@@ -86,8 +97,7 @@ class Resolvable
         /**
          * Resolves the resolvable with the given [context].
          */
-        internal fun resolve(context: Context): String =
-            resolveFormatting(expressions.map { it.toExpression().resolve(context) })
+        internal fun resolve(context: Context): String = resolveFormatting(expressions.map { it.resolve(context) })
 
         companion object {
             /**
