@@ -9,7 +9,6 @@
 
 package io.github.subjekt.compiler.permutations
 
-import io.github.subjekt.compiler.expressions.Expression.Companion.toExpression
 import io.github.subjekt.compiler.expressions.ParameterSymbol
 import io.github.subjekt.compiler.expressions.ResolvableSymbol
 import io.github.subjekt.core.Macro
@@ -27,7 +26,7 @@ import io.github.subjekt.core.definition.DefinedParameter
  * this subject.
  */
 fun Subject.requestNeededContexts(): List<Context> {
-    val resolvableSymbols = resolvables.flatMap { it.value.expressions.flatMap { it.toExpression().symbols } }
+    val resolvableSymbols = resolvables.flatMap { it.value.symbols }
     val parameters = mutableSetOf<List<DefinedParameter>>()
     val macros = mutableSetOf<List<DefinedMacro>>()
     val functions = mutableSetOf<SubjektFunction>()
@@ -83,6 +82,6 @@ internal fun Macro.toDefinedMacros(): List<DefinedMacro> =
 internal fun Macro.extractNeededSymbols(): Set<ResolvableSymbol> =
     resolvables
         .flatMap {
-            it.expressions.flatMap { it.toExpression().symbols }
+            it.symbols
         }.filterNot { it is ParameterSymbol && it.id in argumentsIdentifiers }
         .toSet()

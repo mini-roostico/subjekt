@@ -43,9 +43,12 @@ class Expression(
      * Resolves the expression to a string result using the given [Context].
      */
     @Throws(SymbolNotFoundException::class)
-    fun resolve(context: Context): String =
+    fun resolve(
+        context: Context,
+        log: Boolean = false,
+    ): String =
         TypeVisitor(context).visit(ir).run {
-            with(LogVisitor(false)) {
+            with(LogVisitor(log)) {
                 visit(ir)
                 ExpressionVisitor(context).visit(ir)
             }
