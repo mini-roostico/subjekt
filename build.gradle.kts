@@ -7,6 +7,8 @@
  *
  */
 
+@file:OptIn(ExperimentalDistributionDsl::class)
+
 import com.strumenta.antlrkotlin.gradle.AntlrKotlinTask
 import com.vanniktech.maven.publish.SonatypeHost
 import de.aaschmid.gradle.plugins.cpd.Cpd
@@ -14,6 +16,7 @@ import io.gitlab.arturbosch.detekt.Detekt
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
@@ -82,10 +85,27 @@ kotlin {
     }
 
     js(IR) {
-        moduleName = "subjekt"
-        browser()
-        nodejs()
+        browser {
+            commonWebpackConfig {
+                outputFileName = "subjekt.js"
+            }
+            webpackTask {
+                mode = org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode.PRODUCTION
+            }
+            distribution {
+                outputDirectory = File("$buildDir/distributions")
+            }
+        }
+
+        compilations.all {
+            kotlinOptions {
+                moduleKind = "umd"
+                sourceMap = true
+                sourceMapEmbedSources = "always"
+            }
+        }
         binaries.library()
+        binaries.executable()
     }
 
     applyDefaultHierarchyTemplate()
@@ -100,6 +120,44 @@ kotlin {
             }
         }
     }
+}
+
+tasks.register<Copy>("prepareNpmDistribution") {
+    dependsOn("build", "jsBrowserDistribution")
+
+    duplicatesStrategy = DuplicatesStrategy.WARN
+
+    from("$buildDir/kotlin-webpack/js/productionExecutable") {
+        into("dist")
+        exclude("package.json")
+        rename { filename ->
+            when {
+                filename.endsWith(".js") -> "${project.name}.min.js"
+                filename.endsWith(".js.map") -> "${project.name}.min.js.map"
+                else -> filename
+            }
+        }
+    }
+
+    into("$buildDir/packages/js")
+}
+
+tasks.configureEach {
+    if (name.contains("publishJsPackage") && name.contains("Registry")) {
+        dependsOn("prepareNpmDistribution")
+
+        doFirst {
+            copy {
+                from("$buildDir/npm-package/dist")
+                into("$buildDir/js/packages/${project.name}/dist")
+                duplicatesStrategy = DuplicatesStrategy.INCLUDE
+            }
+        }
+    }
+}
+
+tasks.named("jsProductionLibraryCompileSync") {
+    dependsOn("jsBrowserProductionWebpack")
 }
 
 // Package set for generated ANTLR files
