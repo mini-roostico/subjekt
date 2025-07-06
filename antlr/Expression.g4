@@ -1,62 +1,65 @@
 grammar Expression;
 
-expression
-    : resolvableExpr             #resolvable
-    | atomicExpr                 #atomic
-    | '(' expression ')'         #parenthesis
+// Parser rules
+expr
+    : receiver=expr '.' call=ID '(' (expr (',' expr)*)? ')'     # qualifiedCall
+    | receiver=ID '[' sliceExpr ']'                     # slice
+    | ID '(' (expr (',' expr)*)? ')'             # call
+    | castType '(' expr ')'                      # cast
+    | (plus='+' | minus='-') expr                           # unaryPlusMinus
+    | left=expr (mul='*' | div='/' | mod='%') right=expr                # mulDivMod
+    | left=expr (plus='+' | minus='-') right=expr                      # addSub
+    | left=expr '..' right=expr                             # concat
+    | ID                                         # identifier
+    | INT                                        # intLiteral
+    | FLOAT                                      # floatLiteral
+    | STRING                                     # stringLiteral
+    | '(' expr ')'                               # parenthesized
     ;
 
-resolvableExpr
-    : rangeSlice                #sliceExpr
+sliceExpr
+    : index=expr                                       # singleSlice
+    | startSlice=expr ':' endSlice=expr                              # sliceStartEnd
+    | ':' endSlice=expr                                   # sliceEnd
+    | startSlice=expr ':'                                   # sliceStart
+    | startSlice=expr ':' endSlice=expr ':' stepSlice=expr                     # sliceWithStep
+    | startSlice=expr ':' ':' stepSlice=expr                          # sliceStartStep
+    | ':' endSlice=expr ':' stepSlice=expr                          # sliceEndStep
     ;
 
-atomicExpr
-    : castExpr                  #cast
-    | macroCall                 #call
-    | dotCall                   #moduleCall
-    | singleSlice               #singleSliceExpr
-    | atomicExpr (mod='%'|mul='*'|div='/') atomicExpr #modMulDiv
-    | atomicExpr (plus='+'|minus='-') atomicExpr #plusMinus
-    | atomicExpr '..' atomicExpr #concat
-    | '(' atomicExpr ')'        #atomicParenthesis
-    | ID                        #identifier
-    | NUMBER                    #intLiteral
-    | FLOAT                     #floatLiteral
-    | STRING                    #stringLiteral
+castType
+    : 'int' #intCast
+    | 'float' #floatCast
+    | 'string' #stringCast
     ;
 
+// Lexer rules
+fragment DIGIT : [0-9] ;
+fragment LETTER : [a-zA-Z] ;
+fragment UNDERSCORE : '_' ;
 
-macroCall
-    : ID '(' (expression (',' expression)*)? ')'
-    ;
+INT     : DIGIT+ ;
+FLOAT   : DIGIT+ '.' DIGIT+ ;
+STRING  : '"' (~["\r\n] | '\\"')* '"'
+        | '\'' (~['\r\n] | '\\\'')* '\''
+        ;
+ID      : (LETTER | UNDERSCORE) (LETTER | DIGIT | UNDERSCORE)* ;
 
-dotCall
-    : ID '.' ID '(' (expression (',' expression)*)? ')'
-    ;
+// Operators and punctuation
+CONCAT  : '..' ;
+DOT     : '.' ;
+LPAREN  : '(' ;
+RPAREN  : ')' ;
+LBRACKET: '[' ;
+RBRACKET: ']' ;
+COMMA   : ',' ;
+COLON   : ':' ;
+PLUS    : '+' ;
+MINUS   : '-' ;
+MULT    : '*' ;
+DIV     : '/' ;
+MOD     : '%' ;
 
-singleSlice
-    : ID '[' atomicExpr ']'
-    ;
-
-castExpr
-    : 'int' '(' atomicExpr ')'     #intCast
-    | 'float' '(' atomicExpr ')'   #floatCast
-    | 'string' '(' atomicExpr ')'  #stringCast
-    ;
-
-rangeSlice
-    : ID '[' startExpr=atomicExpr ':' endExpr=atomicExpr ']' #sliceStartEnd
-    | ID '[' ':' endExpr=atomicExpr ']'            #sliceEnd
-    | ID '[' startExpr=atomicExpr ':' ']'            #sliceStart
-    | ID '[' startExpr=atomicExpr? ':' endExpr=atomicExpr? ':' stepExpr=atomicExpr ']' #sliceWithStep
-    ;
-
-STRING : '"' (ESC | ~[\r\n"\\])* '"' | '\'' (ESC | ~[\r\n'\\])* '\'' ;
-ESC : '\\' . ;
-ID  	: ('a'..'z'|'A'..'Z')('a'..'z' | 'A'..'Z' | '0'..'9' | '_')* ;
-FLOAT : ('0'..'9')+ '.' ('0'..'9')+ ;
-NUMBER : ('0'..'9')+ ;
-
-WHITESP  : ( '\t' | ' ' | '\n' | '\r' )+    -> channel(HIDDEN) ;
-
-COMMENT : '/*' .*? '*/' -> channel(HIDDEN) ;
+// Whitespace and comments
+WS      : [ \t\r\n]+ -> skip ;
+COMMENT : '/*' .*? '*/' -> skip ;

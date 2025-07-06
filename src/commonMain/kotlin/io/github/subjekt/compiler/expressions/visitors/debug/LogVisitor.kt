@@ -3,18 +3,16 @@ package io.github.subjekt.compiler.expressions.visitors.debug
 import io.github.subjekt.compiler.expressions.ir.IrBinaryOperation
 import io.github.subjekt.compiler.expressions.ir.IrCall
 import io.github.subjekt.compiler.expressions.ir.IrCast
-import io.github.subjekt.compiler.expressions.ir.IrCompleteSlice
 import io.github.subjekt.compiler.expressions.ir.IrDotCall
 import io.github.subjekt.compiler.expressions.ir.IrEndOfSlice
-import io.github.subjekt.compiler.expressions.ir.IrEndSlice
 import io.github.subjekt.compiler.expressions.ir.IrFloatLiteral
 import io.github.subjekt.compiler.expressions.ir.IrIntegerLiteral
 import io.github.subjekt.compiler.expressions.ir.IrNode
 import io.github.subjekt.compiler.expressions.ir.IrParameter
+import io.github.subjekt.compiler.expressions.ir.IrRangeSlice
 import io.github.subjekt.compiler.expressions.ir.IrSingleSlice
-import io.github.subjekt.compiler.expressions.ir.IrStartEndSlice
-import io.github.subjekt.compiler.expressions.ir.IrStartSlice
 import io.github.subjekt.compiler.expressions.ir.IrStringLiteral
+import io.github.subjekt.compiler.expressions.ir.IrUnaryOperation
 import io.github.subjekt.compiler.expressions.visitors.ir.impl.BaseExpressionVisitor
 
 class LogVisitor(
@@ -97,27 +95,23 @@ class LogVisitor(
         }
     }
 
-    override fun visitCompleteSlice(node: IrCompleteSlice) {
-        indent("CompleteSlice: ${node.identifier}") {
-            super.visitCompleteSlice(node)
+    override fun visitRangeSlice(node: IrRangeSlice) {
+        indent("RangeSlice: ${node.identifier}") {
+            indent("Start: ${node.start}") {
+                visit(node.start)
+            }
+            indent("End: ${node.end}") {
+                visit(node.end)
+            }
+            indent("Step: ${node.step}") {
+                visit(node.step)
+            }
         }
     }
 
-    override fun visitEndSlice(node: IrEndSlice) {
-        indent("EndSlice: ${node.identifier}") {
-            super.visitEndSlice(node)
-        }
-    }
-
-    override fun visitStartEndSlice(node: IrStartEndSlice) {
-        indent("StartEndSlice: ${node.identifier}") {
-            super.visitStartEndSlice(node)
-        }
-    }
-
-    override fun visitStartSlice(node: IrStartSlice) {
-        indent("StartSlice: ${node.identifier}") {
-            super.visitStartSlice(node)
+    override fun visitUnaryOperation(node: IrUnaryOperation) {
+        indent("UnaryOperation: ${node.operator}") {
+            super.visitUnaryOperation(node)
         }
     }
 }

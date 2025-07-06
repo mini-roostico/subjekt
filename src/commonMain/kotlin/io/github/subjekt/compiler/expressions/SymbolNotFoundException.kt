@@ -26,8 +26,8 @@ class SymbolNotFoundException(
                         " but '${symbol.callableId}/${symbol.nArgs}' cannot be resolved."
                 is ParameterSymbol -> "Parameter '${symbol.id}' cannot be resolved."
                 is QualifiedCallSymbol ->
-                    "Called '${symbol.module}.${symbol.callableId}' symbol with ${symbol.nArgs} arguments," +
-                        " but '${symbol.module}.${symbol.callableId}/${symbol.nArgs}' cannot be resolved."
+                    "Called '${symbol.receiver}.${symbol.callableId}' symbol with ${symbol.nArgs} arguments," +
+                        " but '${symbol.receiver}.${symbol.callableId}/${symbol.nArgs}' cannot be resolved."
                 is SliceSymbol ->
                     "Slice on parameter '${symbol.identifier}' cannot be resolved."
             }

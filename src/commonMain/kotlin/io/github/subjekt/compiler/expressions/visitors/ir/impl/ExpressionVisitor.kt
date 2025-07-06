@@ -9,8 +9,11 @@ import io.github.subjekt.compiler.expressions.ir.IrFloatLiteral
 import io.github.subjekt.compiler.expressions.ir.IrIntegerLiteral
 import io.github.subjekt.compiler.expressions.ir.IrNativeType
 import io.github.subjekt.compiler.expressions.ir.IrParameter
+import io.github.subjekt.compiler.expressions.ir.IrRangeSlice
 import io.github.subjekt.compiler.expressions.ir.IrSingleSlice
 import io.github.subjekt.compiler.expressions.ir.IrStringLiteral
+import io.github.subjekt.compiler.expressions.ir.IrUnaryOperation
+import io.github.subjekt.compiler.expressions.ir.UnaryOperator
 import io.github.subjekt.compiler.expressions.ir.utils.IrUtils.callSymbol
 import io.github.subjekt.compiler.expressions.toCallSymbol
 import io.github.subjekt.compiler.expressions.toParameterSymbol
@@ -64,17 +67,31 @@ class ExpressionVisitor(
         )
 
     override fun visitCast(node: IrCast): String {
-        val value = visit(node.value)
+        val value =
+            node.value?.accept(this) ?: throw IllegalArgumentException(
+                "Cannot cast null value to ${node.targetType}.",
+            )
         return when (node.targetType) {
             IrNativeType.INTEGER ->
                 value.toIntOrNull()?.toString()
                     ?: throw IllegalArgumentException("Cannot cast '$value' to INTEGER.")
+
             IrNativeType.FLOAT ->
                 value.toDoubleOrNull()?.toString()
                     ?: throw IllegalArgumentException("Cannot cast '$value' to FLOAT.")
+
             IrNativeType.STRING -> value
         }
     }
+
+    override fun visitUnaryOperation(node: IrUnaryOperation): String =
+        when (node.operator) {
+            UnaryOperator.MINUS -> "-${visit(node.operand)}"
+            UnaryOperator.PLUS -> visit(node.operand)
+        }
+
+    override fun visitRangeSlice(node: IrRangeSlice): String =
+        node.toParameterSymbol().resolveDefinedParameter(context).value
 
     override fun visitFloatLiteral(node: IrFloatLiteral): String = node.value.toString()
 

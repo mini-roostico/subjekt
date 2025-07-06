@@ -38,7 +38,7 @@ data class IrDotCall(
     /**
      * Identifier of the module (e.g. `std`).
      */
-    val moduleId: String,
+    val receiver: IrNode,
     /**
      * Identifier of the call (e.g. `name`).
      */
@@ -48,7 +48,7 @@ data class IrDotCall(
      */
     val arguments: List<IrNode>,
     override val line: Int,
-) : IrIdentified(moduleId, line)
+) : IrIdentified(callId, line)
 
 data class IrSingleSlice(
     override val identifier: String,

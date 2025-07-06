@@ -3,17 +3,15 @@ package io.github.subjekt.compiler.expressions.visitors.ir.impl
 import io.github.subjekt.compiler.expressions.ir.IrBinaryOperation
 import io.github.subjekt.compiler.expressions.ir.IrCall
 import io.github.subjekt.compiler.expressions.ir.IrCast
-import io.github.subjekt.compiler.expressions.ir.IrCompleteSlice
 import io.github.subjekt.compiler.expressions.ir.IrDotCall
 import io.github.subjekt.compiler.expressions.ir.IrEndOfSlice
-import io.github.subjekt.compiler.expressions.ir.IrEndSlice
 import io.github.subjekt.compiler.expressions.ir.IrFloatLiteral
 import io.github.subjekt.compiler.expressions.ir.IrIntegerLiteral
 import io.github.subjekt.compiler.expressions.ir.IrParameter
+import io.github.subjekt.compiler.expressions.ir.IrRangeSlice
 import io.github.subjekt.compiler.expressions.ir.IrSingleSlice
-import io.github.subjekt.compiler.expressions.ir.IrStartEndSlice
-import io.github.subjekt.compiler.expressions.ir.IrStartSlice
 import io.github.subjekt.compiler.expressions.ir.IrStringLiteral
+import io.github.subjekt.compiler.expressions.ir.IrUnaryOperation
 import io.github.subjekt.compiler.expressions.visitors.ir.IrVisitor
 
 abstract class BaseExpressionVisitor<T>(
@@ -25,7 +23,7 @@ abstract class BaseExpressionVisitor<T>(
         return default
     }
 
-    override fun visitCast(node: IrCast): T = visit(node.value)
+    override fun visitCast(node: IrCast): T = node.value?.accept(this) ?: default
 
     override fun visitEndOfSlice(node: IrEndOfSlice): T = default
 
@@ -49,20 +47,12 @@ abstract class BaseExpressionVisitor<T>(
 
     override fun visitStringLiteral(node: IrStringLiteral): T = default
 
-    override fun visitCompleteSlice(node: IrCompleteSlice): T {
+    override fun visitRangeSlice(node: IrRangeSlice): T {
         visit(node.start)
         visit(node.end)
         visit(node.step)
         return default
     }
 
-    override fun visitEndSlice(node: IrEndSlice): T = visit(node.end)
-
-    override fun visitStartEndSlice(node: IrStartEndSlice): T {
-        visit(node.start)
-        visit(node.end)
-        return default
-    }
-
-    override fun visitStartSlice(node: IrStartSlice): T = visit(node.start)
+    override fun visitUnaryOperation(node: IrUnaryOperation): T = visit(node.operand)
 }
