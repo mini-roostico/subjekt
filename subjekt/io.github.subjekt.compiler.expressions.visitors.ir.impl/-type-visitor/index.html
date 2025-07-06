@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>TypeVisitor</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+    <nav class="navigation theme-dark" id="navigation-wrapper">
+            <a class="library-name--link" href="../../../index.html">
+                    subjekt
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+0.1.0-archeo+c2527c0        </div>
+        <div class="navigation-controls">
+        <div class="filter-section filter-section_loading" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active=""
+                        data-filter=":dokkaHtml/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox">
+                    <div class="dropdown--header"><span>Platform filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close platform filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":dokkaHtml/commonMain"
+                                       data-filter=":dokkaHtml/commonMain"/>
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </div>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                    <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                        data-role="dropdown-listbox">
+                        <div class="dropdown--header">
+                            <span>
+                                    subjekt
+                            </span>
+                            <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                                <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                            </button>
+                        </div>
+                        <div class="sidebar--inner" id="sideMenu"></div>
+                    </ul>
+                    <div class="dropdown--overlay"></div>
+                </div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="subjekt::io.github.subjekt.compiler.expressions.visitors.ir.impl/TypeVisitor///PointingToDeclaration//788909594">
+  <div class="breadcrumbs"><a href="../../../index.html">subjekt</a><span class="delimiter">/</span><a href="../index.html">io.github.subjekt.compiler.expressions.visitors.ir.impl</a><span class="delimiter">/</span><span class="current">TypeVisitor</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Type</span><wbr></wbr><span><span>Visitor</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">TypeVisitor</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>context<span class="token operator">: </span><a href="../../io.github.subjekt.core.definition/-context/index.html">Context</a></span></span><span class="token punctuation">)</span> : <a href="../../io.github.subjekt.compiler.expressions.visitors.ir/-ir-visitor/index.html">IrVisitor</a><span class="token operator">&lt;</span><a href="../../io.github.subjekt.compiler.expressions.ir/-type/index.html">Type</a><span class="token operator">&gt; </span></div><p class="paragraph">A visitor that infers the type of an expression in the intermediate representation (IR). It traverses the IR tree and assigns types to nodes based on the operations and operands.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="-1584404342%2FConstructors%2F788909594" anchor-label="TypeVisitor" id="-1584404342%2FConstructors%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-type-visitor.html"><span>Type</span><wbr></wbr><span><span>Visitor</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1584404342%2FConstructors%2F788909594"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span><a href="../../io.github.subjekt.core.definition/-context/index.html">Context</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="783893575%2FProperties%2F788909594" anchor-label="context" id="783893575%2FProperties%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="context.html"><span><span>context</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="783893575%2FProperties%2F788909594"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="context.html">context</a><span class="token operator">: </span><a href="../../io.github.subjekt.core.definition/-context/index.html">Context</a></div><div class="brief "><p class="paragraph">The context in which the IR is evaluated, providing access to symbols and definitions.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="647819667%2FFunctions%2F788909594" anchor-label="visit" id="647819667%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../io.github.subjekt.compiler.expressions.visitors.ir/-ir-visitor/visit.html"><span><span>visit</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="647819667%2FFunctions%2F788909594"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../io.github.subjekt.compiler.expressions.visitors.ir/-ir-visitor/visit.html"><span class="token function">visit</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">node<span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-ir-node/index.html">IrNode</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-type/index.html">Type</a></div><div class="brief "><p class="paragraph">Visits a <a href="../../io.github.subjekt.compiler.expressions.ir/-ir-node/index.html">io.github.subjekt.compiler.expressions.ir.IrNode</a>, calling the appropriate visit method based on the type of the node.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1177056396%2FFunctions%2F788909594" anchor-label="visitBinaryOperation" id="1177056396%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="visit-binary-operation.html"><span>visit</span><wbr></wbr><span>Binary</span><wbr></wbr><span><span>Operation</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1177056396%2FFunctions%2F788909594"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="visit-binary-operation.html"><span class="token function">visitBinaryOperation</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">node<span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-ir-binary-operation/index.html">IrBinaryOperation</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-type/index.html">Type</a></div><div class="brief "><p class="paragraph">Visits a <a href="../../io.github.subjekt.compiler.expressions.ir/-ir-binary-operation/index.html">io.github.subjekt.compiler.expressions.ir.IrBinaryOperation</a> node.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-655765546%2FFunctions%2F788909594" anchor-label="visitCall" id="-655765546%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="visit-call.html"><span>visit</span><wbr></wbr><span><span>Call</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-655765546%2FFunctions%2F788909594"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="visit-call.html"><span class="token function">visitCall</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">node<span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-ir-call/index.html">IrCall</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-type/index.html">Type</a></div><div class="brief "><p class="paragraph">Visits a <a href="../../io.github.subjekt.compiler.expressions.ir/-ir-call/index.html">io.github.subjekt.compiler.expressions.ir.IrCall</a> node.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1819060716%2FFunctions%2F788909594" anchor-label="visitCast" id="-1819060716%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="visit-cast.html"><span>visit</span><wbr></wbr><span><span>Cast</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1819060716%2FFunctions%2F788909594"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="visit-cast.html"><span class="token function">visitCast</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">node<span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-ir-cast/index.html">IrCast</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-type/index.html">Type</a></div><div class="brief "><p class="paragraph">Visits a <a href="../../io.github.subjekt.compiler.expressions.ir/-ir-cast/index.html">io.github.subjekt.compiler.expressions.ir.IrCast</a> node.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-728509204%2FFunctions%2F788909594" anchor-label="visitDotCall" id="-728509204%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="visit-dot-call.html"><span>visit</span><wbr></wbr><span>Dot</span><wbr></wbr><span><span>Call</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-728509204%2FFunctions%2F788909594"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="visit-dot-call.html"><span class="token function">visitDotCall</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">node<span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-ir-dot-call/index.html">IrDotCall</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-type/index.html">Type</a></div><div class="brief "><p class="paragraph">Visits a <a href="../../io.github.subjekt.compiler.expressions.ir/-ir-dot-call/index.html">io.github.subjekt.compiler.expressions.ir.IrDotCall</a> node.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1630839826%2FFunctions%2F788909594" anchor-label="visitEndOfSlice" id="1630839826%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="visit-end-of-slice.html"><span>visit</span><wbr></wbr><span>End</span><wbr></wbr><span>Of</span><wbr></wbr><span><span>Slice</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1630839826%2FFunctions%2F788909594"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="visit-end-of-slice.html"><span class="token function">visitEndOfSlice</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">node<span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-ir-end-of-slice/index.html">IrEndOfSlice</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-type/index.html">Type</a></div><div class="brief "><p class="paragraph">Visits a <a href="../../io.github.subjekt.compiler.expressions.ir/-ir-end-of-slice/index.html">io.github.subjekt.compiler.expressions.ir.IrEndOfSlice</a> node.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-615873748%2FFunctions%2F788909594" anchor-label="visitFloatLiteral" id="-615873748%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="visit-float-literal.html"><span>visit</span><wbr></wbr><span>Float</span><wbr></wbr><span><span>Literal</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-615873748%2FFunctions%2F788909594"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="visit-float-literal.html"><span class="token function">visitFloatLiteral</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">node<span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-ir-float-literal/index.html">IrFloatLiteral</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-type/index.html">Type</a></div><div class="brief "><p class="paragraph">Visits a <a href="../../io.github.subjekt.compiler.expressions.ir/-ir-float-literal/index.html">IrFloatLiteral</a> node.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1883315216%2FFunctions%2F788909594" anchor-label="visitIntegerLiteral" id="-1883315216%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="visit-integer-literal.html"><span>visit</span><wbr></wbr><span>Integer</span><wbr></wbr><span><span>Literal</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1883315216%2FFunctions%2F788909594"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="visit-integer-literal.html"><span class="token function">visitIntegerLiteral</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">node<span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-ir-integer-literal/index.html">IrIntegerLiteral</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-type/index.html">Type</a></div><div class="brief "><p class="paragraph">Visits a <a href="../../io.github.subjekt.compiler.expressions.ir/-ir-integer-literal/index.html">IrIntegerLiteral</a> node.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-169378004%2FFunctions%2F788909594" anchor-label="visitParameter" id="-169378004%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="visit-parameter.html"><span>visit</span><wbr></wbr><span><span>Parameter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-169378004%2FFunctions%2F788909594"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="visit-parameter.html"><span class="token function">visitParameter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">node<span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-ir-parameter/index.html">IrParameter</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-type/index.html">Type</a></div><div class="brief "><p class="paragraph">Visits a <a href="../../io.github.subjekt.compiler.expressions.ir/-ir-parameter/index.html">io.github.subjekt.compiler.expressions.ir.IrParameter</a> node.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1981068184%2FFunctions%2F788909594" anchor-label="visitRangeSlice" id="-1981068184%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="visit-range-slice.html"><span>visit</span><wbr></wbr><span>Range</span><wbr></wbr><span><span>Slice</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1981068184%2FFunctions%2F788909594"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="visit-range-slice.html"><span class="token function">visitRangeSlice</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">node<span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-ir-range-slice/index.html">IrRangeSlice</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-type/index.html">Type</a></div><div class="brief "><p class="paragraph">Visits a <a href="../../io.github.subjekt.compiler.expressions.ir/-ir-range-slice/index.html">IrRangeSlice</a> node.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1495891852%2FFunctions%2F788909594" anchor-label="visitSingleSlice" id="1495891852%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="visit-single-slice.html"><span>visit</span><wbr></wbr><span>Single</span><wbr></wbr><span><span>Slice</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1495891852%2FFunctions%2F788909594"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="visit-single-slice.html"><span class="token function">visitSingleSlice</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">node<span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-ir-single-slice/index.html">IrSingleSlice</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-type/index.html">Type</a></div><div class="brief "><p class="paragraph">Visits a <a href="../../io.github.subjekt.compiler.expressions.ir/-ir-single-slice/index.html">io.github.subjekt.compiler.expressions.ir.IrSingleSlice</a> node.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="995659596%2FFunctions%2F788909594" anchor-label="visitStringLiteral" id="995659596%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="visit-string-literal.html"><span>visit</span><wbr></wbr><span>String</span><wbr></wbr><span><span>Literal</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="995659596%2FFunctions%2F788909594"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="visit-string-literal.html"><span class="token function">visitStringLiteral</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">node<span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-ir-string-literal/index.html">IrStringLiteral</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-type/index.html">Type</a></div><div class="brief "><p class="paragraph">Visits a <a href="../../io.github.subjekt.compiler.expressions.ir/-ir-string-literal/index.html">IrStringLiteral</a> node.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1946107422%2FFunctions%2F788909594" anchor-label="visitUnaryOperation" id="-1946107422%2FFunctions%2F788909594" data-filterable-set=":dokkaHtml/commonMain"></a>
+          <div class="table-row" data-filterable-current=":dokkaHtml/commonMain" data-filterable-set=":dokkaHtml/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="visit-unary-operation.html"><span>visit</span><wbr></wbr><span>Unary</span><wbr></wbr><span><span>Operation</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1946107422%2FFunctions%2F788909594"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="visit-unary-operation.html"><span class="token function">visitUnaryOperation</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">node<span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-ir-unary-operation/index.html">IrUnaryOperation</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../io.github.subjekt.compiler.expressions.ir/-type/index.html">Type</a></div><div class="brief "><p class="paragraph">Visits a <a href="../../io.github.subjekt.compiler.expressions.ir/-ir-unary-operation/index.html">IrUnaryOperation</a> node.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+        <span>© 2025 Copyright</span>
+        <span class="pull-right">
+            <span>Generated by </span>
+            <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                <span>dokka</span>
+            </a>
+        </span>
+    </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
