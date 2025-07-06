@@ -143,19 +143,19 @@ class SuiteParsingSpec : StringSpec({
         suite.subjects[0].name?.asFormattableString() shouldBe "Simple subject {{0}} and {{1}}"
         suite.subjects[0]
             .name
-            ?.expressions
+            ?.rawExpressions
             ?.map { it.source } shouldBe listOf("test", "test2")
         suite.subjects[1].id shouldBe 1
         suite.subjects[1].name?.source shouldBe "Simple subject {test} 2"
         suite.subjects[1].name?.asFormattableString() shouldBe "Simple subject {{0}} 2"
         suite.subjects[1]
             .name
-            ?.expressions
+            ?.rawExpressions
             ?.map { it.source } shouldBe listOf("test")
         suite.subjects[1].resolvables["code"]?.source shouldBe "code {test}"
         suite.subjects[1]
             .resolvables["code"]
-            ?.expressions
+            ?.rawExpressions
             ?.map { it.source } shouldBe listOf("test")
     }
 
