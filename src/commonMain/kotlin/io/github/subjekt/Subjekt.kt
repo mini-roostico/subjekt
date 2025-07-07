@@ -9,7 +9,6 @@
 
 package io.github.subjekt
 
-import io.github.subjekt.compiler.resolve
 import io.github.subjekt.core.Source
 import io.github.subjekt.core.SymbolTable
 import io.github.subjekt.core.parsing.SuiteFactory.parseIntoSuite
@@ -17,6 +16,7 @@ import io.github.subjekt.core.resolution.Exporter
 import io.github.subjekt.core.resolution.Mapper
 import io.github.subjekt.core.resolution.ResolvedSuite
 import io.github.subjekt.core.resolution.SubjektResult
+import io.github.subjekt.engine.resolve
 
 /**
  * End to end utility for subjekt to compile a [Source] directly into a [ResolvedSuite].

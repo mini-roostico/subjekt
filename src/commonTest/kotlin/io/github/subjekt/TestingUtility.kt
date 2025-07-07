@@ -9,13 +9,13 @@
 
 package io.github.subjekt
 
-import io.github.subjekt.compiler.resolve
 import io.github.subjekt.core.Resolvable
 import io.github.subjekt.core.SymbolTable
 import io.github.subjekt.core.definition.Context
 import io.github.subjekt.core.parsing.SuiteFactory
 import io.github.subjekt.core.resolution.Instance
 import io.github.subjekt.core.resolution.ResolvedSubject
+import io.github.subjekt.engine.resolve
 import io.kotest.assertions.fail
 import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.shouldBe
