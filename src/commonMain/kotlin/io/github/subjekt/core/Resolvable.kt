@@ -9,10 +9,10 @@
 
 package io.github.subjekt.core
 
-import io.github.subjekt.compiler.expressions.Expression
-import io.github.subjekt.compiler.expressions.Expression.Companion.toExpression
-import io.github.subjekt.compiler.expressions.ResolvableSymbol
 import io.github.subjekt.core.definition.Context
+import io.github.subjekt.engine.expressions.Expression
+import io.github.subjekt.engine.expressions.Expression.Companion.toExpression
+import io.github.subjekt.engine.expressions.ResolvableSymbol
 import io.github.subjekt.utils.Utils.buildRegex
 import io.github.subjekt.utils.Utils.format
 import kotlin.js.ExperimentalJsExport
