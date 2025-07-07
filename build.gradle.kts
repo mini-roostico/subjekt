@@ -10,12 +10,14 @@
 @file:OptIn(ExperimentalDistributionDsl::class)
 
 import com.strumenta.antlrkotlin.gradle.AntlrKotlinTask
-import com.vanniktech.maven.publish.SonatypeHost
 import de.aaschmid.gradle.plugins.cpd.Cpd
 import io.gitlab.arturbosch.detekt.Detekt
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
+import org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
@@ -71,6 +73,7 @@ kotlin {
                 implementation(libs.yamlkt)
                 implementation(libs.json)
                 implementation(libs.kotlinx.io)
+                implementation(libs.kotlinx.coroutines)
             }
         }
 
@@ -93,15 +96,15 @@ kotlin {
                 mode = org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode.PRODUCTION
             }
             distribution {
-                outputDirectory = File("$buildDir/distributions")
+                outputDirectory = layout.buildDirectory.get().dir("distributions")
             }
         }
 
-        compilations.all {
-            kotlinOptions {
-                moduleKind = "umd"
+        tasks.withType<KotlinJsCompile>().configureEach {
+            compilerOptions {
+                moduleKind.set(JsModuleKind.MODULE_UMD)
                 sourceMap = true
-                sourceMapEmbedSources = "always"
+                sourceMapEmbedSources.set(JsSourceMapEmbedMode.SOURCE_MAP_SOURCE_CONTENT_ALWAYS)
             }
         }
         binaries.library()
@@ -127,7 +130,7 @@ tasks.register<Copy>("prepareNpmDistribution") {
 
     duplicatesStrategy = DuplicatesStrategy.WARN
 
-    from("$buildDir/kotlin-webpack/js/productionExecutable") {
+    from(layout.buildDirectory.dir("kotlin-webpack/js/productionExecutable")) {
         into("dist")
         exclude("package.json")
         rename { filename ->
@@ -139,7 +142,7 @@ tasks.register<Copy>("prepareNpmDistribution") {
         }
     }
 
-    into("$buildDir/packages/js")
+    into(layout.buildDirectory.dir("packages/js"))
 }
 
 tasks.configureEach {
@@ -148,8 +151,8 @@ tasks.configureEach {
 
         doFirst {
             copy {
-                from("$buildDir/npm-package/dist")
-                into("$buildDir/js/packages/${project.name}/dist")
+                from(layout.buildDirectory.dir("npm-package/dist"))
+                into(layout.buildDirectory.dir("js/packages/${project.name}/dist"))
                 duplicatesStrategy = DuplicatesStrategy.INCLUDE
             }
         }
@@ -293,7 +296,7 @@ mavenPublishing {
     signAllPublications()
 
     if (System.getenv("CI") == "true") {
-        publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, automaticRelease = false)
+        publishToMavenCentral(automaticRelease = false)
     }
 }
 
