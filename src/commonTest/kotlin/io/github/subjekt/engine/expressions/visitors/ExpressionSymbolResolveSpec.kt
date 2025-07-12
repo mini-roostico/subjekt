@@ -13,7 +13,7 @@ import io.github.subjekt.engine.expressions.CallSymbol
 import io.github.subjekt.engine.expressions.Expression
 import io.github.subjekt.engine.expressions.ParameterSymbol
 import io.github.subjekt.engine.expressions.QualifiedCallSymbol
-import io.github.subjekt.engine.expressions.ir.IrParameter
+import io.github.subjekt.engine.expressions.ir.IrIdentifier
 import io.kotest.common.KotestInternal
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
@@ -52,7 +52,7 @@ class ExpressionSymbolResolveSpec : StringSpec({
             val result = expr.symbols
             result shouldBe
                 setOf(
-                    QualifiedCallSymbol(IrParameter("module", 1), "macro", 1),
+                    QualifiedCallSymbol(IrIdentifier("module", 1), "macro", 1),
                     ParameterSymbol("arg"),
                 )
         }

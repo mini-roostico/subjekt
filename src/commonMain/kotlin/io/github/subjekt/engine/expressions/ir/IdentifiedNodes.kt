@@ -16,7 +16,7 @@ sealed class IrSymbol(
 /**
  * Represents an identifier node (e.g. `${{ name }}`).
  */
-data class IrParameter(
+data class IrIdentifier(
     /**
      * Identifier value.
      */

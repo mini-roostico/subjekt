@@ -7,9 +7,9 @@ import io.github.subjekt.engine.expressions.ir.IrCast
 import io.github.subjekt.engine.expressions.ir.IrDotCall
 import io.github.subjekt.engine.expressions.ir.IrEndOfSlice
 import io.github.subjekt.engine.expressions.ir.IrFloatLiteral
+import io.github.subjekt.engine.expressions.ir.IrIdentifier
 import io.github.subjekt.engine.expressions.ir.IrIntegerLiteral
 import io.github.subjekt.engine.expressions.ir.IrNode
-import io.github.subjekt.engine.expressions.ir.IrParameter
 import io.github.subjekt.engine.expressions.ir.IrRangeSlice
 import io.github.subjekt.engine.expressions.ir.IrSingleSlice
 import io.github.subjekt.engine.expressions.ir.IrStringLiteral
@@ -43,9 +43,9 @@ interface IrVisitor<T> {
     fun visitCall(node: IrCall): T
 
     /**
-     * Visits a [io.github.subjekt.engine.expressions.ir.IrParameter] node.
+     * Visits a [io.github.subjekt.engine.expressions.ir.IrIdentifier] node.
      */
-    fun visitParameter(node: IrParameter): T
+    fun visitParameter(node: IrIdentifier): T
 
     /**
      * Visits a [io.github.subjekt.engine.expressions.ir.IrDotCall] node.
@@ -97,7 +97,7 @@ interface IrVisitor<T> {
             is IrFloatLiteral -> visitFloatLiteral(node)
             is IrIntegerLiteral -> visitIntegerLiteral(node)
             is IrStringLiteral -> visitStringLiteral(node)
-            is IrParameter -> visitParameter(node)
+            is IrIdentifier -> visitParameter(node)
             is IrRangeSlice -> visitRangeSlice(node)
             is IrUnaryOperation -> visitUnaryOperation(node)
             is IrTree -> visit(node.node)

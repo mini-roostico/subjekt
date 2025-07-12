@@ -17,8 +17,8 @@ import io.github.subjekt.core.definition.DefinedMacro
 import io.github.subjekt.core.definition.DefinedParameter
 import io.github.subjekt.engine.expressions.ir.IrCall
 import io.github.subjekt.engine.expressions.ir.IrDotCall
+import io.github.subjekt.engine.expressions.ir.IrIdentifier
 import io.github.subjekt.engine.expressions.ir.IrNode
-import io.github.subjekt.engine.expressions.ir.IrParameter
 import io.github.subjekt.engine.expressions.ir.IrRangeSlice
 import io.github.subjekt.engine.expressions.ir.IrSingleSlice
 import io.github.subjekt.engine.expressions.slices.SliceEngine.view
@@ -80,7 +80,7 @@ fun IrDotCall.toQualifiedCallSymbol(): QualifiedCallSymbol = QualifiedCallSymbol
 /**
  * Obtains the [ParameterSymbol] associated to the [IrNode.IrParameter].
  */
-fun IrParameter.toParameterSymbol(): ParameterSymbol = ParameterSymbol(identifier)
+fun IrIdentifier.toParameterSymbol(): ParameterSymbol = ParameterSymbol(identifier)
 
 fun IrSingleSlice.toParameterSymbol(): ParameterSymbol = ParameterSymbol(identifier)
 

@@ -19,10 +19,10 @@ import io.github.subjekt.engine.expressions.ir.IrCast
 import io.github.subjekt.engine.expressions.ir.IrDotCall
 import io.github.subjekt.engine.expressions.ir.IrEndOfSlice
 import io.github.subjekt.engine.expressions.ir.IrFloatLiteral
+import io.github.subjekt.engine.expressions.ir.IrIdentifier
 import io.github.subjekt.engine.expressions.ir.IrIntegerLiteral
 import io.github.subjekt.engine.expressions.ir.IrNativeType
 import io.github.subjekt.engine.expressions.ir.IrNode
-import io.github.subjekt.engine.expressions.ir.IrParameter
 import io.github.subjekt.engine.expressions.ir.IrRangeSlice
 import io.github.subjekt.engine.expressions.ir.IrSingleSlice
 import io.github.subjekt.engine.expressions.ir.IrStringLiteral
@@ -214,7 +214,7 @@ private class ExpressionIrCreationVisitor(
     override fun visitIdentifier(ctx: ExpressionParser.IdentifierContext): IrNode =
         withIndent {
             val result =
-                IrParameter(
+                IrIdentifier(
                     identifier = ctx.ID().text,
                     line = ctx.start?.line ?: -1,
                 )

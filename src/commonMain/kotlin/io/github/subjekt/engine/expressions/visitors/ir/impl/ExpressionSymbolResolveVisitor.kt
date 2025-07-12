@@ -16,7 +16,7 @@ import io.github.subjekt.engine.expressions.ir.IrBinaryOperation
 import io.github.subjekt.engine.expressions.ir.IrCall
 import io.github.subjekt.engine.expressions.ir.IrDotCall
 import io.github.subjekt.engine.expressions.ir.IrEndOfSlice
-import io.github.subjekt.engine.expressions.ir.IrParameter
+import io.github.subjekt.engine.expressions.ir.IrIdentifier
 import io.github.subjekt.engine.expressions.ir.IrRangeSlice
 import io.github.subjekt.engine.expressions.ir.IrSingleSlice
 import io.github.subjekt.engine.expressions.ir.IrTree
@@ -43,7 +43,7 @@ private class ExpressionSymbolResolveVisitor : BaseExpressionVisitor<Set<Resolva
     override fun visitCall(node: IrCall): Set<ResolvableSymbol> =
         node.arguments.flatMap { visit(it) }.toSet() + node.toCallSymbol()
 
-    override fun visitParameter(node: IrParameter): Set<ResolvableSymbol> = setOf(node.toParameterSymbol())
+    override fun visitParameter(node: IrIdentifier): Set<ResolvableSymbol> = setOf(node.toParameterSymbol())
 
     override fun visitDotCall(node: IrDotCall): Set<ResolvableSymbol> =
         node.arguments.flatMap { visit(it) }.toSet() + node.toQualifiedCallSymbol()
