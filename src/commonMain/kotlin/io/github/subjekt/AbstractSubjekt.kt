@@ -16,29 +16,7 @@ import io.github.subjekt.core.resolution.Exporter
 import io.github.subjekt.core.resolution.Mapper
 import io.github.subjekt.core.resolution.ResolvedSuite
 import io.github.subjekt.core.resolution.SubjektResult
-import io.github.subjekt.engine.resolve
-
-/**
- * End to end utility for subjekt to compile a [Source] directly into a [ResolvedSuite].
- */
-internal fun Source.compile(initialSymbolTable: SymbolTable): ResolvedSuite? {
-    val parsingResult = parseIntoSuite(initialSymbolTable)
-
-    if (parsingResult.isFailure) {
-        parsingResult.exceptionOrNull()?.let { throw it }
-        return null
-    }
-    val resolvingResult =
-        runCatching {
-            val resolvedSuite = parsingResult.getOrNull()?.resolve()
-            return resolvedSuite ?: error("There was an error resolving the suite.")
-        }
-    if (resolvingResult.isFailure) {
-        resolvingResult.exceptionOrNull()?.let { throw it }
-        return null
-    }
-    return resolvingResult.getOrNull()
-}
+import io.github.subjekt.engine.SubjektEngine
 
 /**
  * Subjekt entry class for using the Subjekt library. Various customization options can be specified by calling the
@@ -58,6 +36,28 @@ abstract class AbstractSubjekt internal constructor(
      */
     val resolvedSuite: ResolvedSuite? by lazy {
         source.compile(initialSymbolTable)
+    }
+
+    /**
+     * End to end utility for subjekt to compile a [Source] directly into a [ResolvedSuite].
+     */
+    internal fun Source.compile(initialSymbolTable: SymbolTable): ResolvedSuite? {
+        val parsingResult = parseIntoSuite(initialSymbolTable)
+
+        if (parsingResult.isFailure) {
+            parsingResult.exceptionOrNull()?.let { throw it }
+            return null
+        }
+        val resolvingResult =
+            runCatching {
+                val resolvedSuite = parsingResult.getOrNull()?.run { SubjektEngine.Default.evaluate(this) }
+                return resolvedSuite ?: error("There was an error resolving the suite.")
+            }
+        if (resolvingResult.isFailure) {
+            resolvingResult.exceptionOrNull()?.let { throw it }
+            return null
+        }
+        return resolvingResult.getOrNull()
     }
 
     /**

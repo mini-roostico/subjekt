@@ -9,6 +9,7 @@
 
 package io.github.subjekt.engine
 
+import io.github.subjekt.TestingUtility.resolve
 import io.github.subjekt.core.Macro
 import io.github.subjekt.core.Parameter
 import io.github.subjekt.core.Resolvable
