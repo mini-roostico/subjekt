@@ -6,7 +6,7 @@ import io.github.subjekt.engine.expressions.CallableSymbol
 import io.github.subjekt.engine.expressions.SymbolNotFoundException
 import io.github.subjekt.engine.expressions.TypeException
 import io.github.subjekt.engine.expressions.ir.BinaryOperator
-import io.github.subjekt.engine.expressions.ir.IrAtomicNode
+import io.github.subjekt.engine.expressions.ir.IrBasicNode
 import io.github.subjekt.engine.expressions.ir.IrBinaryOperation
 import io.github.subjekt.engine.expressions.ir.IrCall
 import io.github.subjekt.engine.expressions.ir.IrDotCall
@@ -34,7 +34,7 @@ object IrUtils {
         line: Int = -1,
         contextualVisitError: (String) -> Nothing,
         visitMethod: (ParserRuleContext) -> IrNode?,
-    ): IrAtomicNode {
+    ): IrBasicNode {
         val left =
             this?.let { visitMethod(it) }
                 ?: contextualVisitError("left")

@@ -55,3 +55,13 @@ data class IrTree(
 data class Error(
     override val line: Int,
 ) : IrNode(line)
+
+/**
+ * Represents a simple node in the IR tree.
+ */
+sealed class IrBasicNode(
+    /**
+     * Line in the source code where this node is located.
+     */
+    override val line: Int,
+) : IrNode(line)

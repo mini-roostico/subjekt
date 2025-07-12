@@ -17,4 +17,4 @@ data class IrCast(
     var value: IrNode?,
     val targetType: IrNativeType,
     override val line: Int = -1,
-) : IrAtomicNode(line)
+) : IrBasicNode(line)

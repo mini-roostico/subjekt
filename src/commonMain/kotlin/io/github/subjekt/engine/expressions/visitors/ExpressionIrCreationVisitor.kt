@@ -13,7 +13,7 @@ package io.github.subjekt.engine.expressions.visitors
 import io.github.subjekt.engine.expressions.Expression
 import io.github.subjekt.engine.expressions.ir.BinaryOperator
 import io.github.subjekt.engine.expressions.ir.Error
-import io.github.subjekt.engine.expressions.ir.IrAtomicNode
+import io.github.subjekt.engine.expressions.ir.IrBasicNode
 import io.github.subjekt.engine.expressions.ir.IrCall
 import io.github.subjekt.engine.expressions.ir.IrCast
 import io.github.subjekt.engine.expressions.ir.IrDotCall
@@ -225,7 +225,7 @@ private class ExpressionIrCreationVisitor(
         left: ParserRuleContext?,
         right: ParserRuleContext?,
         op: BinaryOperator,
-    ): IrAtomicNode =
+    ): IrBasicNode =
         left.binaryOperation(
             right,
             op,
@@ -315,8 +315,8 @@ private class ExpressionIrCreationVisitor(
             val result =
                 IrRangeSlice(
                     identifier = slice ?: ctx.createError { "slice ID is null" },
-                    start = start as? IrAtomicNode ?: ctx.createError { "start of slice is not atomic" },
-                    step = step as? IrAtomicNode ?: ctx.createError { "step of slice is not atomic" },
+                    start = start as? IrBasicNode ?: ctx.createError { "start of slice is not atomic" },
+                    step = step as? IrBasicNode ?: ctx.createError { "step of slice is not atomic" },
                     line = ctx.start?.line ?: -1,
                 )
             logVisit("SliceStartStep", ctx, result)
@@ -330,8 +330,8 @@ private class ExpressionIrCreationVisitor(
             val result =
                 IrRangeSlice(
                     identifier = slice ?: ctx.createError { "slice ID is null" },
-                    end = end as? IrAtomicNode ?: ctx.createError { "end of slice is not atomic" },
-                    step = step as? IrAtomicNode ?: ctx.createError { "step of slice is not atomic" },
+                    end = end as? IrBasicNode ?: ctx.createError { "end of slice is not atomic" },
+                    step = step as? IrBasicNode ?: ctx.createError { "step of slice is not atomic" },
                     line = ctx.start?.line ?: -1,
                 )
             logVisit("SliceEndStep", ctx, result)
@@ -345,8 +345,8 @@ private class ExpressionIrCreationVisitor(
             val result =
                 IrRangeSlice(
                     identifier = slice ?: ctx.createError { "slice ID is null" },
-                    start = start as? IrAtomicNode ?: ctx.createError { "start of slice is not atomic" },
-                    end = end as? IrAtomicNode ?: ctx.createError { "end of slice is not atomic" },
+                    start = start as? IrBasicNode ?: ctx.createError { "start of slice is not atomic" },
+                    end = end as? IrBasicNode ?: ctx.createError { "end of slice is not atomic" },
                     line = ctx.start?.line ?: -1,
                 )
             logVisit("SliceStartEnd", ctx, result)
@@ -359,7 +359,7 @@ private class ExpressionIrCreationVisitor(
             val result =
                 IrRangeSlice(
                     identifier = slice ?: ctx.createError { "slice ID is null" },
-                    end = end as? IrAtomicNode ?: ctx.createError { "end of slice is not atomic" },
+                    end = end as? IrBasicNode ?: ctx.createError { "end of slice is not atomic" },
                     line = ctx.start?.line ?: -1,
                 )
             logVisit("SliceEnd", ctx, result)
@@ -372,7 +372,7 @@ private class ExpressionIrCreationVisitor(
             val result =
                 IrRangeSlice(
                     identifier = slice ?: ctx.createError { "slice ID is null" },
-                    start = start as? IrAtomicNode ?: ctx.createError { "start of slice is not atomic" },
+                    start = start as? IrBasicNode ?: ctx.createError { "start of slice is not atomic" },
                     line = ctx.start?.line ?: -1,
                 )
             logVisit("SliceStart", ctx, result)
@@ -387,9 +387,9 @@ private class ExpressionIrCreationVisitor(
             val result =
                 IrRangeSlice(
                     identifier = slice ?: ctx.createError { "slice ID is null" },
-                    start = start as? IrAtomicNode ?: ctx.createError { "start of slice is not atomic" },
-                    end = end as? IrAtomicNode ?: ctx.createError { "end of slice is not atomic" },
-                    step = step as? IrAtomicNode ?: ctx.createError { "step of slice is not atomic" },
+                    start = start as? IrBasicNode ?: ctx.createError { "start of slice is not atomic" },
+                    end = end as? IrBasicNode ?: ctx.createError { "end of slice is not atomic" },
+                    step = step as? IrBasicNode ?: ctx.createError { "step of slice is not atomic" },
                     line = ctx.start?.line ?: -1,
                 )
             logVisit("SliceWithStep", ctx, result)
