@@ -1,15 +1,17 @@
 package io.github.subjekt.engine.expressions.ir
 
+import io.github.subjekt.engine.expressions.SliceSymbol
+
 /**
  * Represents a node of the IR tree that has an identifier.
  */
-sealed class IrIdentified(
+sealed class IrSymbol(
     /**
      * Identifier of the node.
      */
     open val identifier: String,
     override val line: Int,
-) : IrAtomicNode(line)
+) : IrBasicNode(line)
 
 /**
  * Represents an identifier node (e.g. `${{ name }}`).
@@ -20,7 +22,7 @@ data class IrParameter(
      */
     override val identifier: String,
     override val line: Int,
-) : IrIdentified(identifier, line)
+) : IrSymbol(identifier, line)
 
 /**
  * Represents a call node (e.g. `${{ name() }}`).
@@ -35,7 +37,7 @@ data class IrCall(
      */
     val arguments: List<IrNode>,
     override val line: Int,
-) : IrIdentified(identifier, line)
+) : IrSymbol(identifier, line)
 
 /**
  * Represents a dot call node (e.g. `${{ std.name() }}`).
@@ -54,7 +56,7 @@ data class IrDotCall(
      */
     val arguments: List<IrNode>,
     override val line: Int,
-) : IrIdentified(callId, line)
+) : IrSymbol(callId, line)
 
 data class IrSingleSlice(
     override val identifier: String,
@@ -63,4 +65,35 @@ data class IrSingleSlice(
      */
     val indexExpression: IrNode,
     override val line: Int = -1,
-) : IrIdentified(identifier, line)
+) : IrSymbol(identifier, line)
+
+/**
+ * Represents a slice operation in the Subjekt IR.
+ */
+data class IrRangeSlice(
+    override val identifier: String,
+    /**
+     * Start expression of the slice.
+     */
+    val start: IrBasicNode = IrIntegerLiteral(0, -1),
+    /**
+     * End expression of the slice.
+     */
+    val end: IrBasicNode = IrEndOfSlice(-1),
+    /**
+     * Step expression of the slice.
+     */
+    val step: IrBasicNode = IrIntegerLiteral(1, -1),
+    /**
+     * Symbol representing the slice.
+     */
+    var symbol: SliceSymbol? = null,
+    override val line: Int = -1,
+) : IrSymbol(identifier, line)
+
+/**
+ * Special atomic node needed to mark a slice with no end index.
+ */
+data class IrEndOfSlice(
+    override val line: Int = -1,
+) : IrBasicNode(line)

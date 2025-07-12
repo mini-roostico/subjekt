@@ -29,4 +29,27 @@ data class IrBinaryOperation(
      */
     val operator: BinaryOperator,
     override val line: Int,
-) : IrAtomicNode(line)
+) : IrBasicNode(line)
+
+/**
+ * Represents a unary operation in the Subjekt language.
+ */
+enum class UnaryOperator {
+    MINUS,
+    PLUS,
+}
+
+/**
+ * Represents a unary operation in the IR tree.
+ */
+data class IrUnaryOperation(
+    /**
+     * The operator of the unary operation (e.g. `!`, `-`).
+     */
+    val operator: UnaryOperator,
+    /**
+     * The operand of the unary operation.
+     */
+    val operand: IrNode,
+    override val line: Int = -1,
+) : IrBasicNode(line)

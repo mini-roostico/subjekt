@@ -5,7 +5,7 @@ package io.github.subjekt.engine.expressions.ir
  */
 sealed class IrLiteral(
     override val line: Int,
-) : IrAtomicNode(line)
+) : IrBasicNode(line)
 
 /**
  * Represents a string literal node (e.g. `${{ "Hello" }}` or `${{ 'Hello' }}`).
