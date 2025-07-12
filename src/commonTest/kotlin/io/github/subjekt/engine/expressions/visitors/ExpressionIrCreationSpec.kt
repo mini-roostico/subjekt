@@ -14,7 +14,7 @@ import io.github.subjekt.engine.expressions.ir.BinaryOperator
 import io.github.subjekt.engine.expressions.ir.IrBinaryOperation
 import io.github.subjekt.engine.expressions.ir.IrCall
 import io.github.subjekt.engine.expressions.ir.IrDotCall
-import io.github.subjekt.engine.expressions.ir.IrParameter
+import io.github.subjekt.engine.expressions.ir.IrIdentifier
 import io.github.subjekt.engine.expressions.ir.IrStringLiteral
 import io.github.subjekt.engine.expressions.ir.IrTree
 import io.kotest.common.KotestInternal
@@ -27,7 +27,7 @@ class ExpressionIrCreationSpec : StringSpec({
         val expr = Expression("variable")
         val result = expr.parseToIr()
 
-        result shouldBe IrTree(IrParameter("variable", 1))
+        result shouldBe IrTree(IrIdentifier("variable", 1))
     }
 
     "visitPlusExpr should return correct IrExpressionPlus" {
@@ -37,8 +37,8 @@ class ExpressionIrCreationSpec : StringSpec({
         result shouldBe
             IrTree(
                 IrBinaryOperation(
-                    IrParameter("a", 1),
-                    IrParameter("b", 1),
+                    IrIdentifier("a", 1),
+                    IrIdentifier("b", 1),
                     BinaryOperator.PLUS,
                     1,
                 ),
@@ -54,7 +54,7 @@ class ExpressionIrCreationSpec : StringSpec({
     "visitMacroCall should return correct IrCall" {
         val expr = Expression("macro(arg)")
         val result = expr.parseToIr()
-        result shouldBe IrTree(IrCall("macro", listOf(IrParameter("arg", 1)), 1))
+        result shouldBe IrTree(IrCall("macro", listOf(IrIdentifier("arg", 1)), 1))
     }
 
     "visitDotCall should return correct IrDotCall".config(enabled = false) {
@@ -63,9 +63,9 @@ class ExpressionIrCreationSpec : StringSpec({
         result shouldBe
             IrTree(
                 IrDotCall(
-                    IrParameter("module", 1),
+                    IrIdentifier("module", 1),
                     "macro",
-                    listOf(IrParameter("arg", 1)),
+                    listOf(IrIdentifier("arg", 1)),
                     1,
                 ),
             )

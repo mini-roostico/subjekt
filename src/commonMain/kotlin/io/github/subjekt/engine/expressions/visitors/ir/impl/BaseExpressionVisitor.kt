@@ -6,8 +6,8 @@ import io.github.subjekt.engine.expressions.ir.IrCast
 import io.github.subjekt.engine.expressions.ir.IrDotCall
 import io.github.subjekt.engine.expressions.ir.IrEndOfSlice
 import io.github.subjekt.engine.expressions.ir.IrFloatLiteral
+import io.github.subjekt.engine.expressions.ir.IrIdentifier
 import io.github.subjekt.engine.expressions.ir.IrIntegerLiteral
-import io.github.subjekt.engine.expressions.ir.IrParameter
 import io.github.subjekt.engine.expressions.ir.IrRangeSlice
 import io.github.subjekt.engine.expressions.ir.IrSingleSlice
 import io.github.subjekt.engine.expressions.ir.IrStringLiteral
@@ -38,7 +38,7 @@ abstract class BaseExpressionVisitor<T>(
         return default
     }
 
-    override fun visitParameter(node: IrParameter): T = default
+    override fun visitParameter(node: IrIdentifier): T = default
 
     override fun visitDotCall(node: IrDotCall): T {
         node.arguments.forEach { visit(it) }

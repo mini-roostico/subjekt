@@ -9,9 +9,9 @@ import io.github.subjekt.engine.expressions.ir.IrCast
 import io.github.subjekt.engine.expressions.ir.IrDotCall
 import io.github.subjekt.engine.expressions.ir.IrEndOfSlice
 import io.github.subjekt.engine.expressions.ir.IrFloatLiteral
+import io.github.subjekt.engine.expressions.ir.IrIdentifier
 import io.github.subjekt.engine.expressions.ir.IrIntegerLiteral
 import io.github.subjekt.engine.expressions.ir.IrNativeType
-import io.github.subjekt.engine.expressions.ir.IrParameter
 import io.github.subjekt.engine.expressions.ir.IrRangeSlice
 import io.github.subjekt.engine.expressions.ir.IrSingleSlice
 import io.github.subjekt.engine.expressions.ir.IrStringLiteral
@@ -86,7 +86,7 @@ class TypeVisitor(
             node.type = it
         }
 
-    override fun visitParameter(node: IrParameter): Type =
+    override fun visitParameter(node: IrIdentifier): Type =
         node
             .toParameterSymbol()
             .resolveDefinedParameter(context)
