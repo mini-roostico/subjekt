@@ -8,7 +8,7 @@ import kotlin.js.JsExport
 data class IntValue(
     val value: Int,
 ) : Value(Type.INTEGER) {
-    override fun toString(): String = value.toString()
+    override fun toString(): String = "int($value)"
 
     override fun cast(targetType: Type): Value =
         when (targetType) {
