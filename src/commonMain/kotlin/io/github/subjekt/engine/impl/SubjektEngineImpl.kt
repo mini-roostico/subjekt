@@ -42,9 +42,7 @@ class SubjektEngineImpl : SubjektEngine {
         this.mapValues {
             Instance(
                 it.value
-                    .resolve(context)
-                    .castToString()
-                    .value,
+                    .resolve(context),
                 it.value,
             )
         }
