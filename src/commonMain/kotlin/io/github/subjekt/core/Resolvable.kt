@@ -137,7 +137,7 @@ class Resolvable
                             }
                         "{{$index}}"
                     }
-                val singleExpression = foundBlocks.size == 1 && replaced.length == "\${{0}}".length
+                val singleExpression = foundBlocks.size == 1 && replaced.length == "{{0}}".length
 
                 return ResolvableString(
                     replaced,
