@@ -8,7 +8,7 @@ import kotlin.js.JsExport
 data class BooleanValue(
     val value: Boolean,
 ) : Value(Type.BOOLEAN) {
-    override fun toString(): String = value.toString()
+    override fun toString(): String = "boolean($value)"
 
     override fun cast(targetType: Type): Value =
         when (targetType) {
@@ -16,14 +16,14 @@ data class BooleanValue(
             Type.INTEGER -> IntValue(if (value) 1 else 0)
             Type.FLOAT -> FloatValue(if (value) 1.0 else 0.0)
             Type.BOOLEAN -> this
-            else -> throw UnsupportedOperationException("Cannot cast boolean value $this to $targetType.")
+            else -> throw UnsupportedOperationException("Cannot cast boolean value ${this.value} to $targetType.")
         }
 
     override fun eq(other: Value): BooleanValue =
         if (other is BooleanValue) {
             BooleanValue(value == other.value)
         } else {
-            throw UnsupportedOperationException("Cannot check equality between $this and $other")
+            throw UnsupportedOperationException("Cannot check equality between ${this.value} and $other")
         }
 
     override fun not(): BooleanValue = BooleanValue(!value)
@@ -32,13 +32,13 @@ data class BooleanValue(
         if (other is BooleanValue) {
             BooleanValue(value && other.value)
         } else {
-            throw UnsupportedOperationException("Cannot perform AND operation between $this and $other")
+            throw UnsupportedOperationException("Cannot perform AND operation between ${this.value} and $other")
         }
 
     override fun or(other: Value): BooleanValue =
         if (other is BooleanValue) {
             BooleanValue(value || other.value)
         } else {
-            throw UnsupportedOperationException("Cannot perform OR operation between $this and $other")
+            throw UnsupportedOperationException("Cannot perform OR operation between ${this.value} and $other")
         }
 }
