@@ -11,6 +11,9 @@ package io.github.subjekt
 
 import io.github.subjekt.core.Parameter
 import io.github.subjekt.core.SubjektFunction
+import io.github.subjekt.core.value.StringValue
+import io.github.subjekt.core.value.Type
+import io.github.subjekt.core.value.Value
 import kotlin.math.min
 
 /**
@@ -29,22 +32,35 @@ private val daysOfWeek = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "F
  */
 val stdLibParameters: List<Parameter> =
     listOf(
-        Parameter("DAYS_OF_WEEK", daysOfWeek),
+        Parameter("DAYS_OF_WEEK", daysOfWeek.map { Value.ofString(it) }),
     )
 
 /**
  * Capitalizes the first letter of a string.
  */
-fun capitalizeFirst(str: List<String>): String {
-    require(str.size == 1)
-    return str.first().replaceFirstChar(Char::titlecase)
+fun capitalizeFirst(str: List<Value>): Value {
+    require(str.size == 1 && str.first() is StringValue) {
+        "capitalizeFirst expects a single string argument"
+    }
+    val stringValue = str.first() as StringValue
+    return StringValue(stringValue.value.replaceFirstChar(Char::titlecase))
 }
 
 /**
  * Prettifies [arguments] by removing all non-alphanumeric characters and joining them together following a Pascal
  * case notation.
  */
-fun prettify(arguments: List<String>): String = arguments.joinToString("") { idFromCode(it) }
+fun prettify(arguments: List<Value>): StringValue {
+    require(arguments.isNotEmpty() && arguments.all { it.type == Type.STRING }) {
+        "prettify expects a non-empty list of strings"
+    }
+
+    return StringValue(
+        arguments
+            .map { (it as StringValue).value }
+            .joinToString("") { idFromCode(it) },
+    )
+}
 
 private fun String.substringStartingFromFirstValidChar(): String {
     val startIndex = indexOfFirst { it.isLetter() }

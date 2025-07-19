@@ -39,7 +39,15 @@ class SubjektEngineImpl : SubjektEngine {
      * Resolves this map of [Resolvable] objects into a map of [Instance] objects, using the given [context].
      */
     private fun Map<String, Resolvable>.resolve(context: Context): Map<String, Instance> =
-        this.mapValues { Instance(it.value.resolve(context), it.value) }
+        this.mapValues {
+            Instance(
+                it.value
+                    .resolve(context)
+                    .castToString()
+                    .value,
+                it.value,
+            )
+        }
 
     override fun evaluate(suite: Suite): ResolvedSuite = suite.resolve()
 }

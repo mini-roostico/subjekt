@@ -1,6 +1,7 @@
 package io.github.subjekt.engine.expressions.visitors.ir.impl
 
 import io.github.subjekt.core.definition.Context
+import io.github.subjekt.core.value.Type
 import io.github.subjekt.engine.expressions.TypeException
 import io.github.subjekt.engine.expressions.ir.BinaryOperator
 import io.github.subjekt.engine.expressions.ir.IrBinaryOperation
@@ -16,7 +17,6 @@ import io.github.subjekt.engine.expressions.ir.IrRangeSlice
 import io.github.subjekt.engine.expressions.ir.IrSingleSlice
 import io.github.subjekt.engine.expressions.ir.IrStringLiteral
 import io.github.subjekt.engine.expressions.ir.IrUnaryOperation
-import io.github.subjekt.engine.expressions.ir.Type
 import io.github.subjekt.engine.expressions.ir.utils.IrUtils
 import io.github.subjekt.engine.expressions.toParameterSymbol
 import io.github.subjekt.engine.expressions.visitors.ir.IrVisitor
@@ -94,8 +94,6 @@ class TypeVisitor(
             .run {
                 IrUtils.tryInferType(
                     this,
-                    tryInferType,
-                    "Expected type $tryInferType for parameter '${node.identifier}",
                 )
             }.also { node.type = it }
 

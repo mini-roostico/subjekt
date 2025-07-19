@@ -11,6 +11,7 @@ package io.github.subjekt.engine.expressions
 
 import io.github.subjekt.core.RawExpression
 import io.github.subjekt.core.definition.Context
+import io.github.subjekt.core.value.Value
 import io.github.subjekt.engine.expressions.ir.IrTree
 import io.github.subjekt.engine.expressions.visitors.debug.LogVisitor
 import io.github.subjekt.engine.expressions.visitors.ir.impl.ExpressionVisitor
@@ -46,7 +47,7 @@ class Expression(
     fun resolve(
         context: Context,
         log: Boolean = false,
-    ): String =
+    ): Value =
         TypeVisitor(context).visit(ir).run {
             with(LogVisitor(log)) {
                 visit(ir)

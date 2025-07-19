@@ -15,6 +15,7 @@ import io.github.subjekt.core.Resolvable
 import io.github.subjekt.core.Source
 import io.github.subjekt.core.Suite
 import io.github.subjekt.core.parsing.SuiteFactory.parseIntoSuite
+import io.github.subjekt.core.value.Value.Companion.asStringValue
 import io.github.subjekt.utils.Logger
 import io.github.subjekt.utils.MessageCollector
 import io.kotest.core.spec.style.StringSpec
@@ -205,8 +206,10 @@ class SuiteParsingSpec : StringSpec({
             ).getOrFail()
         suite.id shouldBe "Simple suite"
         suite.symbolTable.parameters.size shouldBe 2
-        suite.symbolTable.resolveParameter("param1")?.values shouldBe listOf("value1", "value2")
-        suite.symbolTable.resolveParameter("param2")?.values shouldBe listOf("value3", "value4")
+        suite.symbolTable.resolveParameter("param1")?.values shouldBe
+            listOf("value1".asStringValue(), "value2".asStringValue())
+        suite.symbolTable.resolveParameter("param2")?.values shouldBe
+            listOf("value3".asStringValue(), "value4".asStringValue())
     }
 
     "Suite parsing with local parameters" {
@@ -232,8 +235,10 @@ class SuiteParsingSpec : StringSpec({
         subject.id shouldBe 0
         subject.name?.source shouldBe "Simple subject"
         subject.symbolTable.parameters.size shouldBe 2
-        subject.symbolTable.resolveParameter("param1")?.values shouldBe listOf("value1", "value2")
-        subject.symbolTable.resolveParameter("param2")?.values shouldBe listOf("value3", "value4")
+        subject.symbolTable.resolveParameter("param1")?.values shouldBe
+            listOf("value1".asStringValue(), "value2".asStringValue())
+        subject.symbolTable.resolveParameter("param2")?.values shouldBe
+            listOf("value3".asStringValue(), "value4".asStringValue())
         suite.symbolTable.parameters.shouldBeEmpty()
         suite.symbolTable.macros.shouldBeEmpty()
     }
@@ -318,8 +323,9 @@ class SuiteParsingSpec : StringSpec({
             ).getOrFail()
         suite.id shouldBe "Simple suite"
         suite.symbolTable.parameters.size shouldBe 2
-        suite.symbolTable.resolveParameter("param1")?.values shouldBe listOf("value1")
-        suite.symbolTable.resolveParameter("param2")?.values shouldBe listOf("value2", "value3")
+        suite.symbolTable.resolveParameter("param1")?.values shouldBe listOf("value1".asStringValue())
+        suite.symbolTable.resolveParameter("param2")?.values shouldBe
+            listOf("value2".asStringValue(), "value3".asStringValue())
         suite.symbolTable.macros.size shouldBe 2
         val macro1 = suite.symbolTable.resolveMacro("macro1")!!
         macro1 shouldBe Macro("macro1", emptyList(), listOf(Resolvable("code1")))
@@ -327,9 +333,10 @@ class SuiteParsingSpec : StringSpec({
         macro2 shouldBe Macro("macro2", emptyList(), listOf(Resolvable("code2"), Resolvable("code3")))
         val subject = suite.subjects[0]
         subject.symbolTable.parameters.size shouldBe 3
-        subject.symbolTable.resolveParameter("param1")?.values shouldBe listOf("value1")
-        subject.symbolTable.resolveParameter("param2")?.values shouldBe listOf("value2", "value3")
-        subject.symbolTable.resolveParameter("param3")?.values shouldBe listOf("value4")
+        subject.symbolTable.resolveParameter("param1")?.values shouldBe listOf("value1".asStringValue())
+        subject.symbolTable.resolveParameter("param2")?.values shouldBe
+            listOf("value2".asStringValue(), "value3".asStringValue())
+        subject.symbolTable.resolveParameter("param3")?.values shouldBe listOf("value4".asStringValue())
         subject.symbolTable.macros.size shouldBe 3
         val macro3 = subject.symbolTable.resolveMacro("macro3")!!
         macro3 shouldBe Macro("macro3", emptyList(), listOf(Resolvable("code4")))
@@ -360,11 +367,12 @@ class SuiteParsingSpec : StringSpec({
             ).getOrFail()
         suite.id shouldBe "Simple suite"
         suite.symbolTable.parameters.size shouldBe 1
-        suite.symbolTable.resolveParameter("param1")?.values shouldBe listOf("value1", "value2")
+        suite.symbolTable.resolveParameter("param1")?.values shouldBe
+            listOf("value1".asStringValue(), "value2".asStringValue())
         suite.subjects[0]
             .symbolTable
             .resolveParameter("param1")
-            ?.values shouldBe listOf("value3", "value4")
+            ?.values shouldBe listOf("value3".asStringValue(), "value4".asStringValue())
     }
 
     "Suite parsing with macro overloading" {

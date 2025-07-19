@@ -1,5 +1,7 @@
 package io.github.subjekt.engine.expressions.ir
 
+import io.github.subjekt.core.value.Type
+
 /**
  * Represents a native type in the Subjekt IR.
  */
@@ -7,6 +9,14 @@ enum class IrNativeType {
     INTEGER,
     FLOAT,
     STRING,
+    ;
+
+    fun toType(): Type =
+        when (this) {
+            INTEGER -> Type.INTEGER
+            FLOAT -> Type.FLOAT
+            STRING -> Type.STRING
+        }
 }
 
 /**

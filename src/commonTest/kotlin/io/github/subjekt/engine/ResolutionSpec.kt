@@ -20,6 +20,8 @@ import io.github.subjekt.core.parsing.SuiteFactory.SuiteBuilder
 import io.github.subjekt.core.resolution.Instance
 import io.github.subjekt.core.resolution.ResolvedSubject
 import io.github.subjekt.core.resolution.ResolvedSuite
+import io.github.subjekt.core.value.Value.Companion.asDoubleValue
+import io.github.subjekt.core.value.Value.Companion.asStringValue
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import kotlin.math.PI
@@ -65,7 +67,10 @@ class ResolutionSpec : StringSpec({
 
     "resolution of a Suite with parameters should work" {
         val resolvable = Resolvable("Test number: \${{ test }}")
-        val symbolTable = SymbolTable().defineParameter(Parameter("test", listOf("1", "2")))
+        val symbolTable =
+            SymbolTable().defineParameter(
+                Parameter("test", listOf("1".asStringValue(), "2".asStringValue())),
+            )
         val suite =
             createSuite(
                 "test",
@@ -125,7 +130,7 @@ class ResolutionSpec : StringSpec({
     }
 
     "resolution of a Suite with macros and parameters should work" {
-        val resolvable = Resolvable("Test number: \${{ test(param) }}")
+        val resolvable = Resolvable("Test number: \${{ test(p) }}")
         val symbolTable =
             SymbolTable()
                 .defineMacro(
@@ -134,7 +139,9 @@ class ResolutionSpec : StringSpec({
                         listOf("param"),
                         listOf(Resolvable("(\${{ param }})")),
                     ),
-                ).defineParameter(Parameter("param", listOf("1", "2", "3")))
+                ).defineParameter(
+                    Parameter("p", listOf("1".asStringValue(), "2".asStringValue(), "3".asStringValue())),
+                )
         val suite = createSuite("test", createSubject(0, resolvable, symbolTable))
         suite.resolve() shouldBe
             ResolvedSuite(
@@ -177,9 +184,9 @@ class ResolutionSpec : StringSpec({
                         ),
                     ),
                 ).defineParameter(
-                    Parameter("param", listOf("1", "2", "3")),
+                    Parameter("param", listOf("1".asStringValue(), "2".asStringValue(), "3".asStringValue())),
                 )
-        val suite = createSuite("test", createSubject(0, resolvable, symbolTable))
+        val suite = createSuite("test_overload", createSubject(0, resolvable, symbolTable))
         suite.resolve() shouldBe
             ResolvedSuite(
                 suite,
@@ -215,8 +222,8 @@ class ResolutionSpec : StringSpec({
                     ),
                 ).defineParameters(
                     listOf(
-                        Parameter("param", listOf("- ", "* ")),
-                        Parameter("param2", listOf("1", "2")),
+                        Parameter("param", listOf("- ".asStringValue(), "* ".asStringValue())),
+                        Parameter("param2", listOf("1".asStringValue(), "2".asStringValue())),
                     ),
                 )
         val symbolTable2 =
@@ -231,8 +238,8 @@ class ResolutionSpec : StringSpec({
                     ),
                 ).defineParameters(
                     listOf(
-                        Parameter("param", listOf("[] ", ". ")),
-                        Parameter("param2", listOf("1", "2")),
+                        Parameter("param", listOf("[] ".asStringValue(), ". ".asStringValue())),
+                        Parameter("param2", listOf("1".asStringValue(), "2".asStringValue())),
                     ),
                 )
         val suite =
@@ -287,10 +294,10 @@ class ResolutionSpec : StringSpec({
         val resolvable = Resolvable("Test number: \${{ plus(pi(), '1') }}")
         val symbolTable =
             SymbolTable()
-                .defineFunction("pi") { PI.toString() }
+                .defineFunction("pi") { PI.asDoubleValue() }
                 .defineFunction("plus") {
                     require(it.size == 2)
-                    (it[0].toDouble() + it[1].toDouble()).toString()
+                    (it[0] + it[1])
                 }
         val suite = createSuite("test", createSubject(0, resolvable, symbolTable))
         suite.resolve() shouldBe

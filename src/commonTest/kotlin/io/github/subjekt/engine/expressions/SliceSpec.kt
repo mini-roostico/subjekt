@@ -3,6 +3,7 @@ package io.github.subjekt.engine.expressions
 import io.github.subjekt.TestingUtility.shouldResolveToSubjects
 import io.github.subjekt.core.Parameter
 import io.github.subjekt.core.SymbolTable
+import io.github.subjekt.core.value.Value.Companion.asStringValue
 import io.github.subjekt.engine.expressions.slices.SliceEngine.slice
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
@@ -11,8 +12,8 @@ class SliceSpec : StringSpec({
     val symbolTable =
         SymbolTable(
             mapOf(
-                "arr" to Parameter("arr", listOf("a", "b", "c", "d", "e")),
-                "index" to Parameter("index", listOf("1", "2")),
+                "arr" to Parameter("arr", listOf("a", "b", "c", "d", "e").map { it.asStringValue() }),
+                "index" to Parameter("index", listOf("1".asStringValue(), "2".asStringValue())),
             ),
         )
 

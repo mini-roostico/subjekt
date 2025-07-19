@@ -6,7 +6,6 @@ import io.github.subjekt.core.definition.Context
 import io.github.subjekt.engine.expressions.ir.BinaryOperator
 import io.github.subjekt.engine.expressions.ir.IrIntegerLiteral
 import io.github.subjekt.engine.expressions.ir.IrStringLiteral
-import io.github.subjekt.engine.expressions.ir.Type
 import io.github.subjekt.engine.expressions.visitors.ir.impl.ExpressionVisitor
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -37,7 +36,6 @@ class BinaryOperationSpec : FunSpec({
         "'2.1' - 3.0" shouldResolveToDouble -0.9
         "2.0 * '3.0'" shouldResolveToDouble 6.0
         "'7.0' / 3.0" shouldResolveToDouble 2.3333333333333335
-        "'7.0' % '3.0'" shouldResolveToDouble 1.0
     }
 
     test("Number operations") {
@@ -79,11 +77,10 @@ class BinaryOperationSpec : FunSpec({
                 ExpressionUtils.resolveBinaryOperation(
                     IrStringLiteral("1", 1),
                     IrStringLiteral("2", 2),
-                    BinaryOperator.PLUS,
-                    Type.UNDEFINED,
-                ) { "" }
+                    BinaryOperator.MINUS,
+                ) { ExpressionVisitor(Context.empty).visit(it) }
             }
-        ex.message shouldBe "Cannot resolve binary operation with undefined type for operator PLUS."
+        ex.message shouldBe "Cannot subtract '2' from '1'."
     }
 
     test("Unsupported string operation throws") {
@@ -93,22 +90,20 @@ class BinaryOperationSpec : FunSpec({
                     IrStringLiteral("a", 1),
                     IrStringLiteral("b", 2),
                     BinaryOperator.MINUS,
-                    Type.STRING,
                 ) { ExpressionVisitor(Context.empty).visit(it) }
             }
-        ex.message shouldBe "Unsupported operation for type STRING with operator MINUS"
+        ex.message shouldBe "Cannot subtract 'b' from 'a'."
     }
 
     test("Invalid number throws") {
         val ex =
-            shouldThrow<IllegalArgumentException> {
+            shouldThrow<UnsupportedOperationException> {
                 ExpressionUtils.resolveBinaryOperation(
                     IrStringLiteral("a", 1),
                     IrIntegerLiteral(3, 2),
-                    BinaryOperator.PLUS,
-                    Type.INTEGER,
+                    BinaryOperator.MULTIPLY,
                 ) { ExpressionVisitor(Context.empty).visit(it) }
             }
-        ex.message shouldBe "Cannot apply operator PLUS on values 'a' and '3' of type INTEGER."
+        ex.message shouldBe "Cannot multiply 'a' by 3."
     }
 })

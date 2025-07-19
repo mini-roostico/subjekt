@@ -10,6 +10,7 @@
 package io.github.subjekt.core.definition
 
 import io.github.subjekt.core.Parameter
+import io.github.subjekt.core.value.Value
 
 /**
  * Represents a parameter fixed to a value. Contrary to the original Parameter, a [parameterId] is not unique to
@@ -24,7 +25,7 @@ data class DefinedParameter(
      * Value of this [DefinedParameter]. It derives from one of the possible values of the original
      * [io.github.subjekt.core.Parameter].
      */
-    val value: String,
+    val value: Value,
     /**
      * Original [io.github.subjekt.core.Parameter] from which this [DefinedParameter] has been derived.
      */

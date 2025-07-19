@@ -1,5 +1,6 @@
 package io.github.subjekt.engine.expressions.visitors.ir.impl
 
+import io.github.subjekt.core.value.IntValue
 import io.github.subjekt.engine.expressions.ExpressionUtils
 import io.github.subjekt.engine.expressions.InternalCompilerException
 import io.github.subjekt.engine.expressions.ir.IrBinaryOperation
@@ -9,7 +10,6 @@ import io.github.subjekt.engine.expressions.ir.IrIntegerLiteral
 import io.github.subjekt.engine.expressions.ir.IrNode
 import io.github.subjekt.engine.expressions.ir.IrStringLiteral
 import io.github.subjekt.engine.expressions.ir.IrUnaryOperation
-import io.github.subjekt.engine.expressions.ir.Type
 import io.github.subjekt.engine.expressions.ir.UnaryOperator
 
 /**
@@ -32,14 +32,15 @@ class IntegerExpressionVisitor :
         )
 
     override fun visitBinaryOperation(node: IrBinaryOperation): Int =
-        ExpressionUtils
-            .resolveBinaryOperation(
-                leftNode = node.left,
-                rightNode = node.right,
-                operator = node.operator,
-                type = Type.INTEGER,
-                visitMethod = { visit(it).toString() },
-            ).toInt()
+        (
+            ExpressionUtils
+                .resolveBinaryOperation(
+                    leftNode = node.left,
+                    rightNode = node.right,
+                    operator = node.operator,
+                    visitMethod = { IntValue(visit(it)) },
+                ) as IntValue
+        ).value
 
     override fun visitUnaryOperation(node: IrUnaryOperation): Int =
         if (node.operator == UnaryOperator.MINUS) -visit(node.operand) else visit(node.operand)

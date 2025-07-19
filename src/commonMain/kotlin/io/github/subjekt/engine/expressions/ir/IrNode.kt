@@ -9,6 +9,7 @@
 
 package io.github.subjekt.engine.expressions.ir
 
+import io.github.subjekt.core.value.Type
 import io.github.subjekt.engine.expressions.visitors.ir.IrVisitor
 
 /**
@@ -26,17 +27,6 @@ sealed class IrNode(
      * Accepts a [irVisitor] to visit this node.
      */
     fun <T> accept(irVisitor: IrVisitor<T>) = irVisitor.visit(this)
-}
-
-/**
- * Represents the type of IR node.
- */
-enum class Type {
-    STRING,
-    INTEGER,
-    FLOAT,
-    NUMBER,
-    UNDEFINED,
 }
 
 /**

@@ -1,9 +1,9 @@
 package io.github.subjekt.engine.expressions
 
+import io.github.subjekt.core.value.Type
+import io.github.subjekt.core.value.Value
 import io.github.subjekt.engine.expressions.ir.BinaryOperator
 import io.github.subjekt.engine.expressions.ir.IrNode
-import io.github.subjekt.engine.expressions.ir.Type
-import kotlin.math.round
 
 object ExpressionUtils {
     /**
@@ -20,87 +20,26 @@ object ExpressionUtils {
         leftNode: IrNode,
         rightNode: IrNode,
         operator: BinaryOperator,
-        type: Type,
-        visitMethod: (IrNode) -> String,
-    ): String {
-        if (type == Type.UNDEFINED) {
-            throw UnsupportedOperationException(
-                "Cannot resolve binary operation with undefined type for operator $operator.",
-            )
-        }
-        val leftStr = visitMethod(leftNode)
-        val rightStr = visitMethod(rightNode)
-        if (operator == BinaryOperator.CONCAT) return "$leftStr$rightStr"
+        visitMethod: (IrNode) -> Value,
+    ): Value {
+        val left = visitMethod(leftNode)
+        val right = visitMethod(rightNode)
 
-        return when (type) {
-            Type.STRING -> {
-                if (operator == BinaryOperator.PLUS) {
-                    // If the type is STRING and the operator is PLUS, we perform string concatenation
-                    "$leftStr$rightStr"
-                } else {
-                    throw UnsupportedOperationException(
-                        "Unsupported operation for type STRING with operator $operator",
-                    )
-                }
-            }
-
-            else -> {
-                leftStr.applyNumberOperation(rightStr, operator, type)
-            }
+        return when (operator) {
+            BinaryOperator.PLUS -> left + right
+            BinaryOperator.MINUS -> left - right
+            BinaryOperator.MULTIPLY -> left * right
+            BinaryOperator.DIVIDE -> left / right
+            BinaryOperator.MODULO -> left % right
+            BinaryOperator.EQ -> left eq right
+            BinaryOperator.NE -> left ne right
+            BinaryOperator.LT -> left lt right
+            BinaryOperator.LE -> left le right
+            BinaryOperator.GT -> left gt right
+            BinaryOperator.GE -> left ge right
+            BinaryOperator.AND -> left and right
+            BinaryOperator.OR -> left or right
+            BinaryOperator.CONCAT -> left concat right
         }
     }
-
-    private fun String.applyNumberOperation(
-        right: String,
-        operator: BinaryOperator,
-        type: Type,
-    ): String =
-        when (type) {
-            Type.INTEGER -> {
-                val leftInt = this.toIntOrNull()
-                val rightInt = right.toIntOrNull()
-                leftInt.binaryOp(rightInt, operator)
-            }
-            Type.FLOAT -> {
-                val leftFloat = this.toDoubleOrNull()
-                val rightFloat = right.toDoubleOrNull()
-                leftFloat.binaryOp(rightFloat, operator)
-            }
-            Type.NUMBER -> {
-                val leftNumber = this.toIntOrNull() ?: this.toDoubleOrNull()
-                val rightNumber = right.toIntOrNull() ?: right.toDoubleOrNull()
-
-                if (leftNumber is Double || rightNumber is Double) {
-                    leftNumber?.toDouble().binaryOp(rightNumber?.toDouble(), operator)
-                } else {
-                    leftNumber?.toInt().binaryOp(rightNumber?.toInt(), operator)
-                }
-            }
-            else -> InternalCompilerException(null, "Unexpected else case in applyNumberOperation: $type")
-        }?.toString() ?: throw IllegalArgumentException(
-            "Cannot apply operator $operator on values '$this' and '$right' of type $type.",
-        )
-
-    private inline fun <reified T : Number> T?.binaryOp(
-        right: T?,
-        operator: BinaryOperator,
-    ): String? =
-        if (this == null || right == null) {
-            null
-        } else {
-            when (operator) {
-                BinaryOperator.PLUS -> (this.toDouble() + right.toDouble())
-                BinaryOperator.MINUS -> (this.toDouble() - right.toDouble())
-                BinaryOperator.MULTIPLY -> (this.toDouble() * right.toDouble())
-                BinaryOperator.DIVIDE -> (this.toDouble() / right.toDouble())
-                BinaryOperator.MODULO -> (this.toDouble() % right.toDouble())
-                BinaryOperator.CONCAT -> "$this$right"
-            }.let {
-                if (T::class == Int::class && operator != BinaryOperator.CONCAT) {
-                    round(it as Double).toInt().toString()
-                } else {
-                    it.toString()
-                }
-            }
-        }
 }

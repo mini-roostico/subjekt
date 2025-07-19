@@ -15,6 +15,7 @@ import io.github.subjekt.core.Resolvable
 import io.github.subjekt.core.Source
 import io.github.subjekt.core.resolution.ResolvedSuite
 import io.github.subjekt.core.resolution.SubjektResult
+import io.github.subjekt.core.value.Value
 
 /**
  * Subjekt entry class for using the Subjekt library. Various customization options can be specified by calling the
@@ -57,7 +58,7 @@ class Subjekt internal constructor(
      */
     fun customParameter(
         id: String,
-        values: Array<String>,
+        values: Array<Value>,
     ): Subjekt {
         initialSymbolTable = initialSymbolTable.defineParameter(Parameter(id, values.toList()))
         return this
@@ -79,11 +80,11 @@ class Subjekt internal constructor(
     /**
      * Adds a custom function to the [initialSymbolTable] used to resolve the [source].
      */
-    fun customFunction(
+    fun customStringFunction(
         id: String,
         function: (List<String>) -> String,
     ): Subjekt {
-        initialSymbolTable = initialSymbolTable.defineFunction(id, function)
+        initialSymbolTable = initialSymbolTable.defineStringFunction(id, function)
         return this
     }
 

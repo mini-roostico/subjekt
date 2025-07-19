@@ -10,6 +10,8 @@
 package io.github.subjekt.core
 
 import io.github.subjekt.core.definition.Context
+import io.github.subjekt.core.value.StringValue
+import io.github.subjekt.core.value.Value
 import io.github.subjekt.engine.expressions.Expression
 import io.github.subjekt.engine.expressions.Expression.Companion.toExpression
 import io.github.subjekt.engine.expressions.ResolvableSymbol
@@ -97,7 +99,20 @@ class Resolvable
         /**
          * Resolves the resolvable with the given [context].
          */
-        internal fun resolve(context: Context): String = resolveFormatting(expressions.map { it.resolve(context) })
+        internal fun resolve(context: Context): Value =
+            if (resolvableString.pure) {
+                StringValue(resolvableString.toFormat)
+            } else if (resolvableString.singleExpression && expressions.isNotEmpty()) { // defensive check
+                // If it's a single expression, resolve it directly
+                expressions.first().resolve(context)
+            } else {
+                // Otherwise, resolve all expressions and format the string
+                StringValue(
+                    resolveFormatting(
+                        expressions.map { it.resolve(context).castToString().value },
+                    ),
+                )
+            }
 
         companion object {
             /**
@@ -109,13 +124,12 @@ class Resolvable
                 expressionPrefix: String = "\${{",
                 expressionSuffix: String = "}}",
             ): ResolvableString {
-                // Match prefix ... suffix blocks
                 val regex = buildRegex(expressionPrefix, expressionSuffix)
+
                 val foundBlocks = mutableListOf<String>()
                 val replaced =
                     regex.replace(this) {
                         val block = it.groupValues[1].trim()
-                        // Note: collapse identical expressions to the same index
                         val index =
                             foundBlocks.indexOf(block).takeIf { it != -1 } ?: run {
                                 foundBlocks.add(block)
@@ -123,7 +137,14 @@ class Resolvable
                             }
                         "{{$index}}"
                     }
-                return ResolvableString(replaced, foundBlocks.map { RawExpression(it) })
+                val singleExpression = foundBlocks.size == 1 && replaced.length == "\${{0}}".length
+
+                return ResolvableString(
+                    replaced,
+                    foundBlocks.map { RawExpression(it) },
+                    pure = foundBlocks.isEmpty(),
+                    singleExpression = singleExpression,
+                )
             }
         }
     }
@@ -143,6 +164,15 @@ internal data class ResolvableString(
      * source, it will be counted only once.
      */
     val expressions: List<RawExpression>,
+    /**
+     * Indicates if the string is a single expression, i.e., it contains only one expression and no other text.
+     */
+    val singleExpression: Boolean = false,
+    /**
+     * Indicates if the string is pure, i.e., it does not contain any expressions.
+     * If true, the string can be used as a constant value without formatting.
+     */
+    val pure: Boolean = false,
 ) {
     /**
      * Formats the string with the given [values]. Throws an [IllegalArgumentException] if the [values] number
@@ -152,6 +182,9 @@ internal data class ResolvableString(
     fun format(values: List<String>): String {
         require(values.size == expressions.size) {
             "Number of values does not match number of expressions"
+        }
+        if (pure) {
+            return toFormat // If pure, no formatting is needed. Avoids expensive Regex operations.
         }
         return toFormat.format(values)
     }

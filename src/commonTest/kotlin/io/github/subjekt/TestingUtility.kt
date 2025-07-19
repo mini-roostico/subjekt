@@ -40,7 +40,7 @@ object TestingUtility {
         ResolvedSubject(0, mapOf("name" to Instance(name, Resolvable(name))))
 
     fun String.resolveAsExpression(context: Context = Context.empty): String =
-        Resolvable("\${{$this}}").resolve(context)
+        Resolvable("\${{$this}}").resolve(context).castToString().value
 
     infix fun String.shouldResolveTo(expected: String) = this.resolveAsExpression() shouldBe expected
 
