@@ -10,19 +10,25 @@
 package io.github.subjekt
 
 import io.github.subjekt.core.Resolvable
+import io.github.subjekt.core.Source
 import io.github.subjekt.core.Suite
 import io.github.subjekt.core.SymbolTable
 import io.github.subjekt.core.definition.Context
 import io.github.subjekt.core.parsing.SuiteFactory
+import io.github.subjekt.core.parsing.SuiteFactory.parseIntoSuite
 import io.github.subjekt.core.resolution.Instance
 import io.github.subjekt.core.resolution.ResolvedSubject
 import io.github.subjekt.core.resolution.ResolvedSuite
+import io.github.subjekt.core.value.Value.Companion.asStringValue
 import io.github.subjekt.engine.SubjektEngine
 import io.kotest.assertions.fail
 import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.shouldBe
 
 object TestingUtility {
+    fun String.compileYaml(initialSymbolTable: SymbolTable = SymbolTable()): Suite =
+        Source.fromYaml(this).parseIntoSuite(initialSymbolTable).getOrFail()
+
     fun Suite.resolve(): ResolvedSuite = SubjektEngine.Default.evaluate(this)
 
     /**
@@ -37,7 +43,7 @@ object TestingUtility {
     }
 
     fun getSimpleResolvedSubject(name: String): ResolvedSubject =
-        ResolvedSubject(0, mapOf("name" to Instance(name, Resolvable(name))))
+        ResolvedSubject(0, mapOf("name" to Instance(name.asStringValue(), Resolvable(name))))
 
     fun String.resolveAsExpression(context: Context = Context.empty): String =
         Resolvable("\${{$this}}").resolve(context).castToString().value
@@ -62,8 +68,12 @@ object TestingUtility {
             ).build()
             .resolve()
             .resolvedSubjects
-            .map { it.name!!.value }
-            .toSet()
+            .map {
+                it.name!!
+                    .value
+                    .castToString()
+                    .value
+            }.toSet()
 
     fun String.shouldResolveToSubjects(
         symbolTable: SymbolTable,

@@ -26,7 +26,14 @@ class SubjektResultToFileSpec : StringSpec({
         val resolvedSubject = getSimpleResolvedSubject("subject1")
         val resolvedSuite =
             ResolvedSuite(Suite("suite", SymbolTable(), emptyList<Subject>(), Configuration()), setOf(resolvedSubject))
-        val result = TextResult(resolvedSuite, { it.name?.value.orEmpty() })
+        val result =
+            TextResult(resolvedSuite, {
+                it.name
+                    ?.value
+                    ?.castToString()
+                    ?.value
+                    .orEmpty()
+            })
 
         val filePath = "test.txt"
         result.toFile(filePath) shouldBe null
@@ -42,7 +49,14 @@ class SubjektResultToFileSpec : StringSpec({
                 Suite("suite", SymbolTable(), emptyList<Subject>(), Configuration()),
                 setOf(resolvedSubject1, resolvedSubject2),
             )
-        val result = TextResult(resolvedSuite, { it.name?.value.orEmpty() })
+        val result =
+            TextResult(resolvedSuite, {
+                it.name
+                    ?.value
+                    ?.castToString()
+                    ?.value
+                    .orEmpty()
+            })
 
         val directory = "testDir"
         result.toFiles(directory) shouldBe null
