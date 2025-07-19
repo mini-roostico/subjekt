@@ -104,6 +104,16 @@ class BinaryOperationSpec : FunSpec({
                     BinaryOperator.MULTIPLY,
                 ) { ExpressionVisitor(Context.empty).visit(it) }
             }
-        ex.message shouldBe "Cannot multiply 'a' by 3."
+        ex.message shouldBe "Cannot multiply 'a' by int(3)."
+    }
+
+    test("Mixed operations") {
+        "1 + '2' * 3" shouldResolveTo "7"
+        "'1' + 2 - 3" shouldResolveTo "0"
+        "2 * '3' + 4" shouldResolveTo "10"
+        "'7' / 2 + 3" shouldResolveTo "6.5"
+        "'7' % 3 + 2" shouldResolveTo "3"
+        "1 .. 3 * 2" shouldResolveTo "16"
+        "(1 .. '3') + ('2' .. 4) * (5 + 6)" shouldResolveTo "277"
     }
 })

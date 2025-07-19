@@ -26,10 +26,24 @@ class SubjektResultSpec : StringSpec({
         val resolvedSubject = getSimpleResolvedSubject("subject1")
         val resolvedSuite =
             ResolvedSuite(Suite("suite", SymbolTable(), emptyList<Subject>(), Configuration()), setOf(resolvedSubject))
-        val result = TextResult(resolvedSuite, { it.name?.value ?: "" })
+        val result =
+            TextResult(resolvedSuite, {
+                it.name
+                    ?.value
+                    ?.castToString()
+                    ?.value ?: ""
+            })
 
         result.asString() shouldBe "subject1"
     }
+
+    fun getResult(resolvedSuite: ResolvedSuite): TextResult =
+        TextResult(resolvedSuite, {
+            it.name
+                ?.value
+                ?.castToString()
+                ?.value ?: ""
+        })
 
     "asStrings should return the correct list of string representations" {
         val resolvedSubject1 = getSimpleResolvedSubject("subject1")
@@ -39,8 +53,7 @@ class SubjektResultSpec : StringSpec({
                 Suite("suite", SymbolTable(), emptyList<Subject>(), Configuration()),
                 setOf(resolvedSubject1, resolvedSubject2),
             )
-        val result = TextResult(resolvedSuite, { it.name?.value ?: "" })
-
+        val result = getResult(resolvedSuite)
         result.asStrings() shouldBe listOf("subject1", "subject2")
     }
 
@@ -55,7 +68,13 @@ class SubjektResultSpec : StringSpec({
                 resolvedSuite,
                 {
                     mapOf(
-                        "name" to (it.name?.value.orEmpty()),
+                        "name" to (
+                            it.name
+                                ?.value
+                                ?.castToString()
+                                ?.value
+                                .orEmpty()
+                        ),
                     )
                 },
                 { map -> map },

@@ -249,7 +249,14 @@ class ResolutionSpec : StringSpec({
                 createSubject(1, resolvable2, symbolTable2),
             )
         val result = suite.resolve()
-        println(result.resolvedSubjects.joinToString(separator = "\n") { it.name?.value ?: "" })
+        println(
+            result.resolvedSubjects.joinToString(separator = "\n") {
+                it.name
+                    ?.value
+                    ?.castToString()
+                    ?.value ?: ""
+            },
+        )
         result shouldBe
             ResolvedSuite(
                 suite,
