@@ -15,6 +15,7 @@ import io.github.subjekt.core.Resolvable
 import io.github.subjekt.core.Source
 import io.github.subjekt.core.SubjektFunction
 import io.github.subjekt.core.resolution.SubjektResult
+import io.github.subjekt.core.value.StringValue
 
 /**
  * Subjekt entry class for using the Subjekt library. Various customization options can be specified by calling the
@@ -41,7 +42,7 @@ class Subjekt internal constructor(
         id: String,
         values: List<String>,
     ): Subjekt {
-        initialSymbolTable = initialSymbolTable.defineParameter(Parameter(id, values))
+        initialSymbolTable = initialSymbolTable.defineParameter(Parameter(id, values.map { StringValue(it) }))
         return this
     }
 

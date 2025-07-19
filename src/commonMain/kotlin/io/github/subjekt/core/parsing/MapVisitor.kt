@@ -20,8 +20,10 @@ import io.github.subjekt.core.Subject
 import io.github.subjekt.core.Subject.Companion.createAndAddSubjectFromString
 import io.github.subjekt.core.Suite
 import io.github.subjekt.core.SymbolTable
+import io.github.subjekt.core.parsing.ParsingUtil.parseParameterValues
 import io.github.subjekt.core.parsing.SuiteFactory.SubjectBuilder
 import io.github.subjekt.core.parsing.SuiteFactory.SuiteBuilder
+import io.github.subjekt.core.value.Value
 import io.github.subjekt.utils.Logger
 import io.github.subjekt.utils.Utils.checkNulls
 import io.github.subjekt.utils.Utils.parsingCheck
@@ -255,7 +257,7 @@ internal class MapVisitor(
         parsingCheck(parameter is Map<*, *>) { "Parameter must be a map" }
         val parameterMap = parameter as Map<*, *>
         var parameterId: String? = null
-        var parameterValues: List<String>? = null
+        var parameterValues: List<Value>? = null
         parameterMap.entries.forEach { (key, value) ->
             parsingCheck(value != null) { "Parameter values must not be null" }
             when (key) {
@@ -264,15 +266,7 @@ internal class MapVisitor(
                     parameterId = value as String
                 }
                 in Parameter.PARAMETER_VALUES_KEYS -> {
-                    parsingCheck(
-                        value is List<*> || value is String,
-                    ) { "Parameter's $key (i.e. values) must be a string or list" }
-                    parameterValues =
-                        when (value) {
-                            is String -> listOf(value)
-                            is List<*> -> value.map { it.toString() }
-                            else -> parsingFail { "Parameter values must be a string or list" }
-                        }
+                    parameterValues = parseParameterValues(value)
                 }
                 else -> parsingFail { "Unknown parameter key: $key" }
             }

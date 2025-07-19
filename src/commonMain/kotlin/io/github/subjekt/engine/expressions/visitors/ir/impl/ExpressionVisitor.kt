@@ -1,6 +1,7 @@
 package io.github.subjekt.engine.expressions.visitors.ir.impl
 
 import io.github.subjekt.core.definition.Context
+import io.github.subjekt.core.value.Value
 import io.github.subjekt.engine.expressions.ExpressionUtils
 import io.github.subjekt.engine.expressions.ir.IrBinaryOperation
 import io.github.subjekt.engine.expressions.ir.IrCall
@@ -9,7 +10,6 @@ import io.github.subjekt.engine.expressions.ir.IrDotCall
 import io.github.subjekt.engine.expressions.ir.IrFloatLiteral
 import io.github.subjekt.engine.expressions.ir.IrIdentifier
 import io.github.subjekt.engine.expressions.ir.IrIntegerLiteral
-import io.github.subjekt.engine.expressions.ir.IrNativeType
 import io.github.subjekt.engine.expressions.ir.IrRangeSlice
 import io.github.subjekt.engine.expressions.ir.IrSingleSlice
 import io.github.subjekt.engine.expressions.ir.IrStringLiteral
@@ -30,24 +30,24 @@ class ExpressionVisitor(
      * The context in which the expression is evaluated.
      */
     val context: Context,
-) : BaseExpressionVisitor<String>("") {
-    override fun visitCall(node: IrCall): String {
+) : BaseExpressionVisitor<Value>(Value.ofString("")) {
+    override fun visitCall(node: IrCall): Value {
         val symbol = node.toCallSymbol()
         return context.callSymbol(symbol, node.arguments.map { visit(it) })
     }
 
-    override fun visitParameter(node: IrIdentifier): String =
+    override fun visitParameter(node: IrIdentifier): Value =
         node
             .toParameterSymbol()
             .resolveDefinedParameter(context)
             .value
 
-    override fun visitDotCall(node: IrDotCall): String {
+    override fun visitDotCall(node: IrDotCall): Value {
         val symbol = node.toQualifiedCallSymbol()
         return context.callSymbol(symbol, node.arguments.map { visit(it) })
     }
 
-    override fun visitSingleSlice(node: IrSingleSlice): String {
+    override fun visitSingleSlice(node: IrSingleSlice): Value {
         val originalParameter =
             context.originalSymbolTable?.resolveParameter(node.identifier)
                 ?: throw IllegalArgumentException(
@@ -65,45 +65,35 @@ class ExpressionVisitor(
         )
     }
 
-    override fun visitBinaryOperation(node: IrBinaryOperation): String =
+    override fun visitBinaryOperation(node: IrBinaryOperation): Value =
         ExpressionUtils.resolveBinaryOperation(
             leftNode = node.left,
             rightNode = node.right,
             operator = node.operator,
-            type = node.type,
             visitMethod = { visit(it) },
         )
 
-    override fun visitCast(node: IrCast): String {
+    override fun visitCast(node: IrCast): Value {
         val value =
             node.value?.accept(this) ?: throw IllegalArgumentException(
                 "Cannot cast null value to ${node.targetType}.",
             )
-        return when (node.targetType) {
-            IrNativeType.INTEGER ->
-                value.toIntOrNull()?.toString()
-                    ?: throw IllegalArgumentException("Cannot cast '$value' to INTEGER.")
-
-            IrNativeType.FLOAT ->
-                value.toDoubleOrNull()?.toString()
-                    ?: throw IllegalArgumentException("Cannot cast '$value' to FLOAT.")
-
-            IrNativeType.STRING -> value
-        }
+        return value.cast(node.targetType.toType())
     }
 
-    override fun visitUnaryOperation(node: IrUnaryOperation): String =
+    override fun visitUnaryOperation(node: IrUnaryOperation): Value =
         when (node.operator) {
-            UnaryOperator.MINUS -> "-${visit(node.operand)}"
+            UnaryOperator.MINUS -> -visit(node.operand)
             UnaryOperator.PLUS -> visit(node.operand)
+            UnaryOperator.NOT -> !visit(node.operand)
         }
 
-    override fun visitRangeSlice(node: IrRangeSlice): String =
+    override fun visitRangeSlice(node: IrRangeSlice): Value =
         node.toParameterSymbol().resolveDefinedParameter(context).value
 
-    override fun visitFloatLiteral(node: IrFloatLiteral): String = node.value.toString()
+    override fun visitFloatLiteral(node: IrFloatLiteral): Value = Value.ofDouble(node.value)
 
-    override fun visitIntegerLiteral(node: IrIntegerLiteral): String = node.value.toString()
+    override fun visitIntegerLiteral(node: IrIntegerLiteral): Value = Value.ofInt(node.value)
 
-    override fun visitStringLiteral(node: IrStringLiteral): String = node.value
+    override fun visitStringLiteral(node: IrStringLiteral): Value = Value.ofString(node.value)
 }

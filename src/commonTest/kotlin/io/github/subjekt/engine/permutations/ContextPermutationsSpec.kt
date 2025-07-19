@@ -18,6 +18,7 @@ import io.github.subjekt.core.SymbolTable
 import io.github.subjekt.core.definition.Context
 import io.github.subjekt.core.definition.DefinedMacro
 import io.github.subjekt.core.definition.DefinedParameter
+import io.github.subjekt.core.value.Value.Companion.asStringValue
 import io.github.subjekt.engine.expressions.CallSymbol
 import io.github.subjekt.engine.expressions.ParameterSymbol
 import io.kotest.core.spec.style.StringSpec
@@ -46,10 +47,10 @@ class ContextPermutationsSpec : StringSpec({
     "requestNeededContexts should return all the needed contexts for the given subject" {
         val initialSymbolTable =
             SymbolTable()
-                .defineParameter(Parameter("param1", listOf("value1", "value2")))
-                .defineParameter(Parameter("param2", listOf("value3", "value4")))
-                .defineParameter(Parameter("param3", listOf("value5")))
-                .defineParameter(Parameter("shouldNotBeIncluded", listOf("value6")))
+                .defineParameter(Parameter("param1", listOf("value1".asStringValue(), "value2".asStringValue())))
+                .defineParameter(Parameter("param2", listOf("value3".asStringValue(), "value4".asStringValue())))
+                .defineParameter(Parameter("param3", listOf("value5".asStringValue())))
+                .defineParameter(Parameter("shouldNotBeIncluded", listOf("value6".asStringValue())))
                 .defineMacro(
                     Macro("macro1", listOf("arg1"), listOf(Resolvable("\${{ param3 }}"))),
                 ).defineMacro(
@@ -74,9 +75,9 @@ class ContextPermutationsSpec : StringSpec({
                     listOf("3", "4").map { valueParam2 ->
                         Context(originalSymbolTable = initialSymbolTable)
                             .withParameters(
-                                "param1" to "value$valueParam1",
-                                "param2" to "value$valueParam2",
-                                "param3" to "value5",
+                                "param1" to "value$valueParam1".asStringValue(),
+                                "param2" to "value$valueParam2".asStringValue(),
+                                "param3" to "value5".asStringValue(),
                             ).withMacro(
                                 "macro1",
                                 listOf("arg1"),
@@ -91,18 +92,18 @@ class ContextPermutationsSpec : StringSpec({
     "populateDefinedSymbols should populate parameters, macros, and functions correctly" {
         val symbolTable =
             SymbolTable().defineParameter(
-                Parameter("internal1", listOf("valueInternal1")),
+                Parameter("internal1", listOf("valueInternal1".asStringValue())),
             )
         val parameters = mutableSetOf<List<DefinedParameter>>()
         val macros = mutableSetOf<List<DefinedMacro>>()
         val functions = mutableSetOf<SubjektFunction>()
 
-        val parameter = Parameter("param1", listOf("value1", "value2"))
+        val parameter = Parameter("param1", listOf("value1".asStringValue(), "value2".asStringValue()))
         parameter.populateDefinedSymbols(symbolTable, parameters, macros, functions)
         parameters shouldContain
             listOf(
-                DefinedParameter("param1", "value1", parameter),
-                DefinedParameter("param1", "value2", parameter),
+                DefinedParameter("param1", "value1".asStringValue(), parameter),
+                DefinedParameter("param1", "value2".asStringValue(), parameter),
             )
         macros shouldBe emptySet()
         functions shouldBe emptySet()
@@ -112,10 +113,10 @@ class ContextPermutationsSpec : StringSpec({
 
         parameters shouldContain
             listOf(
-                DefinedParameter("param1", "value1"),
-                DefinedParameter("param1", "value2"),
+                DefinedParameter("param1", "value1".asStringValue()),
+                DefinedParameter("param1", "value2".asStringValue()),
             )
-        parameters shouldContain listOf(DefinedParameter("internal1", "valueInternal1"))
+        parameters shouldContain listOf(DefinedParameter("internal1", "valueInternal1".asStringValue()))
         macros shouldContain
             listOf(
                 DefinedMacro("macro1", listOf("arg1"), Resolvable("\${{ internal1 }}")),
@@ -124,11 +125,15 @@ class ContextPermutationsSpec : StringSpec({
     }
 
     "toDefinedParameters should return correct defined parameters" {
-        val parameter = Parameter("param1", listOf("value1", "value2"))
+        val parameter = Parameter("param1", listOf("value1".asStringValue(), "value2".asStringValue()))
 
         val result = parameter.toDefinedParameters()
 
-        result shouldBe listOf(DefinedParameter("param1", "value1"), DefinedParameter("param1", "value2"))
+        result shouldBe
+            listOf(
+                DefinedParameter("param1", "value1".asStringValue()),
+                DefinedParameter("param1", "value2".asStringValue()),
+            )
     }
 
     "toDefinedMacros should return correct defined macros" {

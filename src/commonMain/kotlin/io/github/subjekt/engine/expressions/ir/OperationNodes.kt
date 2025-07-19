@@ -10,6 +10,14 @@ enum class BinaryOperator {
     DIVIDE,
     MODULO,
     CONCAT,
+    EQ,
+    NE,
+    LT,
+    LE,
+    GT,
+    GE,
+    AND,
+    OR,
 }
 
 /**
@@ -37,6 +45,7 @@ data class IrBinaryOperation(
 enum class UnaryOperator {
     MINUS,
     PLUS,
+    NOT,
 }
 
 /**

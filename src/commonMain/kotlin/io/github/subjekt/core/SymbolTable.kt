@@ -9,6 +9,7 @@
 
 package io.github.subjekt.core
 
+import io.github.subjekt.core.value.Value
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
 
@@ -90,11 +91,23 @@ data class SymbolTable
          */
         fun defineFunction(
             id: String,
-            function: Function1<List<String>, String>,
+            function: Function1<List<Value>, Value>,
         ): SymbolTable =
             copy(
                 functions =
                     functions + (id to SubjektFunction(id, function)),
+            )
+
+        /**
+         * Returns a new [SymbolTable] with the [Function1] [function] of strings defined.
+         */
+        fun defineStringFunction(
+            id: String,
+            function: Function1<List<String>, String>,
+        ): SymbolTable =
+            copy(
+                functions =
+                    functions + (id to SubjektFunction.fromStringFunction(id, function)),
             )
 
         /**

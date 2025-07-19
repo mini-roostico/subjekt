@@ -13,6 +13,7 @@ import io.github.subjekt.core.Resolvable
 import io.github.subjekt.core.SubjektFunction
 import io.github.subjekt.core.SymbolTable
 import io.github.subjekt.core.SymbolTable.Companion.ARGS_SEPARATOR
+import io.github.subjekt.core.value.Value
 
 /**
  * A context is a collection of defined parameters and macros. It can be seen as a possible instance of the resolution
@@ -50,13 +51,13 @@ data class Context(
      */
     fun withParameter(
         id: String,
-        value: String,
+        value: Value,
     ): Context = copy(definedParameters = definedParameters + (id to DefinedParameter(id, value)))
 
     /**
      * Returns a new context with the given [DefinedParameter]s (id -> value) added to it.
      */
-    fun withParameters(vararg parameters: Pair<String, String>): Context =
+    fun withParameters(vararg parameters: Pair<String, Value>): Context =
         copy(
             definedParameters =
                 definedParameters + parameters.map { (id, value) -> id to DefinedParameter(id, value) },
@@ -100,7 +101,7 @@ data class Context(
     fun withFunction(
         id: String,
         function: Function1<List<String>, String>,
-    ): Context = copy(functions = functions + (id to SubjektFunction(id, function)))
+    ): Context = copy(functions = functions + (id to SubjektFunction.fromStringFunction(id, function)))
 
     companion object {
         /**

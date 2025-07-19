@@ -2,6 +2,8 @@ package io.github.subjekt.engine.expressions.ir.utils
 
 import io.github.subjekt.core.definition.Context
 import io.github.subjekt.core.definition.DefinedMacro
+import io.github.subjekt.core.value.Type
+import io.github.subjekt.core.value.Value
 import io.github.subjekt.engine.expressions.CallableSymbol
 import io.github.subjekt.engine.expressions.SymbolNotFoundException
 import io.github.subjekt.engine.expressions.TypeException
@@ -11,7 +13,6 @@ import io.github.subjekt.engine.expressions.ir.IrBinaryOperation
 import io.github.subjekt.engine.expressions.ir.IrCall
 import io.github.subjekt.engine.expressions.ir.IrDotCall
 import io.github.subjekt.engine.expressions.ir.IrNode
-import io.github.subjekt.engine.expressions.ir.Type
 import io.github.subjekt.engine.expressions.toCallSymbol
 import io.github.subjekt.engine.expressions.toQualifiedCallSymbol
 import org.antlr.v4.kotlinruntime.ParserRuleContext
@@ -55,8 +56,8 @@ object IrUtils {
      */
     fun DefinedMacro.call(
         context: Context,
-        arguments: List<String>,
-    ): String {
+        arguments: List<Value>,
+    ): Value {
         argumentsIdentifiers
             .foldIndexed(context) { index, acc, id ->
                 acc.withParameter(id, arguments[index])
@@ -72,8 +73,8 @@ object IrUtils {
      */
     fun Context.callSymbol(
         symbol: CallableSymbol,
-        arguments: List<String>,
-    ): String {
+        arguments: List<Value>,
+    ): Value {
         val definedMacro = symbol.resolveDefinedMacro(this)
         return if (definedMacro != null) {
             definedMacro.call(this, arguments)
@@ -91,8 +92,8 @@ object IrUtils {
      */
     fun IrCall.resolveCall(
         context: Context,
-        visitMethod: (IrNode) -> String,
-    ): String {
+        visitMethod: (IrNode) -> Value,
+    ): Value {
         val symbol = toCallSymbol()
         return context.callSymbol(symbol, arguments.map { visitMethod(it) })
     }
@@ -102,8 +103,8 @@ object IrUtils {
      */
     internal fun IrDotCall.resolveCall(
         context: Context,
-        visitMethod: (IrNode) -> String,
-    ): String {
+        visitMethod: (IrNode) -> Value,
+    ): Value {
         val symbol = toQualifiedCallSymbol()
         return context.callSymbol(symbol, arguments.map { visitMethod(it) })
     }
@@ -113,27 +114,5 @@ object IrUtils {
      *
      * @throws TypeException if the value cannot be converted to the specified type.
      */
-    internal fun tryInferType(
-        value: String,
-        type: Type?,
-        message: String,
-    ): Type =
-        when (type) {
-            Type.INTEGER -> {
-                value.toIntOrNull() ?: throw TypeException(message)
-                Type.INTEGER
-            }
-
-            Type.FLOAT -> {
-                value.toFloatOrNull() ?: throw TypeException(message)
-                Type.FLOAT
-            }
-
-            Type.NUMBER -> {
-                value.toFloatOrNull() ?: value.toIntOrNull() ?: throw TypeException(message)
-                Type.NUMBER
-            }
-
-            else -> Type.STRING
-        }
+    internal fun tryInferType(value: Value): Type = value.type
 }

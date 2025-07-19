@@ -71,17 +71,30 @@ object Utils {
         return result
     }
 
+    private fun regexPattern(
+        expressionPrefix: String,
+        expressionSuffix: String,
+    ): String {
+        val escapedPrefix = Regex.escape(expressionPrefix)
+        val escapedSuffix = Regex.escape(expressionSuffix)
+        return "$escapedPrefix([\\s\\S]*?)$escapedSuffix"
+    }
+
     /**
      * Builds a regex pattern that matches the given expression within prefix and suffix.
      */
     internal fun buildRegex(
         expressionPrefix: String,
         expressionSuffix: String,
-    ): Regex {
-        val escapedPrefix = Regex.escape(expressionPrefix)
-        val escapedSuffix = Regex.escape(expressionSuffix)
-        return Regex("$escapedPrefix([\\s\\S]*?)$escapedSuffix", RegexOption.MULTILINE)
-    }
+    ): Regex = Regex(regexPattern(expressionPrefix, expressionSuffix), RegexOption.MULTILINE)
+
+    /**
+     * Builds a regex pattern that exactly matches the given expression within prefix and suffix.
+     */
+    internal fun buildFullMatchRegex(
+        expressionPrefix: String,
+        expressionSuffix: String,
+    ): Regex = Regex("^${regexPattern(expressionPrefix, expressionSuffix)}$")
 
     /**
      * Throws a [ParsingException] with the given message.

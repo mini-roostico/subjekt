@@ -9,6 +9,8 @@
 
 package io.github.subjekt.core
 
+import io.github.subjekt.core.value.StringValue
+import io.github.subjekt.core.value.Value
 import io.github.subjekt.utils.Utils.isLegalIdentifier
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
@@ -34,7 +36,7 @@ data class Parameter(
     /**
      * The values that the parameter can assume. These are the possible values that can be used in the [Resolvable]s.
      */
-    val values: List<String>,
+    val values: List<Value>,
 ) : Symbol() {
     companion object {
         /**
@@ -62,15 +64,15 @@ data class Parameter(
          */
         fun Pair<String, String>.toSingleValueParameter(): Parameter {
             val (id, value) = this
-            return Parameter(id, listOf(value))
+            return Parameter(id, listOf(StringValue(value)))
         }
 
         /**
          * Utility function to create a [Parameter] from a pair of ID and list of values.
          */
-        fun Pair<String, List<*>>.toParameter(): Parameter {
+        fun Pair<String, List<Value>>.toParameter(): Parameter {
             val (id, values) = this
-            return Parameter(id, values.map { it.toString() })
+            return Parameter(id, values)
         }
     }
 
@@ -210,12 +212,12 @@ data class Macro(
 @JsExport
 data class SubjektFunction(
     val id: String,
-    private val function: Function1<List<String>, String>,
+    private val function: Function1<List<Value>, Value>,
 ) : Symbol() {
     /**
      * Calls the function with the given [arguments].
      */
-    operator fun invoke(arguments: List<String>): String = function(arguments)
+    operator fun invoke(arguments: List<Value>): Value = function(arguments)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -227,4 +229,15 @@ data class SubjektFunction(
     }
 
     override fun hashCode(): Int = id.hashCode()
+
+    companion object {
+        fun fromStringFunction(
+            id: String,
+            function: Function1<List<String>, String>,
+        ): SubjektFunction =
+            SubjektFunction(id) { args ->
+                val stringArgs = args.map { it.castToString().value }
+                StringValue(function(stringArgs))
+            }
+    }
 }

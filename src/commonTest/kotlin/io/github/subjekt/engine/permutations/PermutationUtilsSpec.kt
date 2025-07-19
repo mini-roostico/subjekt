@@ -16,6 +16,7 @@ import io.github.subjekt.core.SymbolTable.Companion.ARGS_SEPARATOR
 import io.github.subjekt.core.definition.Context
 import io.github.subjekt.core.definition.DefinedMacro
 import io.github.subjekt.core.definition.DefinedParameter
+import io.github.subjekt.core.value.Value.Companion.asStringValue
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 
@@ -25,12 +26,12 @@ class PermutationUtilsSpec : StringSpec({
         val parameters =
             setOf(
                 listOf(
-                    DefinedParameter("param1", "value1"),
-                    DefinedParameter("param1", "value2"),
+                    DefinedParameter("param1", "value1".asStringValue()),
+                    DefinedParameter("param1", "value2".asStringValue()),
                 ),
                 listOf(
-                    DefinedParameter("param2", "value3"),
-                    DefinedParameter("param2", "value4"),
+                    DefinedParameter("param2", "value3".asStringValue()),
+                    DefinedParameter("param2", "value4".asStringValue()),
                 ),
             )
         val macros =
@@ -55,8 +56,8 @@ class PermutationUtilsSpec : StringSpec({
                             listOf("3", "4").map { secondMacroNum ->
                                 Context(
                                     mapOf(
-                                        "param1" to DefinedParameter("param1", "value$firstParamNum"),
-                                        "param2" to DefinedParameter("param2", "value$secondParamNum"),
+                                        "param1" to DefinedParameter("param1", "value$firstParamNum".asStringValue()),
+                                        "param2" to DefinedParameter("param2", "value$secondParamNum".asStringValue()),
                                     ),
                                     mapOf(
                                         "macro1" + ARGS_SEPARATOR + "1" to
@@ -87,17 +88,17 @@ class PermutationUtilsSpec : StringSpec({
         val parameters =
             setOf(
                 listOf(
-                    DefinedParameter("param1", "value1"),
+                    DefinedParameter("param1", "value1".asStringValue()),
                 ),
                 listOf(
-                    DefinedParameter("param2", "value3"),
-                    DefinedParameter("param2", "value4"),
+                    DefinedParameter("param2", "value3".asStringValue()),
+                    DefinedParameter("param2", "value4".asStringValue()),
                 ),
             )
         val macros =
             setOf(
                 listOf(
-                    DefinedMacro("macro1", listOf("arg1"), Resolvable("body1")),
+                    DefinedMacro("macro", listOf("arg1"), Resolvable("body1")),
                 ),
             )
         val symbolTable = SymbolTable()
@@ -107,11 +108,11 @@ class PermutationUtilsSpec : StringSpec({
                 .map { value ->
                     Context(
                         mapOf(
-                            "param1" to DefinedParameter("param1", "value1"),
-                            "param2" to DefinedParameter("param2", "value$value"),
+                            "param1" to DefinedParameter("param1", "value1".asStringValue()),
+                            "param2" to DefinedParameter("param2", "value$value".asStringValue()),
                         ),
                         mapOf(
-                            "macro1${ARGS_SEPARATOR}1" to DefinedMacro("macro1", listOf("arg1"), Resolvable("body1")),
+                            "macro${ARGS_SEPARATOR}1" to DefinedMacro("macro", listOf("arg1"), Resolvable("body1")),
                         ),
                         emptyMap(),
                         symbolTable,

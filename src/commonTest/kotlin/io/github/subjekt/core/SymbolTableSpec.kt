@@ -9,14 +9,15 @@
 
 package io.github.subjekt.core
 
+import io.github.subjekt.core.value.Value.Companion.asStringValue
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 
 class SymbolTableSpec : StringSpec({
 
     "SymbolTable should combine parameters correctly" {
-        val param1 = Parameter("param1", listOf("value1"))
-        val param2 = Parameter("param2", listOf("value2"))
+        val param1 = Parameter("param1", listOf("value1".asStringValue()))
+        val param2 = Parameter("param2", listOf("value2".asStringValue()))
         val table1 = SymbolTable(parameters = mapOf(param1.id to param1))
         val table2 = SymbolTable(parameters = mapOf(param2.id to param2))
 
@@ -40,17 +41,17 @@ class SymbolTableSpec : StringSpec({
     "SymbolTable should combine functions correctly" {
         val function1: Function1<List<String>, String> = { it.first() }
         val function2: Function1<List<String>, String> = { it.last() }
-        val table1 = SymbolTable().defineFunction("func1", function1)
-        val table2 = SymbolTable().defineFunction("func2", function2)
+        val table1 = SymbolTable().defineStringFunction("func1", function1)
+        val table2 = SymbolTable().defineStringFunction("func2", function2)
 
         val combinedTable = table1 + table2
 
-        combinedTable.resolveFunction("func1") shouldBe SubjektFunction("func1", function1)
-        combinedTable.resolveFunction("func2") shouldBe SubjektFunction("func2", function2)
+        combinedTable.resolveFunction("func1") shouldBe SubjektFunction.fromStringFunction("func1", function1)
+        combinedTable.resolveFunction("func2") shouldBe SubjektFunction.fromStringFunction("func2", function2)
     }
 
     "SymbolTable should define and resolve parameters correctly" {
-        val param = Parameter("param", listOf("value"))
+        val param = Parameter("param", listOf("value".asStringValue()))
         val table = SymbolTable().defineParameter(param)
 
         table.resolveParameter("param") shouldBe param
@@ -65,8 +66,8 @@ class SymbolTableSpec : StringSpec({
 
     "SymbolTable should define and resolve functions correctly" {
         val function: Function1<List<String>, String> = { it.first() }
-        val table = SymbolTable().defineFunction("func", function)
+        val table = SymbolTable().defineStringFunction("func", function)
 
-        table.resolveFunction("func") shouldBe SubjektFunction("func", function)
+        table.resolveFunction("func") shouldBe SubjektFunction.fromStringFunction("func", function)
     }
 })
