@@ -22,12 +22,13 @@ object ParsingUtil {
         parsingCheck(
             value is String || value is Int || value is Boolean || value is Double,
         ) { "Parameter value must be a string, int, boolean, or double" }
-        return when (value) {
-            is String -> StringValue(value)
-            is Int -> IntValue(value)
-            is Boolean -> BooleanValue(value)
-            is Double -> FloatValue(value)
-            else -> throw IllegalArgumentException("Unsupported parameter value type: ${value!!::class.simpleName}")
+        val valueClass = value!!::class
+        return when (valueClass) {
+            String::class -> StringValue(value as String)
+            Int::class -> IntValue(value as Int)
+            Boolean::class -> BooleanValue(value as Boolean)
+            Double::class -> FloatValue(value as Double)
+            else -> throw IllegalArgumentException("Unsupported parameter value type: ${valueClass.simpleName}")
         }
     }
 }
