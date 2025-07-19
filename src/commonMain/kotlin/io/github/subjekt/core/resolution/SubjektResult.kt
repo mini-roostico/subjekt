@@ -45,7 +45,13 @@ sealed class SubjektResult<I, R>(
     /**
      * A function that will be used to extract the name of a [ResolvedSubject], used as file name for example.
      */
-    private val nameMapper: (ResolvedSubject) -> String = { it.name?.value ?: it.subjectId.toString() },
+    private val nameMapper: (ResolvedSubject) -> String = {
+        it.name
+            ?.value
+            ?.castToString()
+            ?.value
+            ?: it.subjectId.toString()
+    },
 ) {
     /**
      * Renders a single [element] of type [I] into a string.
@@ -105,7 +111,12 @@ class TextResult(
     contentResolver: (ResolvedSubject) -> String,
     reduce: (List<String>) -> List<String> = { it },
     private val separator: String = "\n",
-    nameResolver: (ResolvedSubject) -> String = { it.name?.value ?: it.subjectId.toString() },
+    nameResolver: (ResolvedSubject) -> String = {
+        it.name
+            ?.value
+            ?.castToString()
+            ?.value ?: it.subjectId.toString()
+    },
 ) : SubjektResult<String, List<String>>(resolvedSuite, reduce, contentResolver, nameResolver) {
     override fun renderOne(element: String): String = element
 
@@ -121,7 +132,12 @@ class JsonResult<I, R>(
     resolvedSuite: ResolvedSuite,
     contentResolver: (ResolvedSubject) -> I,
     reduce: (List<I>) -> R,
-    nameResolver: (ResolvedSubject) -> String = { it.name?.value ?: it.subjectId.toString() },
+    nameResolver: (ResolvedSubject) -> String = {
+        it.name
+            ?.value
+            ?.castToString()
+            ?.value ?: it.subjectId.toString()
+    },
 ) : SubjektResult<I, R>(resolvedSuite, reduce, contentResolver, nameResolver) {
     override fun renderOne(element: I): String = Json.encodeToString(singleSerializer, element)
 

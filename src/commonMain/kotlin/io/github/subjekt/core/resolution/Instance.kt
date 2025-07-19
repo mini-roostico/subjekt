@@ -10,8 +10,11 @@
 package io.github.subjekt.core.resolution
 
 import io.github.subjekt.core.Resolvable
+import io.github.subjekt.core.value.StringValue
+import io.github.subjekt.core.value.Value
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
+import kotlin.js.JsName
 
 /**
  * Represents a [Resolvable] that has been resolved to a single value by fixing the
@@ -23,9 +26,15 @@ data class Instance(
     /**
      * The resolved value of the [Resolvable].
      */
-    val value: String,
+    val value: Value,
     /**
      * The original [Resolvable] from which this [Instance] was resolved.
      */
     val origin: Resolvable,
-)
+) {
+    @JsName("fromString")
+    constructor(string: String, origin: Resolvable) : this(
+        StringValue(string),
+        origin,
+    )
+}

@@ -12,6 +12,8 @@ package io.github.subjekt
 import io.github.subjekt.core.resolution.Exporter
 import io.github.subjekt.core.resolution.JsonResult
 import io.github.subjekt.core.resolution.ResolvedSubject
+import io.github.subjekt.core.value.Value
+import io.github.subjekt.utils.Serializers.valueSerializer
 import io.github.subjekt.utils.Utils.uniqueName
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.ListSerializer
@@ -33,7 +35,10 @@ val safeNameResolverUniqueFallback: (ResolvedSubject) -> String = {
  */
 fun safeNameResolverAsPlaceholder(placeholder: String): (ResolvedSubject) -> String =
     {
-        it.name?.value ?: placeholder
+        it.name
+            ?.value
+            ?.castToString()
+            ?.value ?: placeholder
     }
 
 /**
@@ -64,10 +69,10 @@ fun <I, R> createJsonExporter(
  * A simple [Exporter] that produces a [JsonResult] containing a map of [String] keys and [String] values, obtained
  * from the [ResolvedSubject] instances.
  */
-val mapJsonExporter: Exporter<Map<String, String>, List<Map<String, String>>> =
+val mapJsonExporter: Exporter<Map<String, Value>, List<Map<String, Value>>> =
     createJsonExporter(
-        MapSerializer(String.serializer(), String.serializer()),
-        ListSerializer(MapSerializer(String.serializer(), String.serializer())),
+        MapSerializer(String.serializer(), valueSerializer()),
+        ListSerializer(MapSerializer(String.serializer(), valueSerializer())),
         { it.instances.mapValues { (key, instance) -> instance.value } },
         { map -> map },
     )

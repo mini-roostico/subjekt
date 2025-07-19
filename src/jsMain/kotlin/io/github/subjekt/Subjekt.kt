@@ -42,7 +42,7 @@ class Subjekt internal constructor(
      * [io.github.subjekt.core.resolution.SubjektResult] containing the map of instances taken from each
      * [io.github.subjekt.core.resolution.ResolvedSubject].
      */
-    fun resolveSubjectsAsJson(): SubjektResult<Map<String, String>, List<Map<String, String>>>? =
+    fun resolveSubjectsAsJson(): SubjektResult<Map<String, Value>, List<Map<String, Value>>>? =
         mapAndExport(
             identityMapper,
             mapJsonExporter,
