@@ -15,7 +15,6 @@ import io.github.subjekt.core.value.Value
 import io.github.subjekt.engine.expressions.ir.IrTree
 import io.github.subjekt.engine.expressions.visitors.debug.LogVisitor
 import io.github.subjekt.engine.expressions.visitors.ir.impl.ExpressionVisitor
-import io.github.subjekt.engine.expressions.visitors.ir.impl.TypeVisitor
 import io.github.subjekt.engine.expressions.visitors.ir.impl.resolveSymbols
 import io.github.subjekt.engine.expressions.visitors.parseToIr
 
@@ -48,11 +47,9 @@ class Expression(
         context: Context,
         log: Boolean = false,
     ): Value =
-        TypeVisitor(context).visit(ir).run {
-            with(LogVisitor(log)) {
-                visit(ir)
-                ExpressionVisitor(context).visit(ir)
-            }
+        with(LogVisitor(log)) {
+            visit(ir)
+            ExpressionVisitor(context).visit(ir)
         }
 
     companion object {
