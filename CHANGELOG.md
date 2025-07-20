@@ -1,3 +1,43 @@
+## [2.2.0](https://github.com/mini-roostico/subjekt/compare/2.1.0...2.2.0) (2025-07-20)
+
+### Features
+
+* added serializer for Values ([78af169](https://github.com/mini-roostico/subjekt/commit/78af1692c8b634217aabed1a0e1c948889a49886))
+
+### Dependency updates
+
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.137 ([#194](https://github.com/mini-roostico/subjekt/issues/194)) ([4482734](https://github.com/mini-roostico/subjekt/commit/44827342eba3f35a6e138d15c72543d604d83d89))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.138 ([#196](https://github.com/mini-roostico/subjekt/issues/196)) ([79045ff](https://github.com/mini-roostico/subjekt/commit/79045ff78f722e945f9404ea7e61c674b4e1aa6d))
+* **deps:** update node.js to v22.17.1 ([#198](https://github.com/mini-roostico/subjekt/issues/198)) ([9ee4bd3](https://github.com/mini-roostico/subjekt/commit/9ee4bd3b38366583557c10fa3cd5e2520508cbe1))
+* **deps:** update plugin com.gradle.develocity to v4.1 ([#197](https://github.com/mini-roostico/subjekt/issues/197)) ([4160481](https://github.com/mini-roostico/subjekt/commit/4160481258b4e4b3cc82b19cde5fc4fb19de96f1))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.0.28 ([#193](https://github.com/mini-roostico/subjekt/issues/193)) ([21b9c0d](https://github.com/mini-roostico/subjekt/commit/21b9c0dda5a6ef07c50802faf91f931b7b3bcdfb))
+
+### Bug Fixes
+
+* fixed JS Number type erasure when parsing parameter values ([daa86ca](https://github.com/mini-roostico/subjekt/commit/daa86ca0c4487a5e6395361ca9389c0e5a32e1b9))
+* fixed single expression Resolvable not being recognized ([aed5469](https://github.com/mini-roostico/subjekt/commit/aed5469ffb89e354f2b6fe7e8f4892f89c738af0))
+
+### Tests
+
+* added spec for type coherence ([ee88073](https://github.com/mini-roostico/subjekt/commit/ee88073428df2499cb2c12ce97caa0b5c5bf98de))
+* fixed tests ([5700ec6](https://github.com/mini-roostico/subjekt/commit/5700ec69b8ea53e2aceba8abdaf2bf0351958ed1))
+
+### Build and continuous integration
+
+* added coroutines to build ([9fc4a9d](https://github.com/mini-roostico/subjekt/commit/9fc4a9d8a52aa8a9b54f4b4897c1bcfd0c4a1d6c))
+
+### Refactoring
+
+* changed Instance class to contain Value instead of only strings ([1ea5365](https://github.com/mini-roostico/subjekt/commit/1ea5365f6299e942fc75f90a44ebb736b9cbe819))
+* changed Values toString and error messages ([c8d7255](https://github.com/mini-roostico/subjekt/commit/c8d72554ed3f1cac4f2064bac22b363764b256f7))
+* major refactoring of the whole type and resolving system. ([876df28](https://github.com/mini-roostico/subjekt/commit/876df284194e444d033961f161191399dbc43ab5))
+* modified IR nodes structure ([7aec747](https://github.com/mini-roostico/subjekt/commit/7aec7479a58f35a31fd5974564b5ff14c440b74e))
+* moved Subjekt entry point outside in a separate class ([dec4509](https://github.com/mini-roostico/subjekt/commit/dec4509cb6972e879258356e45fc38c1d7e36e5b))
+* removed unnecessary TypeVisitor.kt ([3383ff2](https://github.com/mini-roostico/subjekt/commit/3383ff256683685d2d0dbf73e8eefc660c007d7d))
+* renamed 'compiler' package to 'engine' ([8abecac](https://github.com/mini-roostico/subjekt/commit/8abecaccadc8a4e5e44a44192a4bb1a5389c8fbc))
+* renamed IrParameter into IrIdentifier ([f1c94f7](https://github.com/mini-roostico/subjekt/commit/f1c94f71cdb8d5f8c02d584ed66f6a64375850ca))
+* renamed Resolution.kt to Engine.kt ([8e8bf41](https://github.com/mini-roostico/subjekt/commit/8e8bf4154cecf4811c6cde2583849b98c4a6b1d0))
+
 ## [2.1.0](https://github.com/mini-roostico/subjekt/compare/2.0.11...2.1.0) (2025-07-06)
 
 ### Features
