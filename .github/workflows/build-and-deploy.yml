@@ -25,7 +25,7 @@ jobs:
       will-release: ${{ steps.compute-next-version.outputs.will-release }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.3.0
+        uses: actions/checkout@v5.0.0
         with:
           fetch-depth: 0
       - name: Compute next release version
@@ -57,7 +57,7 @@ jobs:
       needs.test-extensively.result == 'success'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.3.0
+        uses: actions/checkout@v5.0.0
         with:
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Find the version of Node from package.json
@@ -102,7 +102,7 @@ jobs:
       - release
     if: ${{ needs.precompute-next-version.outputs.will-release == 'true' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           persist-credentials: false
 
