@@ -1,7 +1,7 @@
 {
   "name": "@mini-roostico/subjekt",
   "devDependencies": {
-    "semantic-release-preconfigured-conventional-commits": "1.1.145"
+    "semantic-release-preconfigured-conventional-commits": "1.1.146"
   },
   "engines": {
     "node": "22.19.0"
