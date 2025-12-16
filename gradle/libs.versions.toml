@@ -1,6 +1,6 @@
 [versions]
 kotest = "6.0.0.M2"
-kotlin = "2.1.21"
+kotlin = "2.3.0"
 antlr-kotlin = "1.0.5"
 
 [libraries]
