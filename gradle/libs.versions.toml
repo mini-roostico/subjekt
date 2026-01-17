@@ -1,7 +1,7 @@
 [versions]
 kotest = "6.0.0.M2"
 kotlin = "2.1.21"
-antlr-kotlin = "1.0.5"
+antlr-kotlin = "1.0.9"
 
 [libraries]
 antlr-runtime = { module = "com.strumenta:antlr-kotlin-runtime", version.ref = "antlr-kotlin" }
