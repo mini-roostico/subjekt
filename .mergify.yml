@@ -12,14 +12,14 @@ pull_request_rules:
   - name: rebase-merge working updates
     conditions:
       - and:
-        - or: &authors_are_bots
-          - author=renovate[bot]
-          - author=dependabot[bot]
-        - and:
-          - or:
-            - check-success~=.*success
-          - "#review-threads-unresolved=0"
-          - "#commits-behind=0"
+          - or: &authors_are_bots
+              - author=renovate[bot]
+              - author=dependabot[bot]
+          - and:
+              - or:
+                  - check-success~=.*success
+              - "#review-threads-unresolved=0"
+              - "#commits-behind=0"
       - label=dependencies
       - -draft
       - -conflict
@@ -41,12 +41,14 @@ pull_request_rules:
   - name: Auto-rebase if appropriately labeled or if the author is an authorized bot
     conditions:
       - or:
-        - label=auto-update-rebase
-        - and:
-            - label=dependencies
-            - or: *authors_are_bots
+          - label=auto-update-rebase
+          - and:
+              - label=dependencies
+              - or: *authors_are_bots
       - -draft
       - -conflict
     actions:
       rebase:
         bot_account: FreshMag
+merge_protections_settings:
+  reporting_method: check-runs
