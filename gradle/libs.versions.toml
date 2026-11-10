@@ -35,6 +35,6 @@ kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.89.2"
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.35.0" }
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:3.5.4"
 npm-publish = "dev.petuska.npm.publish:3.5.3"
-taskTree = "com.dorongold.task-tree:4.0.1"
+taskTree = "com.dorongold.task-tree:4.0.2"
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
