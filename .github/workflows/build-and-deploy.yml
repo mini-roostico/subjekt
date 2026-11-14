@@ -5,7 +5,7 @@ on:
 
 jobs:
   check-secrets:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       run-with-secrets: ${{ steps.require-secrets.outputs.run-with-secrets }}
     steps:
@@ -20,7 +20,7 @@ jobs:
           echo "run-with-secrets=${{ steps.detect-secrets.outputs.has-secrets == 'true' && !github.event.repository.fork }}" >> $GITHUB_OUTPUT
 
   precompute-next-version:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       will-release: ${{ steps.compute-next-version.outputs.will-release }}
     steps:
@@ -49,7 +49,7 @@ jobs:
     needs:
       - check-secrets
       - test-extensively
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions: write-all
     if: |
       always() &&
@@ -122,7 +122,7 @@ jobs:
           folder: build/dokka/html
 
   success:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs:
       - check-secrets
       - test-extensively
